@@ -1,0 +1,12 @@
+#!/bin/bash
+
+BaseDir=`dirname "${BASH_SOURCE[0]}"`
+OutputDir="$BaseDir/analysis/cppcheck"
+
+cd "$OutputDir"
+
+SourceDir="$BaseDir/build"
+GeneratedFile="cppcheck.txt"
+
+cppcheck --enable=all --library=opengl -rp="." --xml "$SourceDir" 2> "$GeneratedFile"
+cppcheck-htmlreport --source-dir="$SourceDir" --report-dir="$OutputDir" --file="$GeneratedFile"
