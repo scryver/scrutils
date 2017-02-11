@@ -11,10 +11,12 @@ staticScrAth = env.Library(
 
 headers = [
     'vector2d.hpp',
+    'vector3d.hpp',
 ]
 
 inlines = [
     'vector2d.inl',
+    'vector3d.inl',
 ]
 
 install_headers(env, 'Scryver/Math', headers, inlines)

@@ -6,6 +6,7 @@ mathEnv.Append(LIBS=['scrath'])
 testScrAth = mathEnv.Program('testScrAth',
                     source=[
                         'test_vector2d.cpp',
+                        'test_vector3d.cpp',
                         'test_vector_include.cpp',
                     ])
 
