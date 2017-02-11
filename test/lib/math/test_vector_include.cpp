@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "scryver/math/vector2d.hpp"
+#include <Scryver/Math/Vector2D>
 
 using Scryver::Math::Vector2D;
 

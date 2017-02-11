@@ -1,0 +1,19 @@
+from __future__ import print_function
+
+import os
+import subprocess
+
+from utility.googletest import google_test_init
+
+Import('env')
+
+testEnv = env.Clone()
+
+incPath, libPath = google_test_init(testEnv)
+
+testEnv.Append(CPPFLAGS=['-pthread'])
+testEnv.Append(CPPPATH=[incPath])
+testEnv.Append(LIBS=['gtest', 'gtest_main', 'gmock', 'gmock_main', 'pthread'])
+testEnv.Append(LIBPATH=[libPath])
+
+Return('testEnv')

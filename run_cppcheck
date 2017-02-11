@@ -5,8 +5,8 @@ OutputDir="$BaseDir/analysis/cppcheck"
 
 cd "$OutputDir"
 
-SourceDir="$BaseDir/build"
+SourceDir="../../build"
 GeneratedFile="cppcheck.txt"
 
-cppcheck --enable=all --library=opengl -rp="." --xml "$SourceDir" 2> "$GeneratedFile"
-cppcheck-htmlreport --source-dir="$SourceDir" --report-dir="$OutputDir" --file="$GeneratedFile"
+cppcheck --enable=all --library=../../cppcheck/opengl.cfg --library=../../cppcheck/gtest.cfg -rp="." -i$SourceDir/test --suppress=missingIncludeSystem --xml "$SourceDir" 2> "$GeneratedFile"
+cppcheck-htmlreport --source-dir="$SourceDir" --report-dir="." --file="$GeneratedFile"

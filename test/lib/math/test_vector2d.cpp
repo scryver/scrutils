@@ -4,7 +4,7 @@
 #include <random>
 #include <iostream>
 
-#include "scryver/math/vector2d.hpp"
+#include <Scryver/Math/Vector2D>
 
 std::mt19937 vec2DrandEngine(time(NULL));
 
@@ -41,27 +41,27 @@ TEST(Vector2D, Constructor)
     EXPECT_EQ(-3, vecInt2.y);
 
     Vector2D<unsigned char> vecUChar(1, -1);
-    EXPECT_EQ(0x01, vecUChar.x);
-    EXPECT_EQ(0xFF, vecUChar.y);
+    EXPECT_EQ(0x01u, vecUChar.x);
+    EXPECT_EQ(0xFFu, vecUChar.y);
 }
 
 TEST(Vector2D, DefaultTemplates)
 {
-    Vector2Dd vec(1, 2);
+    Scryver::Math::Vector2Dd vec(1, 2);
     EXPECT_DOUBLE_EQ(1.0, vec.x);
     EXPECT_DOUBLE_EQ(2.0, vec.y);
 
-    Vector2Df vec2;
+    Scryver::Math::Vector2Df vec2;
     EXPECT_FLOAT_EQ(0.0f, vec2.x);
     EXPECT_FLOAT_EQ(0.0f, vec2.y);
 
-    Vector2Di vecInt(1, -3);
+    Scryver::Math::Vector2Di vecInt(1, -3);
     EXPECT_EQ(1, vecInt.x);
     EXPECT_EQ(-3, vecInt.y);
 
-    Vector2Du vecUInt(1, -1);
-    EXPECT_EQ(0x01, vecUInt.x);
-    EXPECT_EQ(0xFFFFFFFF, vecUInt.y);
+    Scryver::Math::Vector2Du vecUInt(1, -1);
+    EXPECT_EQ(0x01u, vecUInt.x);
+    EXPECT_EQ(0xFFFFFFFFu, vecUInt.y);
 }
 
 // TEST(Vector2D, AssignmentAddition)

@@ -1,0 +1,12 @@
+Import('testEnv')
+
+mathEnv = testEnv.Clone()
+mathEnv.Append(LIBS=['scrath'])
+
+testScrAth = mathEnv.Program('testScrAth',
+                    source=[
+                        'test_vector2d.cpp',
+                        'test_vector_include.cpp',
+                    ])
+
+testEnv.Install('$PREFIX/test', testScrAth)

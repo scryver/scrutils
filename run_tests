@@ -1,0 +1,8 @@
+#!/bin/bash
+
+scons -Q --coverage || exit 1
+
+./build/test/testScrAth
+
+./run_gcoverage
+./run_cppcheck

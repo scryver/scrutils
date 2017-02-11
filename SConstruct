@@ -63,5 +63,5 @@ else:
 
 SConscript(['lib/math/SConscript'], 'env', variant_dir='build/tmp/lib/math')
 
-testEnv = SConscript(['vendor/testing/SConscript'], 'env')
+testEnv = SConscript(['test/SConscript'], 'env')
 SConscript(['test/lib/math/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/math')

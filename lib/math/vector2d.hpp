@@ -20,7 +20,6 @@ public:
 // This include only works when the default constructor is already defined
 #include "vector2d.inl"
 
-
 typedef Vector2D<double>         Vector2Dd;
 typedef Vector2D<float>          Vector2Df;
 typedef Vector2D<int>            Vector2Di;
