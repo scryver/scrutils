@@ -1,0 +1,23 @@
+from utility.headers import install_headers
+
+Import('env')
+
+staticScrAth = env.Library(
+    'scrath',   # SCRyver mATH
+    source=[
+        # 'buffer.cpp',
+    ]
+)
+
+headers = [
+    'vector2d.hpp',
+]
+
+inlines = [
+    'vector2d.inl',
+]
+
+install_headers(env, 'Scryver/Math', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrAth)

@@ -1,25 +1,4 @@
-import uuid
-
-try:
-    string = unicode
-except NameError:
-    string = str
-
-VERSION_MAJOR = 1
-VERSION_MINOR = 0
-VERSION_BUILD = string(uuid.uuid4())
-
-# Create version file from vars (config.h -> include/config.h)
-def create_config_header(target, source, env):
-     t_name = string(target[0])
-     s_name = string(source[0])
-     with open(t_name, 'wt') as target_file:
-        with open(s_name, 'rt') as source_file:
-            f = source_file.read()
-        f = f.format(VERSION_MAJOR=VERSION_MAJOR, VERSION_MINOR=VERSION_MINOR,
-                     VERSION_BUILD=VERSION_BUILD)
-        target_file.write(f)
-     return None
+from utility.headers import create_config_header
 
 AddOption('--prefix',
           dest='prefix',
@@ -28,22 +7,44 @@ AddOption('--prefix',
           action='store',
           metavar='DIR',
           help='installation prefix')
+AddOption('--build-release',
+          dest='build_release',
+          default=False,
+          action='store_true',
+          help='Build will be optimized for release. This will disable coverage if set.')
+AddOption('--coverage',
+          dest='coverage',
+          default=False,
+          action='store_true',
+          help='Enable gcoverage')
+
 
 prefix = GetOption('prefix')
 if not prefix.startswith('/') and not prefix.startswith('#') and not prefix[1] == ':':
     prefix = '#' + prefix
 
 # Set C++11 standard
-env = Environment(CPPFLAGS=['-std=c++11'],
-                  PREFIX = prefix)
+env = Environment(CPPFLAGS = ['-std=c++11'],
+                  PREFIX = prefix,
+                  CPPPATH = '$PREFIX/include',
+                  LIBPATH = '$PREFIX/lib')
 
-env['CPPPATH'] = '$PREFIX/include'
-env['LIBPATH'] = '$PREFIX/lib'
+config_builder = Builder(action=create_config_header,
+                         suffix='.h',
+                         src_suffix='.tmpl.h')
+env.Append(BUILDERS={'Header': config_builder})
 
-env.Append(CPPFLAGS=['-fprofile-arcs', '-g', '-Wall', '-ftest-coverage'])
-env.Append(LIBS='gcov')
+build_release = GetOption('build_release')
+if build_release:
+    env.Append(CPPFLAGS=['-O3'])
+else:
+    env.Append(CPPFLAGS=['-O0', '-g', '-Wall', '-Werror'])
 
-testEnv = env.Clone()
+    coverage = GetOption('coverage')
+    if coverage:
+        env.Append(CPPFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+        env.Append(LIBS='gcov')
+
 # conf = Configure(env)
 # if not conf.CheckLibWithHeader('m', 'math.h', 'c'):
 #     print 'Did not find libm.a or m.lib, exiting!'
@@ -51,21 +52,16 @@ testEnv = env.Clone()
 # env = conf.Finish()
 
 # Test for SFML, OpenGL, GLEW and GLM libraries
-env.ParseConfig('pkg-config sfml-all --cflags --libs')
-env.ParseConfig('pkg-config gl --cflags --libs')
-env.ParseConfig('pkg-config glew --cflags --libs')
+# env.ParseConfig('pkg-config sfml-all --cflags --libs')
+# env.ParseConfig('pkg-config gl --cflags --libs')
+# env.ParseConfig('pkg-config glew --cflags --libs')
 
-config_builder = Builder(action=create_config_header,
-                         suffix='.h',
-                         src_suffix='.tmpl.h')
-env.Append(BUILDERS={'Header': config_builder})
-# env.Command('config.h', 'config.tmpl.h', create_config_header)
+# These need to be set/overwritten by configs
+# env['VERSION_MAJOR'] = 'x'
+# env['VERSION_MINOR'] = 'y'
 
-SConscript(['games/mapping/SConscript'], 'env', variant_dir='build/tmp/mapping')
-SConscript(['games/sandbox/SConscript'], 'env', variant_dir='build/tmp/sandbox')
-SConscript(['lib/grapher/src/SConscript'], 'env', variant_dir='build/tmp/lib/grapher')
-SConscript(['lib/scrogl/SConscript'], 'env', variant_dir='build/tmp/lib/scrogl')
 
-testEnv = SConscript(['vendor/gtest/SConscript'], 'testEnv')
-SConscript(['tests/lib/grapher/SConscript'], 'testEnv', variant_dir='build/tmp/test/grapher')
-SConscript(['tests/lib/scrogl/SConscript'], 'testEnv', variant_dir='build/tmp/test/scrogl')
+SConscript(['lib/math/SConscript'], 'env', variant_dir='build/tmp/lib/math')
+
+testEnv = SConscript(['vendor/testing/SConscript'], 'env')
+SConscript(['test/lib/math/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/math')
