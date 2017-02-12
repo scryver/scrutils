@@ -20,19 +20,19 @@ def google_test_init(env):
                                  '-DCMAKE_INSTALL_PREFIX={}'.format(gtestInstallDir.get_abspath()),
                                  '..'],
                                 cwd=gtestBuildDir.get_abspath())
-    out, err = cmakeCmd.communicate()
+    _, err = cmakeCmd.communicate()
     if err:
         print('GoogleTest::CMake Error::{}'.format(err))
         sys.exit(1)
 
     makeCmd = subprocess.Popen(['make'], cwd=gtestBuildDir.get_abspath())
-    out, err = makeCmd.communicate()
+    _, err = makeCmd.communicate()
     if err:
         print('GoogleTest::Make Error::{}'.format(err))
         sys.exit(1)
 
     installCmd = subprocess.Popen(['make', 'install'], cwd=gtestBuildDir.get_abspath())
-    out, err = installCmd.communicate()
+    _, err = installCmd.communicate()
     if err:
         print('GoogleTest::Install Error::{}'.format(err))
         sys.exit(1)

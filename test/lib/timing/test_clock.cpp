@@ -35,6 +35,7 @@ TEST(GameClock, IsStatic)
     EXPECT_TRUE(gameClock.initialize());
 
     float tick = gameClock.newFrame();
+    EXPECT_NE(0.0f, tick);
     std::this_thread::sleep_for(std::chrono::milliseconds(25));
     tick = gameClock.newFrame();
 
