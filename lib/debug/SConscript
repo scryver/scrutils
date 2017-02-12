@@ -1,0 +1,21 @@
+from utility.headers import install_headers
+
+Import('env')
+
+staticScrUg = env.Library(
+    'scrug',   # SCRyver debUG
+    source=[
+        # Empty
+    ]
+)
+
+headers = [
+    'printer.hpp',
+]
+
+inlines = None
+
+install_headers(env, 'Scryver/Debug', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrUg)

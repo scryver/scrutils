@@ -44,7 +44,8 @@ env.Append(BUILDERS={'Header': config_builder})
 
 build_release = GetOption('build_release')
 if build_release:
-    env.Append(CPPFLAGS=['-O3'])
+    env.Append(CPPFLAGS=['-O3'],
+               CPPDEFINES=['NDEBUG'])
 else:
     env.Append(CPPFLAGS=['-O0', '-g', '-Wall', '-Werror'])
 
@@ -89,6 +90,7 @@ else:
     env.Append(CPPDEFINES=['USING_SFML'])
 
 sub_dirs = [
+    'lib/debug',
     'lib/engine',
     'lib/files',
     'lib/inputs',

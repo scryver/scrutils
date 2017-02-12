@@ -10,6 +10,7 @@
 #include <Scryver/Inputs/KeyboardCodes>
 #include <Scryver/Engine/Window>
 #include <Scryver/Timing/GameClock>
+#include <Scryver/Debug/Printer>
 
 
 // The ARB_debug_output extension, which is used in this tutorial as an example,
@@ -65,24 +66,23 @@ int main(int argc, char* argv[]) {
 
     Scryver::Engine::Window window;
 #if defined(USING_GLFW)
-    std::cout << "Initializing window for GLFW" << std::endl;
+    debugPrint("Initializing window for GLFW");
 #elif defined(USING_SFML)
-    std::cout << "Initializing window for SFML" << std::endl;
+    debugPrint("Initializing window for SFML");
 #endif
 
     window.initialize(800, 600, "Main");
 
     if (GLEW_ARB_debug_output)
     {
-        std::cout << "The OpenGL implementation provides debug output. Let's use it !" << std::endl;
+        debugPrint("The OpenGL implementation provides debug output. Let's use it !");
         glDebugMessageCallbackARB(&DebugOutputCallback, NULL);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
     }
     else
     {
-        std::cout << "ARB_debug_output unavailable. "
-                  << "You have to use glGetError() and/or gDebugger to catch mistakes."
-                  << std::endl;
+        debugPrint("ARB_debug_output unavailable. "
+                   << "You have to use glGetError() and/or gDebugger to catch mistakes.");
     }
 
     float elapsed = 0.0f;
@@ -94,9 +94,9 @@ int main(int argc, char* argv[]) {
         float frameTime = gameClock.newFrame();
         window.pollEvents();
         if (window.isKeyPressed(Scryver::Keys::Number_1))
-            std::cout << "Keyboard: Number 1" << std::endl;
+            debugPrint("Keyboard: Number 1");
         if (window.isKeyPressed(Scryver::Keys::Space))
-            std::cout << "Keyboard: Space" << std::endl;
+            debugPrint("Keyboard: Space");
         if (window.isKeyPressed(Scryver::Keys::Escape))
             window.close();
         window.clear();
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
         if (elapsed >= 1.0f)
         {
             elapsed -= 1.0f;
-            std::cout << "Frames: " << frames << std::endl;
+            debugPrint("Frames: " << frames);
             frames = 0;
         }
     }
