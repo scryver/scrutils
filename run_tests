@@ -5,6 +5,7 @@ scons -Q --coverage || exit 1
 ./build/test/testScrAth || exit 1
 ./build/test/testScrIlity || exit 1
 ./build/test/testScrUts || exit 1
+./build/test/testScrIng || exit 1
 
 ./run_gcoverage
 ./run_cppcheck

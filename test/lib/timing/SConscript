@@ -1,0 +1,11 @@
+Import('testEnv')
+
+utilEnv = testEnv.Clone()
+utilEnv.Append(LIBS=['scring'])
+
+testScrIng = utilEnv.Program('testScrIng',
+                               source=[
+                                   'test_clock.cpp',
+                               ])
+
+testEnv.Install('$PREFIX/test', testScrIng)

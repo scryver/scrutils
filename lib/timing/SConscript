@@ -1,0 +1,23 @@
+from utility.headers import install_headers
+
+Import('env')
+
+staticScrIng = env.Library(
+    'scring',   # SCRyver timING
+    source=[
+        'clock.cpp',
+        'game_clock.cpp',
+    ]
+)
+
+headers = [
+    'clock.hpp',
+    'game_clock.hpp',
+]
+
+inlines = None
+
+install_headers(env, 'Scryver/Timing', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrIng)

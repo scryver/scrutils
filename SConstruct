@@ -92,6 +92,7 @@ sub_dirs = [
     'lib/engine',
     'lib/inputs',
     'lib/math',
+    'lib/timing',
     'lib/utility',
     'games/sandbox',
 ]
@@ -99,6 +100,7 @@ sub_dirs = [
 test_dirs = [
     'lib/inputs',
     'lib/math',
+    'lib/timing',
     'lib/utility',
 ]
 
