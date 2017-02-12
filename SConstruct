@@ -61,7 +61,12 @@ else:
 # env['VERSION_MINOR'] = 'y'
 
 
+SConscript(['lib/inputs/SConscript'], 'env', variant_dir='build/tmp/lib/inputs')
 SConscript(['lib/math/SConscript'], 'env', variant_dir='build/tmp/lib/math')
+SConscript(['lib/utility/SConscript'], 'env', variant_dir='build/tmp/lib/utility')
+SConscript(['games/sandbox/SConscript'], 'env', variant_dir='build/tmp/games/sandbox')
 
 testEnv = SConscript(['test/SConscript'], 'env')
+SConscript(['test/lib/inputs/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/inputs')
 SConscript(['test/lib/math/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/math')
+SConscript(['test/lib/utility/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/utility')

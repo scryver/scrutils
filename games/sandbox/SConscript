@@ -1,0 +1,36 @@
+Import('env')
+
+glfwEnv = env.Clone()
+sfmlEnv = env.Clone()
+# clonedEnv.Append(LIBS=['grapher'])
+# # For loading of shared libs set the origin
+# clonedEnv.Append(LINKFLAGS = Split('-z origin'))
+# # And set the exe to point to ../lib for shared libs
+# clonedEnv.Append(RPATH = env.Literal(os.path.join('\\$$ORIGIN', os.pardir, 'lib')))
+
+glfwEnv['VERSION_MAJOR'] = 1
+glfwEnv['VERSION_MINOR'] = 0
+glfwEnv.Header('config')
+# sfmlEnv['VERSION_MAJOR'] = 1
+# sfmlEnv['VERSION_MINOR'] = 0
+# sfmlEnv.Header('config')
+
+glfwEnv.ParseConfig('pkg-config glfw3 --cflags --libs')
+glfwEnv.ParseConfig('pkg-config gl --cflags --libs')
+glfwEnv.ParseConfig('pkg-config glew --cflags --libs')
+
+sfmlEnv.ParseConfig('pkg-config sfml-window --cflags --libs')
+sfmlEnv.ParseConfig('pkg-config gl --cflags --libs')
+sfmlEnv.ParseConfig('pkg-config glew --cflags --libs')
+
+glfwMain = glfwEnv.Program('glfwMain',
+                           source=[
+                               'glfw_main.cpp',
+                           ])
+sfmlMain = sfmlEnv.Program('sfmlMain',
+                           source=[
+                               'sfml_main.cpp',
+                           ])
+
+env.Install('$PREFIX/bin', glfwMain)
+env.Install('$PREFIX/bin', sfmlMain)

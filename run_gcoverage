@@ -5,8 +5,8 @@ OutputDir="$DIR/analysis/coverage"
 
 # echo "For nice html use '--html --html-details -o index.html'."
 
-gcovr -r "$DIR" \
+gcovr -r "$DIR" -b \
     --html --html-details --html-absolute-paths \
     -o "$OutputDir/index.html" \
     --exclude "vendor.*" \
-    --exclude "build/tmp.*"
+    --exclude "build/tmp/test/.*"

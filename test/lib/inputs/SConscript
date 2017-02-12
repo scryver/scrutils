@@ -1,0 +1,11 @@
+Import('testEnv')
+
+mathEnv = testEnv.Clone()
+mathEnv.Append(LIBS=['scruts'])
+
+testScrUts = mathEnv.Program('testScrUts',
+                    source=[
+                        'test_userinput.cpp',
+                    ])
+
+testEnv.Install('$PREFIX/test', testScrUts)

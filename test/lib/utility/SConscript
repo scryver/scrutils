@@ -1,0 +1,11 @@
+Import('testEnv')
+
+utilEnv = testEnv.Clone()
+utilEnv.Append(LIBS=['scrility'])
+
+testScrIlity = utilEnv.Program('testScrIlity',
+                               source=[
+                                   'test_dictionary.cpp',
+                               ])
+
+testEnv.Install('$PREFIX/test', testScrIlity)

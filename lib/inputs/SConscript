@@ -1,0 +1,24 @@
+from utility.headers import install_headers
+
+Import('env')
+
+staticScrUts = env.Library(
+    'scruts',   # SCRyver inpUTS
+    source=[
+        'user_input.cpp',
+    ]
+)
+
+headers = [
+    'user_input.hpp',
+    'keyboard_codes.hpp',
+]
+
+inlines = [
+    'user_input.inl',
+]
+
+install_headers(env, 'Scryver/Inputs', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrUts)

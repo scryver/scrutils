@@ -8,5 +8,12 @@ cd "$OutputDir"
 SourceDir="../../build"
 GeneratedFile="cppcheck.txt"
 
-cppcheck --enable=all --library=../../cppcheck/opengl.cfg --library=../../cppcheck/gtest.cfg -rp="." -i$SourceDir/test --suppress=missingIncludeSystem --xml "$SourceDir" 2> "$GeneratedFile"
-cppcheck-htmlreport --source-dir="$SourceDir" --report-dir="." --file="$GeneratedFile"
+cppcheck --enable=all \
+         --library=../../cppcheck/opengl.cfg \
+         --library=../../cppcheck/gtest.cfg \
+         -rp="." \
+         --suppress=missingIncludeSystem \
+         --xml \
+         "$SourceDir" 2> "$GeneratedFile"
+
+cppcheck-htmlreport --report-dir="." --file="$GeneratedFile"
