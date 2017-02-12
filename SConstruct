@@ -50,7 +50,7 @@ else:
 
     coverage = GetOption('coverage')
     if coverage:
-        env.Append(CPPFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+        env.Append(CPPFLAGS=['-fprofile-arcs', '-ftest-coverage'])  # -fno-exceptions
         env.Append(LIBS='gcov')
 
 # conf = Configure(env)

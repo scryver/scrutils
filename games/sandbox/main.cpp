@@ -1,5 +1,6 @@
 #include "config.h"
 
+#include <cstdint>
 #include <iostream>
 
 #include <GL/glew.h>
@@ -8,6 +9,7 @@
 
 #include <Scryver/Inputs/KeyboardCodes>
 #include <Scryver/Engine/Window>
+#include <Scryver/Timing/GameClock>
 
 
 // The ARB_debug_output extension, which is used in this tutorial as an example,
@@ -59,6 +61,8 @@ void DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 }
 
 int main(int argc, char* argv[]) {
+    gameClock.initialize();
+
     Scryver::Engine::Window window;
 #if defined(USING_GLFW)
     std::cout << "Initializing window for GLFW" << std::endl;
@@ -81,9 +85,13 @@ int main(int argc, char* argv[]) {
                   << std::endl;
     }
 
+    float elapsed = 0.0f;
+    uint32_t frames = 0;
+
     // run the main loop
     while (window.isOpen())
     {
+        float frameTime = gameClock.newFrame();
         window.pollEvents();
         if (window.isKeyPressed(Scryver::Keys::Number_1))
             std::cout << "Keyboard: Number 1" << std::endl;
@@ -93,6 +101,16 @@ int main(int argc, char* argv[]) {
             window.close();
         window.clear();
         window.display();
+
+        frames++;
+        elapsed += frameTime;
+
+        if (elapsed >= 1.0f)
+        {
+            elapsed -= 1.0f;
+            std::cout << "Frames: " << frames << std::endl;
+            frames = 0;
+        }
     }
 
     window.destroy();
