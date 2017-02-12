@@ -1,0 +1,21 @@
+from utility.headers import install_headers
+
+Import('env')
+
+staticScrIles = env.Library(
+    'scriles',   # SCRyver fILES
+    source=[
+        'file_reader.cpp',
+    ]
+)
+
+headers = [
+    'file_reader.hpp',
+]
+
+inlines = None
+
+install_headers(env, 'Scryver/Files', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrIles)

@@ -1,5 +1,10 @@
 #include <gtest/gtest.h>
 
+// Following sys headers are to set/restore core dump.
+// We need this because of a death test in this test code.
+#include <sys/time.h>
+#include <sys/resource.h>
+
 #include <ctime>
 #include <random>
 
@@ -19,6 +24,19 @@ using Scryver::Utility::Dictionary;
 using Scryver::Utility::DictKey;
 using Scryver::Utility::KeySet;
 
+static struct rlimit old_limit;
+
+void limit_core(void) {
+  struct rlimit rlim;
+
+  rlim.rlim_cur = rlim.rlim_max = 0;
+  getrlimit(RLIMIT_CORE, &old_limit);
+  setrlimit(RLIMIT_CORE, &rlim);
+}
+
+void restore_core(void) {
+  setrlimit(RLIMIT_CORE, &old_limit);
+}
 
 namespace {
     struct Packet {
@@ -90,7 +108,9 @@ TEST(Dictionary, FreeList)
 
     EXPECT_EQ(d[handle2], 3);
     EXPECT_EQ(d[handle3], 4);
+    limit_core();
     EXPECT_DEATH(d[handle1], "at called with old generation");
+    restore_core();
 
     EXPECT_EQ(d.size(), 2u);
     EXPECT_EQ(d.capacity(), d.size());

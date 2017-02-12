@@ -90,6 +90,7 @@ else:
 
 sub_dirs = [
     'lib/engine',
+    'lib/files',
     'lib/inputs',
     'lib/math',
     'lib/timing',
@@ -98,6 +99,7 @@ sub_dirs = [
 ]
 
 test_dirs = [
+    'lib/files',
     'lib/inputs',
     'lib/math',
     'lib/timing',
