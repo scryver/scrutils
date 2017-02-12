@@ -4,7 +4,7 @@
 #include <random>
 #include <iostream>
 
-#include <Scryver/Math/Vector3D>
+#include "Scryver/Math/Vector3D.hpp"
 
 std::mt19937 vec3DrandEngine(time(NULL));
 

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <Scryver/Math/Vector2D>
-#include <Scryver/Math/Vector3D>
+#include "Scryver/Math/Vector2D.hpp"
+#include "Scryver/Math/Vector3D.hpp"
 
 using Scryver::Math::Vector2D;
 using Scryver::Math::Vector3D;

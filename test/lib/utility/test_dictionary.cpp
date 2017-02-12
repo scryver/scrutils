@@ -8,6 +8,8 @@
 #include <ctime>
 #include <random>
 
+#include "Scryver/Utility/Dictionary.hpp"
+
 std::mt19937 dictRandEngine(time(NULL));
 
 #if defined(FULL_TESTS) && FULL_TESTS
@@ -17,8 +19,6 @@ std::uniform_int_distribution<int> dictNrTestGen(1, 10);
 #endif
 
 std::uniform_int_distribution<int> dictIntGen(-65536, 65535);
-
-#include <Scryver/Utility/Dictionary>
 
 using Scryver::Utility::Dictionary;
 using Scryver::Utility::DictKey;

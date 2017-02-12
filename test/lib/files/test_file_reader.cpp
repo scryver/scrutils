@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-#include <Scryver/Files/FileReader>
+#include "Scryver/Files/FileReader.hpp"
 
 const std::string testFile = "build/test/file_reader.txt";
 const std::string testBinary = "build/test/binary_file.txt";

@@ -1,7 +1,7 @@
 #ifndef SCRYVER_TIMING_GAME_CLOCK_HPP
 #define SCRYVER_TIMING_GAME_CLOCK_HPP
 
-#include <Scryver/Timing/Clock>
+#include "Scryver/Timing/Clock.hpp"
 
 namespace Scryver {
 

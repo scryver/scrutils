@@ -6,8 +6,8 @@
 #include <random>
 #include <iostream>
 
-#include <Scryver/Timing/Clock>
-#include <Scryver/Timing/GameClock>
+#include "Scryver/Timing/Clock.hpp"
+#include "Scryver/Timing/GameClock.hpp"
 
 std::mt19937 clockRandEngine(time(NULL));
 #if defined(FULL_TESTS) && FULL_TESTS
@@ -22,6 +22,8 @@ using std::cout;
 using std::endl;
 using std::flush;
 using Scryver::Timing::Clock;
+
+static const float THRESHOLD = 0.001f;
 
 TEST(Clock, Initialize)
 {
@@ -90,7 +92,6 @@ TEST(Clock, FrameTimeMeasuring)
 
 #if defined(FULL_TESTS) && FULL_TESTS
     const int NR_TESTS = clockNrTestGen(clockRandEngine);
-    const float THRESHOLD = 0.001f;
 
     cout << "Running " << NR_TESTS << " timing tests: " << flush;
     for (int i = 0; i < NR_TESTS; i++) {
@@ -111,16 +112,16 @@ TEST(Clock, FrameTimeMeasuring)
     cout << endl;
 #endif
 
-    EXPECT_GT(accumulate + 0.001, clock.runningTime());
-    EXPECT_LT(accumulate - 0.001, clock.runningTime());
+    EXPECT_GT(accumulate + THRESHOLD * 2, clock.runningTime());
+    EXPECT_LT(accumulate - THRESHOLD * 2, clock.runningTime());
 
     clock.destroy();
 }
 
 TEST(GameClock, IsReallyStatic)
 {
-    EXPECT_GT(0.025f + 0.001, gameClock.dt());
-    EXPECT_LT(0.025f - 0.001, gameClock.dt());
+    EXPECT_GT(0.025f + THRESHOLD, gameClock.dt());
+    EXPECT_LT(0.025f - THRESHOLD, gameClock.dt());
 
     float tick = gameClock.newFrame();
     EXPECT_GT(tick, 0.0f);

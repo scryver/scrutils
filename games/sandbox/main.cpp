@@ -7,10 +7,10 @@
 
 #include <SFML/OpenGL.hpp>
 
-#include <Scryver/Inputs/KeyboardCodes>
-#include <Scryver/Engine/Window>
-#include <Scryver/Timing/GameClock>
-#include <Scryver/Debug/Printer>
+#include "Scryver/Inputs/KeyboardCodes.hpp"
+#include "Scryver/Engine/Window.hpp"
+#include "Scryver/Timing/GameClock.hpp"
+#include "Scryver/Debug/Printer.hpp"
 
 
 // The ARB_debug_output extension, which is used in this tutorial as an example,

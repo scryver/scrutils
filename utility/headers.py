@@ -35,7 +35,7 @@ def install_headers(env, libname, files, implementations=None):
             if '_' in f:
                 fs[i] = f.replace('_', ' ')
             fs[i] = fs[i].title().replace(' ', '')
-        name = '$PREFIX/include/{}/{}'.format(libname, os.path.sep.join(fs))
+        name = '$PREFIX/include/{}/{}.hpp'.format(libname, os.path.sep.join(fs))
         env.InstallAs(name, filename)
 
     if implementations:

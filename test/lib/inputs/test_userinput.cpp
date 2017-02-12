@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <Scryver/Inputs/UserInput>
+#include "Scryver/Inputs/UserInput.hpp"
 
 using Scryver::Inputs::UserInput;
 using Scryver::Math::Vector2Df;

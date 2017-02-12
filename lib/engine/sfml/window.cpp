@@ -8,8 +8,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 
-#include <Scryver/Inputs/UserInput>
-#include <Scryver/Inputs/KeyboardCodes>
+#include "Scryver/Inputs/UserInput.hpp"
+#include "Scryver/Inputs/KeyboardCodes.hpp"
 
 using Scryver::Engine::SFMLWindow;
 using namespace Scryver::Keys;

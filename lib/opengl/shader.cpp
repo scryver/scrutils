@@ -3,8 +3,8 @@
 #include <cstdint>
 #include <string>
 
-#include <Scryver/Files/FileReader>
-#include <Scryver/Debug/Printer>
+#include "Scryver/Files/FileReader.hpp"
+#include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::Shader;
 

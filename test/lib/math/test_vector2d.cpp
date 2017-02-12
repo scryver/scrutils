@@ -4,7 +4,7 @@
 #include <random>
 #include <iostream>
 
-#include <Scryver/Math/Vector2D>
+#include "Scryver/Math/Vector2D.hpp"
 
 std::mt19937 vec2DrandEngine(time(NULL));
 

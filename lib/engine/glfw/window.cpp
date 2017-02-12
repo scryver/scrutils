@@ -7,8 +7,8 @@
 
 #include <GLFW/glfw3.h>
 
-#include <Scryver/Inputs/UserInput>
-#include <Scryver/Inputs/KeyboardCodes>
+#include "Scryver/Inputs/UserInput.hpp"
+#include "Scryver/Inputs/KeyboardCodes.hpp"
 
 using Scryver::Engine::GLFWWindow;
 using namespace Scryver::Keys;
