@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from utility.headers import create_config_header
 
 AddOption('--prefix',
@@ -17,6 +19,12 @@ AddOption('--coverage',
           default=False,
           action='store_true',
           help='Enable gcoverage')
+AddOption('--backend',
+          dest='backend',
+          default='sfml',
+          nargs=1, type='string',
+          action='store',
+          help='Window manager backend (sfml and glfw supported)')
 
 
 prefix = GetOption('prefix')
@@ -60,13 +68,43 @@ else:
 # env['VERSION_MAJOR'] = 'x'
 # env['VERSION_MINOR'] = 'y'
 
+backend = GetOption('backend')
 
-SConscript(['lib/inputs/SConscript'], 'env', variant_dir='build/tmp/lib/inputs')
-SConscript(['lib/math/SConscript'], 'env', variant_dir='build/tmp/lib/math')
-SConscript(['lib/utility/SConscript'], 'env', variant_dir='build/tmp/lib/utility')
-SConscript(['games/sandbox/SConscript'], 'env', variant_dir='build/tmp/games/sandbox')
+if backend == 'glfw':
+    env.ParseConfig('pkg-config glfw3 --cflags --libs')
+elif backend == 'sfml':
+    env.ParseConfig('pkg-config sfml-window --cflags --libs')
+else:
+    print("Backend '{}' not supported!".format(backend))
+    Exit(1)
+
+env.ParseConfig('pkg-config gl --cflags --libs')
+env.ParseConfig('pkg-config glew --cflags --libs')
+
+if backend == 'glfw':
+    env['USING_BACKEND'] = 'glfw'
+    env.Append(CPPDEFINES=['USING_GLFW'])
+else:
+    env['USING_BACKEND'] = 'sfml'
+    env.Append(CPPDEFINES=['USING_SFML'])
+
+sub_dirs = [
+    'lib/engine',
+    'lib/inputs',
+    'lib/math',
+    'lib/utility',
+    'games/sandbox',
+]
+
+test_dirs = [
+    'lib/inputs',
+    'lib/math',
+    'lib/utility',
+]
+
+for d in sub_dirs:
+    SConscript([d + '/SConscript'], 'env', variant_dir='build/tmp/' + d)
 
 testEnv = SConscript(['test/SConscript'], 'env')
-SConscript(['test/lib/inputs/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/inputs')
-SConscript(['test/lib/math/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/math')
-SConscript(['test/lib/utility/SConscript'], 'testEnv', variant_dir='build/tmp/test/lib/utility')
+for d in test_dirs:
+    SConscript(['test/' + d + '/SConscript'], 'testEnv', variant_dir='build/tmp/test/' + d)

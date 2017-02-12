@@ -4,8 +4,11 @@
 
 #include <GL/glew.h>
 
-#include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
+
+#include <Scryver/Inputs/KeyboardCodes>
+#include <Scryver/Engine/Window>
+
 
 // The ARB_debug_output extension, which is used in this tutorial as an example,
 // can call a function of ours with error messages.
@@ -56,22 +59,14 @@ void DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 }
 
 int main(int argc, char* argv[]) {
-    sf::ContextSettings settings;
-    settings.depthBits = 24;
-    settings.stencilBits = 8;
-    settings.antialiasingLevel = 4;
-    settings.majorVersion = 3;
-    settings.minorVersion = 3;
-    settings.attributeFlags = sf::ContextSettings::Debug;
+    Scryver::Engine::Window window;
+#if defined(USING_GLFW)
+    std::cout << "Initializing window for GLFW" << std::endl;
+#elif defined(USING_SFML)
+    std::cout << "Initializing window for SFML" << std::endl;
+#endif
 
-    // create the window
-    sf::Window window(sf::VideoMode(800, 600), "SFML Main", sf::Style::Default, settings);
-
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        std::cout << "Failed to initialize GLEW!" << std::endl;
-        return -1;
-    }
+    window.initialize(800, 600, "Main");
 
     if (GLEW_ARB_debug_output)
     {
@@ -86,47 +81,21 @@ int main(int argc, char* argv[]) {
                   << std::endl;
     }
 
-    settings = window.getSettings();
-
-    std::cout << "depth bits:" << settings.depthBits << std::endl;
-    std::cout << "stencil bits:" << settings.stencilBits << std::endl;
-    std::cout << "antialiasing level:" << settings.antialiasingLevel << std::endl;
-    std::cout << "version:" << settings.majorVersion << "." << settings.minorVersion << std::endl;
-
     // run the main loop
     while (window.isOpen())
     {
-        // handle events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if(event.type == sf::Event::Closed)
-                window.close();
-            else if (event.type == sf::Event::KeyPressed)
-            {
-                if (event.key.code == sf::Keyboard::Space)
-                    std::cout << "Keyboard: Space" << std::endl;
-                else if (event.key.code == sf::Keyboard::Num1)
-                    std::cout << "Keyboard: Num1" << std::endl;
-                else if (event.key.code == sf::Keyboard::Num2)
-                    std::cout << "Keyboard: Num2" << std::endl;
-                else if (event.key.code == sf::Keyboard::Num3)
-                    std::cout << "Keyboard: Num3" << std::endl;
-                else if (event.key.code == sf::Keyboard::Num4)
-                    std::cout << "Keyboard: Num4" << std::endl;
-                else if (event.key.code == sf::Keyboard::Num5)
-                    std::cout << "Keyboard: Num5" << std::endl;
-                else if (event.key.code == sf::Keyboard::Num6)
-                    std::cout << "Keyboard: Num6" << std::endl;
-                else if (event.key.code == sf::Keyboard::Escape)
-                    window.close();
-            }
-        }
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        window.pollEvents();
+        if (window.isKeyPressed(Scryver::Keys::Number_1))
+            std::cout << "Keyboard: Number 1" << std::endl;
+        if (window.isKeyPressed(Scryver::Keys::Space))
+            std::cout << "Keyboard: Space" << std::endl;
+        if (window.isKeyPressed(Scryver::Keys::Escape))
+            window.close();
+        window.clear();
         window.display();
     }
+
+    window.destroy();
 
     return 0;
 }

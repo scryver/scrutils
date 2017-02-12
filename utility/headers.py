@@ -41,6 +41,6 @@ def install_headers(env, libname, files, implementations=None):
     if implementations:
         for filename in implementations:
             fs = filename.split(os.path.sep)
-            fs = [f.capitalize for f in fs[:-1]] + [fs[-1]]
+            fs = [f.title() for f in fs[:-1]] + [fs[-1]]
             name = '$PREFIX/include/{}/{}'.format(libname, os.path.sep.join(fs))
             env.InstallAs(name, filename)

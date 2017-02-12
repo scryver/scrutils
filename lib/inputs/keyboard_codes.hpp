@@ -7,7 +7,7 @@
 
 namespace Scryver {
 
-namespace Inputs {
+namespace Keys {
 
 const uint16_t Unknown = 0xFFFF;
 
@@ -38,16 +38,16 @@ const uint16_t X = 0x0058;
 const uint16_t Y = 0x0059;
 const uint16_t Z = 0x005A;
 
-const uint16_t NUM_0 = 0x0030;
-const uint16_t NUM_1 = 0x0031;
-const uint16_t NUM_2 = 0x0032;
-const uint16_t NUM_3 = 0x0033;
-const uint16_t NUM_4 = 0x0034;
-const uint16_t NUM_5 = 0x0035;
-const uint16_t NUM_6 = 0x0036;
-const uint16_t NUM_7 = 0x0037;
-const uint16_t NUM_8 = 0x0038;
-const uint16_t NUM_9 = 0x0039;
+const uint16_t Number_0 = 0x0030;
+const uint16_t Number_1 = 0x0031;
+const uint16_t Number_2 = 0x0032;
+const uint16_t Number_3 = 0x0033;
+const uint16_t Number_4 = 0x0034;
+const uint16_t Number_5 = 0x0035;
+const uint16_t Number_6 = 0x0036;
+const uint16_t Number_7 = 0x0037;
+const uint16_t Number_8 = 0x0038;
+const uint16_t Number_9 = 0x0039;
 
 const uint16_t Escape = 0x0100;
 const uint16_t Return = 0x0101;
@@ -77,7 +77,7 @@ const uint16_t Comma = 0x002C;
 const uint16_t Period = 0x002E;
 const uint16_t Slash = 0x002F;
 
-const uint16_t PageUp = 0x010A
+const uint16_t PageUp = 0x010A;
 const uint16_t PageDown = 0x010B;
 const uint16_t Home = 0x010C;
 const uint16_t End = 0x010D;
@@ -126,7 +126,7 @@ const uint16_t F15 = 0x0130;
 const uint16_t Pause = 0x011C;
 
 const uint8_t NUM_KEYS = 102;
-}  // namespace Inputs
+}  // namespace Keys
 
 }  // namespace Scryver
 

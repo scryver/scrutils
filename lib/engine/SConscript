@@ -1,0 +1,34 @@
+from utility.headers import install_headers
+
+Import('env')
+
+# env.Append(CPPPATH=Glob('.'))
+
+engineEnv = env.Clone()
+
+sources = []
+
+headers = [
+    'window.hpp',
+]
+
+inlines = [
+    'iwindow.hpp',
+]
+
+if engineEnv['USING_BACKEND'] == 'glfw':
+    sources.append('glfw/window.cpp')
+    inlines.append('glfw/window.hpp')
+else:
+    sources.append('sfml/window.cpp')
+    inlines.append('sfml/window.hpp')
+
+staticScrIne = engineEnv.Library(
+    'scrine',   # SCRyver engINE
+    source=sources
+)
+
+install_headers(env, 'Scryver/Engine', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrIne)
