@@ -111,8 +111,8 @@ test_dirs = [
 ]
 
 for d in sub_dirs:
-    SConscript([d + '/SConscript'], 'env', variant_dir='build/tmp/' + d)
+    SConscript([d + '/SConscript'], 'env', variant_dir='build/src/' + d)
 
 testEnv = SConscript(['test/SConscript'], 'env')
 for d in test_dirs:
-    SConscript(['test/' + d + '/SConscript'], 'testEnv', variant_dir='build/tmp/test/' + d)
+    SConscript(['test/' + d + '/SConscript'], 'testEnv', variant_dir='build/src/test/' + d)

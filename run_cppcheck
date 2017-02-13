@@ -13,7 +13,7 @@ cppcheck --enable=all \
          --library=../../cppcheck/gtest.cfg \
          -rp="." \
          -I "$SourceDir/include" \
-         -DUSING_GLFW \
+         -D$1 \
          --suppress=missingIncludeSystem \
          --xml \
          --std=c++11 \

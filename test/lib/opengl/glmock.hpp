@@ -51,14 +51,14 @@ public:
                                             GLsizei stride,
                                             void* offset) );
 
-    static CGLMock& GetInstance() {
+    static CGLMock& getInstance() {
         static CGLMock instance;
 
         return instance;
     }
 };
 
-#define GLMock  CGLMock::GetInstance()
+#define GLMock  CGLMock::getInstance()
 
 #define glGenBuffers                GLMock.GenBuffers
 #define glDeleteBuffers             GLMock.DeleteBuffers

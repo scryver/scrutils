@@ -1,6 +1,7 @@
 #!/bin/bash
 
-scons -Q --coverage --backend=glfw      || exit 1
+scons -Q --coverage                     || exit 1
+# scons -Q --coverage --backend=glfw      || exit 1
 
 ./build/test/testScrAth                 || exit 1
 ./build/test/testScrIlity               || exit 1
@@ -10,4 +11,5 @@ scons -Q --coverage --backend=glfw      || exit 1
 ./build/test/testScrOgl                 || exit 1
 
 ./run_gcoverage
-./run_cppcheck
+./run_cppcheck USING_SFML
+# ./run_cppcheck USING_GLFW
