@@ -1,6 +1,6 @@
 template <typename T>
-Dictionary<T>::Dictionary(uint16_t itemTypeId, size_t reserveCount) :
-        m_itemTypeId(itemTypeId)
+Dictionary<T>::Dictionary(uint16_t itemTypeId, size_t reserveCount)
+    : m_itemTypeId(itemTypeId)
 {
     m_sparseIds.reserve(reserveCount);
     m_items.reserve(reserveCount);

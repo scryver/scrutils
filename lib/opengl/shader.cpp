@@ -1,7 +1,9 @@
-#include "shaders.hpp"
+#include "shader.hpp"
 
 #include <cstdint>
 #include <string>
+
+#include <GL/glew.h>
 
 #include "Scryver/Files/FileReader.hpp"
 #include "Scryver/Debug/Printer.hpp"
@@ -26,7 +28,7 @@ Shader::~Shader()
 }
 
 bool Shader::initialize(const std::string& vertex, const std::string& fragment,
-                bool fromFiles = true)
+                        bool fromFiles)
 {
     GLuint vertexShaderID;
     GLuint fragmentShaderID;
@@ -64,14 +66,14 @@ bool Shader::initialize(const std::string& vertex, const std::string& fragment,
     else
     {
         debugPrint("Creating vertex shader");
-        vertexShaderID = createAndCompileShader(vertexCode, GL_VERTEX_SHADER);
+        vertexShaderID = createAndCompileShader(vertex, GL_VERTEX_SHADER);
         if (vertexShaderID == 0)
         {
             errorPrint("Compiling vertex shader failed!");
             return false;
         }
         debugPrint("Creating fragment shader");
-        fragmentShaderID = createAndCompileShader(fragmentCode, GL_FRAGMENT_SHADER);
+        fragmentShaderID = createAndCompileShader(fragment, GL_FRAGMENT_SHADER);
         if (fragmentShaderID == 0)
         {
             errorPrint("Compiling fragment shader failed!");

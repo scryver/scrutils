@@ -1,0 +1,11 @@
+Import('testEnv')
+
+openglEnv = testEnv.Clone()
+openglEnv.Prepend(LIBS=['scrogl', 'scriles', 'scrine', 'scruts'])
+
+testScrOgl = openglEnv.Program('testScrOgl',
+                             source=[
+                                 'test_shader.cpp',
+                             ])
+
+testEnv.Install('$PREFIX/test', testScrOgl)

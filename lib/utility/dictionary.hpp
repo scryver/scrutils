@@ -127,7 +127,7 @@ inline bool operator!=(const DictKey& a, const DictKey& b);
 inline bool operator< (const DictKey& a, const DictKey& b);
 inline bool operator> (const DictKey& a, const DictKey& b);
 
-#include "dictionary.inl"
+#include "dictionary_inl.hpp"
 
 } // namespace Utility
 

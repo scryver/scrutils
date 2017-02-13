@@ -16,4 +16,8 @@ testEnv.Append(CPPPATH=[incPath])
 testEnv.Append(LIBS=['gtest', 'gtest_main', 'gmock', 'gmock_main', 'pthread'])
 testEnv.Append(LIBPATH=[libPath])
 
+if '-Werror' in testEnv['CPPFLAGS']:
+    flags = testEnv['CPPFLAGS']
+    testEnv['CPPFLAGS'] = [flag for flag in flags if flag != '-Werror']
+
 Return('testEnv')

@@ -12,8 +12,13 @@ cppcheck --enable=all \
          --library=../../cppcheck/opengl.cfg \
          --library=../../cppcheck/gtest.cfg \
          -rp="." \
+         -I "$SourceDir/include" \
+         -DUSING_GLFW \
          --suppress=missingIncludeSystem \
          --xml \
+         --std=c++11 \
+         --report-progress \
+         --language=c++ \
          "$SourceDir" 2> "$GeneratedFile"
 
 cppcheck-htmlreport --report-dir="." --file="$GeneratedFile"

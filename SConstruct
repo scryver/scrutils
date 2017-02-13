@@ -95,6 +95,7 @@ sub_dirs = [
     'lib/files',
     'lib/inputs',
     'lib/math',
+    'lib/opengl',
     'lib/timing',
     'lib/utility',
     'games/sandbox',
@@ -104,6 +105,7 @@ test_dirs = [
     'lib/files',
     'lib/inputs',
     'lib/math',
+    'lib/opengl',
     'lib/timing',
     'lib/utility',
 ]

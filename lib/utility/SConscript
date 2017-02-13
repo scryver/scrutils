@@ -14,7 +14,7 @@ headers = [
 ]
 
 inlines = [
-    'dictionary.inl',
+    'dictionary_inl.hpp',
 ]
 
 install_headers(env, 'Scryver/Utility', headers, inlines)

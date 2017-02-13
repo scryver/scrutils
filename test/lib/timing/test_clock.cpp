@@ -55,7 +55,8 @@ TEST(Clock, Reset)
     std::this_thread::sleep_for(std::chrono::milliseconds(80));
     EXPECT_FLOAT_EQ(0.0f, clock.lastTickTime());
     float tickLength = clock.tick();
-    EXPECT_TRUE(tickLength < 0.081 && tickLength > 0.079);
+    EXPECT_GT(tickLength, 0.079f);
+    EXPECT_LT(tickLength, 0.082f);
     clock.tick();
     clock.tick();
     EXPECT_TRUE(clock.lastTickTime() < 0.00001);
