@@ -9,3 +9,7 @@ testScrOgl = openglEnv.Program('testScrOgl',
                              ])
 
 testEnv.Install('$PREFIX/test', testScrOgl)
+testEnv.Install('$PREFIX/test/files', 'broken.glsl')
+testEnv.Install('$PREFIX/test/files', 'vertex.glsl')
+testEnv.Install('$PREFIX/test/files', 'fragment.glsl')
+testEnv.Install('$PREFIX/test/files', 'linker_error.glsl')

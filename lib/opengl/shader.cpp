@@ -12,8 +12,8 @@ using Scryver::OpenGL::Shader;
 
 static GLuint createAndCompileShader(const std::string& source, GLenum shaderType);
 #ifndef NDEBUG
-static void printShaderError(GLuint shaderID, int infoLogLength);
-static void printProgramError(GLuint programID, int infoLogLength);
+static inline void printShaderError(GLuint shaderID, int infoLogLength);
+static inline void printProgramError(GLuint programID, int infoLogLength);
 #endif
 
 Shader::Shader()
@@ -95,10 +95,11 @@ bool Shader::initialize(const std::string& vertex, const std::string& fragment,
     // Check the program
     glGetProgramiv(identifier, GL_LINK_STATUS, &result);
     glGetProgramiv(identifier, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (infoLogLength > 0)
+    if (result == GL_FALSE)
     {
 #ifndef NDEBUG
-        printProgramError(identifier, infoLogLength);
+        if (infoLogLength > 0)
+            printProgramError(identifier, infoLogLength);
 #endif
         glDeleteProgram(identifier);
         identifier = 0;
@@ -138,10 +139,11 @@ GLuint createAndCompileShader(const std::string& source, GLenum shaderType)
     // Check shader
     glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
     glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (infoLogLength > 0)
+    if (result == GL_FALSE)
     {
 #ifndef NDEBUG
-        printShaderError(shaderID, infoLogLength);
+        if (infoLogLength > 0)
+            printShaderError(shaderID, infoLogLength);
 #endif
         glDeleteShader(shaderID);
         return 0;
@@ -155,19 +157,13 @@ void printShaderError(GLuint shaderID, int infoLogLength)
 {
     std::vector<char> shaderErrorMessage(infoLogLength+1);
     glGetShaderInfoLog(shaderID, infoLogLength, NULL, &shaderErrorMessage[0]);
-    errorPrintStart();
-    for (auto i = shaderErrorMessage.begin(); i != shaderErrorMessage.end(); ++i)
-        errorPrintMessage(*i);
-    errorPrintStop();
+    errorPrint(static_cast<const char*>(&shaderErrorMessage.front()));
 }
 
 void printProgramError(GLuint programID, int infoLogLength)
 {
     std::vector<char> programErrorMessage(infoLogLength+1);
     glGetProgramInfoLog(programID, infoLogLength, NULL, &programErrorMessage[0]);
-    errorPrintStart();
-    for (auto i = programErrorMessage.begin(); i != programErrorMessage.end(); ++i)
-        errorPrintMessage(*i);
-    errorPrintStop();
+    errorPrint(static_cast<const char*>(&programErrorMessage.front()));
 }
 #endif

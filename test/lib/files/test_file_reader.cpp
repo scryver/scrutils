@@ -6,8 +6,8 @@
 
 #include "Scryver/Files/FileReader.hpp"
 
-const std::string testFile = "build/test/file_reader.txt";
-const std::string testBinary = "build/test/binary_file.txt";
+const std::string testFile = "build/test/files/file_reader.txt";
+const std::string testBinary = "build/test/files/binary_file.txt";
 
 using std::cout;
 using std::endl;

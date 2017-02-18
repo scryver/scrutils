@@ -9,5 +9,5 @@ testScrIles = utilEnv.Program('testScrIles',
                               ])
 
 testEnv.Install('$PREFIX/test', testScrIles)
-testEnv.Install('$PREFIX/test', 'file_reader.txt')
-testEnv.Install('$PREFIX/test', 'binary_file.txt')
+testEnv.Install('$PREFIX/test/files', 'file_reader.txt')
+testEnv.Install('$PREFIX/test/files', 'binary_file.txt')
