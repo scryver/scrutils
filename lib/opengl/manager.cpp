@@ -14,6 +14,8 @@
 #include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::GLManager;
+using Scryver::OpenGL::buffer_t;
+using Scryver::OpenGL::vertexArray_t;
 
 #ifndef TESTING_ENABLED
 // The ARB_debug_output extension, which is used in this tutorial as an example,
@@ -76,7 +78,7 @@ GLManager::~GLManager()
     destroy();
 }
 
-bool GLManager::initialize()
+bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays)
 {
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -98,8 +100,8 @@ bool GLManager::initialize()
     }
 #endif
 
-    m_vBuffers.reserve(512);
-    m_vVertexArrays.reserve(128);
+    m_vBuffers.reserve(reserveBuffers);
+    m_vVertexArrays.reserve(reserveVertexArrays);
 
     return true;
 }
@@ -114,38 +116,68 @@ void GLManager::destroy()
     m_vBuffers.clear();
 }
 
-uint32_t GLManager::createBuffer()
+buffer_t GLManager::createBuffer()
 {
-    uint32_t buf;
+    buffer_t buf;
     glGenBuffers(1, &buf);
     m_vBuffers.push_back(buf);
     return buf;
 }
 
-std::vector<uint32_t> GLManager::createBuffers(size_t nrBuffers)
+std::vector<buffer_t> GLManager::createBuffers(size_t nrBuffers)
 {
-    std::vector<uint32_t> buf;
+    std::vector<buffer_t> buf;
     buf.resize(nrBuffers);
     glGenBuffers(nrBuffers, &buf.front());
     m_vBuffers.insert(m_vBuffers.end(), buf.begin(), buf.end());
     return buf;
 }
 
-uint32_t GLManager::createVertexArray()
+void GLManager::bindArrayBuffer(buffer_t buffer)
 {
-    uint32_t vao;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+}
+
+void GLManager::unbindArrayBuffer()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void GLManager::bindElementBuffer(buffer_t buffer)
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+}
+
+void GLManager::unbindElementBuffer()
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+vertexArray_t GLManager::createVertexArray()
+{
+    vertexArray_t vao;
     glGenVertexArrays(1, &vao);
     m_vVertexArrays.push_back(vao);
     return vao;
 }
 
-std::vector<uint32_t> GLManager::createVertexArrays(size_t nrVertexArrays)
+std::vector<vertexArray_t> GLManager::createVertexArrays(size_t nrVertexArrays)
 {
-    std::vector<uint32_t> vaos;
+    std::vector<vertexArray_t> vaos;
     vaos.resize(nrVertexArrays);
-    glGenBuffers(nrVertexArrays, &vaos.front());
+    glGenVertexArrays(nrVertexArrays, &vaos.front());
     m_vVertexArrays.insert(m_vVertexArrays.end(), vaos.begin(), vaos.end());
     return vaos;
+}
+
+void GLManager::bindVertexArray(vertexArray_t vertexArray)
+{
+    glBindVertexArray(vertexArray);
+}
+
+void GLManager::unbindVertexArray()
+{
+    glBindVertexArray(0);
 }
 
 GLManager& GLManager::getInstance()

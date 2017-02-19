@@ -74,11 +74,9 @@ backend = GetOption('backend')
 if backend == 'glfw':
     env['USING_BACKEND'] = 'glfw'
     env.Append(CPPDEFINES=['USING_GLFW'])
-    env.ParseConfig('pkg-config glfw3 --cflags --libs')
 elif backend == 'sfml':
     env['USING_BACKEND'] = 'sfml'
     env.Append(CPPDEFINES=['USING_SFML'])
-    env.ParseConfig('pkg-config sfml-window --cflags --libs')
 else:
     print("Backend '{}' not supported!".format(backend))
     Exit(1)

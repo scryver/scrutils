@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -49,26 +50,28 @@ int main(int argc, char* argv[]) {
     vertices[1] = Scryver::Math::Vector3Df(1.0f, -1.0f, 0.0f);
     vertices[2] = Scryver::Math::Vector3Df(0.0f, 1.0f, 0.0f);
 
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    Scryver::OpenGL::buffer_t VBO = glManager.createBuffer();
+    glManager.bindArrayBuffer(VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glManager.unbindArrayBuffer();
 
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    Scryver::OpenGL::vertexArray_t VAO = glManager.createVertexArray();
+    glManager.bindVertexArray(VAO);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glManager.bindArrayBuffer(VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glManager.unbindArrayBuffer();
     glDisableVertexAttribArray(0);
-    glBindVertexArray(0);
+    glManager.unbindVertexArray();
 
-    glUseProgram(shader.identifier);
+    shader.use();
+
+    Scryver::OpenGL::uniform_t scaleLoc = shader.getUniform("gScale");
+    float scale = 0.0f;
 
     while (window.isOpen())
     {
-        gameClock.newFrame();
+        scale += gameClock.newFrame();
 
         window.pollEvents();
         // if (window.isKeyPressed(Scryver::Keys::Number_1))
@@ -80,12 +83,13 @@ int main(int argc, char* argv[]) {
 
         window.clear();
 
+        glUniform1f(scaleLoc, sinf(scale));
         // Drawing calls
-        glBindVertexArray(VAO);
+        glManager.bindVertexArray(VAO);
         glEnableVertexAttribArray(0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glDisableVertexAttribArray(0);
-        glBindVertexArray(0);
+        glManager.unbindVertexArray();
 
         window.display();
 
@@ -96,8 +100,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
     shader.destroy();
     glManager.destroy();
     window.destroy();

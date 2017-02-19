@@ -1,5 +1,6 @@
 #include "shader.hpp"
 
+#include <cassert>
 #include <cstdint>
 #include <string>
 
@@ -13,6 +14,7 @@
 #include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::Shader;
+using Scryver::OpenGL::uniform_t;
 
 static GLuint createAndCompileShader(const std::string& source, GLenum shaderType);
 #ifndef NDEBUG
@@ -126,6 +128,20 @@ void Shader::destroy()
         glDeleteProgram(identifier);
         identifier = 0;
     }
+}
+
+void Shader::use()
+{
+    assert(identifier != 0);
+    glUseProgram(identifier);
+}
+
+uniform_t Shader::getUniform(const std::string& uniform)
+{
+    assert(identifier != 0);
+    uniform_t location = glGetUniformLocation(identifier, uniform.c_str());
+    assert(location != 0xFFFFFFFF);
+    return location;
 }
 
 GLuint createAndCompileShader(const std::string& source, GLenum shaderType)

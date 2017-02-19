@@ -19,7 +19,7 @@ uint32_t Buffer::bufferData(const std::vector<T>& data,
     if (t == ArrayBuffer)
         type = GL_ARRAY_BUFFER;
     else
-        type = GL_ELEMENT_BUFFER;
+        type = GL_ELEMENT_ARRAY_BUFFER;
     if (m == Static)
         mode = GL_STATIC_DRAW;
     else if (m == Dynamic)

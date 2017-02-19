@@ -10,7 +10,7 @@ typedef unsigned int GLuint;
 typedef int GLint;
 
 const GLenum GL_ARRAY_BUFFER = 0;
-const GLenum GL_ELEMENT_BUFFER = 1;
+const GLenum GL_ELEMENT_ARRAY_BUFFER = 1;
 
 const GLenum GL_STATIC_DRAW = 2;
 const GLenum GL_DYNAMIC_DRAW = 3;
@@ -46,58 +46,58 @@ public:
      * GLEW
      */
     GLuint GlewExperimental;
-    MOCK_METHOD0( GlewInit, GLuint() );
+    MOCK_METHOD0( GlewInit,                 GLuint() );
 
     /**
      * Generic
      */
-    MOCK_METHOD1( Enable, void(GLenum mode) );
-    MOCK_METHOD1( Clear,  void(GLenum flags) );
+    MOCK_METHOD1( Enable,                   void(GLenum mode) );
+    MOCK_METHOD1( Clear,                    void(GLenum flags) );
 
     /**
      * Buffers
      */
-    MOCK_METHOD2( GenBuffers, void(GLsizei n, GLuint* buffers) );
-    MOCK_METHOD2( DeleteBuffers, void(GLsizei n, GLuint* buffers) );
-    MOCK_METHOD2( BindBuffer, void(GLenum t, GLuint buffer) );
-    MOCK_METHOD4( BufferData, void(GLenum t, GLsizei size, const void* data, GLenum mode) );
+    MOCK_METHOD2( GenBuffers,               void(GLsizei n, GLuint* buffers) );
+    MOCK_METHOD2( DeleteBuffers,            void(GLsizei n, GLuint* buffers) );
+    MOCK_METHOD2( BindBuffer,               void(GLenum t, GLuint buffer) );
+    MOCK_METHOD4( BufferData,               void(GLenum t, GLsizei size, const void* data, GLenum mode) );
 
     /**
      * Vertex Attributes
      */
-    MOCK_METHOD2( GenVertexArrays, void(GLsizei n, GLuint* vertexArrays) );
-    MOCK_METHOD2( DeleteVertexArrays, void(GLsizei n, GLuint* vertexArrays) );
-    MOCK_METHOD1( BindVertexArray, void(GLuint vertexArrays) );
-    MOCK_METHOD1( EnableVertexAttribArray, void(GLuint attribute) );
-    MOCK_METHOD6( VertexAttribPointer, void(GLuint attribute,
-                                            GLsizei size,
-                                            GLenum type,
-                                            GLenum normal,
-                                            GLsizei stride,
-                                            void* offset) );
+    MOCK_METHOD2( GenVertexArrays,          void(GLsizei n, GLuint* vertexArrays) );
+    MOCK_METHOD2( DeleteVertexArrays,       void(GLsizei n, GLuint* vertexArrays) );
+    MOCK_METHOD1( BindVertexArray,          void(GLuint vertexArrays) );
+    MOCK_METHOD1( EnableVertexAttribArray,  void(GLuint attribute) );
+    MOCK_METHOD6( VertexAttribPointer,      void(GLuint attribute, GLsizei size,
+                                                 GLenum type, GLenum normal,
+                                                 GLsizei stride, void* offset) );
 
     /**
      * Shaders
      */
-    MOCK_METHOD1( CreateShader, GLuint(GLenum type) );
-    MOCK_METHOD4( ShaderSource, void(GLuint shader, GLsizei nr, const GLchar** source, const GLint* length) );
-    MOCK_METHOD1( CompileShader, void(GLuint shader) );
-    MOCK_METHOD3( GetShaderiv, void(GLuint shader, GLenum status, GLint* result) );
-    MOCK_METHOD4( GetShaderInfoLog, void(GLuint shader, GLsizei maxLength, GLsizei* length, GLchar* infoLog) );
-    MOCK_METHOD1( DeleteShader, void(GLuint shader) );
+    MOCK_METHOD1( CreateShader,             GLuint(GLenum type) );
+    MOCK_METHOD4( ShaderSource,             void(GLuint shader, GLsizei nr, const GLchar** source, const GLint* length) );
+    MOCK_METHOD1( CompileShader,            void(GLuint shader) );
+    MOCK_METHOD3( GetShaderiv,              void(GLuint shader, GLenum status, GLint* result) );
+    MOCK_METHOD4( GetShaderInfoLog,         void(GLuint shader, GLsizei maxLength, GLsizei* length, GLchar* infoLog) );
+    MOCK_METHOD1( DeleteShader,             void(GLuint shader) );
 
-    MOCK_METHOD0( CreateProgram, GLuint() );
-    MOCK_METHOD2( AttachShader, void(GLuint program, GLuint shader) );
-    MOCK_METHOD2( DetachShader, void(GLuint program, GLuint shader) );
-    MOCK_METHOD1( LinkProgram, void(GLuint program) );
-    MOCK_METHOD3( GetProgramiv, void(GLuint program, GLenum status, GLint* result) );
-    MOCK_METHOD4( GetProgramInfoLog, void(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) );
-    MOCK_METHOD1( DeleteProgram, void(GLuint program) );
+    MOCK_METHOD0( CreateProgram,            GLuint() );
+    MOCK_METHOD2( AttachShader,             void(GLuint program, GLuint shader) );
+    MOCK_METHOD2( DetachShader,             void(GLuint program, GLuint shader) );
+    MOCK_METHOD1( LinkProgram,              void(GLuint program) );
+    MOCK_METHOD3( GetProgramiv,             void(GLuint program, GLenum status, GLint* result) );
+    MOCK_METHOD4( GetProgramInfoLog,        void(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) );
+    MOCK_METHOD1( DeleteProgram,            void(GLuint program) );
+    MOCK_METHOD1( UseProgram,               void(GLuint program) );
+
+    MOCK_METHOD2( GetUniformLocation,       GLuint(GLuint program, const GLchar* name) );
 
     static CGLMock& getInstance();
 };
 
-#define GLMock  CGLMock::getInstance()
+#define GLMock                      CGLMock::getInstance()
 
 #define glewExperimental            GLMock.GlewExperimental
 #define glewInit                    GLMock.GlewInit
@@ -129,5 +129,7 @@ public:
 #define glGetProgramiv              GLMock.GetProgramiv
 #define glGetProgramInfoLog         GLMock.GetProgramInfoLog
 #define glDeleteProgram             GLMock.DeleteProgram
+#define glUseProgram                GLMock.UseProgram
+#define glGetUniformLocation        GLMock.GetUniformLocation
 
 #endif  // SCRYVER_TEST_OPEN_GL_MOCK_HPP

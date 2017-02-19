@@ -8,6 +8,8 @@ namespace Scryver {
 
 namespace OpenGL {
 
+typedef uint32_t uniform_t;
+
 class Shader
 {
 public:
@@ -17,6 +19,10 @@ public:
     bool initialize(const std::string& vertex, const std::string& fragment,
                     bool fromFiles = true);
     void destroy();
+
+    void use();
+
+    uniform_t getUniform(const std::string& uniform);
 
     uint32_t identifier;
 };

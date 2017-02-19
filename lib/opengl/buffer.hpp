@@ -20,7 +20,7 @@ class Buffer
 public:
     enum BufferType {
         ArrayBuffer = GL_ARRAY_BUFFER,
-        ElementBuffer = GL_ELEMENT_BUFFER,
+        ElementBuffer = GL_ELEMENT_ARRAY_BUFFER,
     };
 
     enum BufferMode {
@@ -64,7 +64,7 @@ public:
         if (type == ArrayBuffer)
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         else if (type == ElementBuffer)
-            glBindBuffer(GL_ELEMENT_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     uint32_t identifier;

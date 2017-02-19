@@ -1,8 +1,16 @@
 #include "glmock.hpp"
 
 
-CGLMock::CGLMock() {}
-CGLMock::~CGLMock() {}
+CGLMock::CGLMock()
+    : GlewExperimental(GL_FALSE)
+{
+    // Empty
+}
+
+CGLMock::~CGLMock()
+{
+    // Empty
+}
 
 CGLMock& CGLMock::getInstance()
 {

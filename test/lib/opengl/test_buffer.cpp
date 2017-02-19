@@ -98,11 +98,11 @@ TEST(Buffer, ShouldMapArrayType)
         .Times(1)
         .WillOnce(testing::SetArgPointee<1>(1));
 
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, testing::_))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, testing::_))
         .Times(1);
-    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_BUFFER, sizeof(float) * 5, testing::_, GL_STATIC_DRAW))
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 5, testing::_, GL_STATIC_DRAW))
         .Times(1);
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, 0))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
         .Times(1);
 
     b.initialize();
@@ -122,11 +122,11 @@ TEST(Buffer, OnlySupportsStaticAndDynamicDraw)
         .Times(1)
         .WillOnce(testing::SetArgPointee<1>(1));
 
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, testing::_))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, testing::_))
         .Times(1);
-    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_BUFFER, sizeof(float) * 5, testing::_, GL_STATIC_DRAW))
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 5, testing::_, GL_STATIC_DRAW))
         .Times(1);
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, 0))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
         .Times(1);
 
     b.initialize();
@@ -142,11 +142,11 @@ TEST(Buffer, OnlySupportsStaticAndDynamicDraw)
         .Times(1)
         .WillOnce(testing::SetArgPointee<1>(1));
 
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, testing::_))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, testing::_))
         .Times(1);
-    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_BUFFER, sizeof(float) * 5, testing::_, GL_DYNAMIC_DRAW))
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 5, testing::_, GL_DYNAMIC_DRAW))
         .Times(1);
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, 0))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
         .Times(1);
 
     b.initialize();
@@ -299,16 +299,16 @@ TEST(Buffer, UnbindMapsType)
         .Times(1)
         .WillOnce(testing::SetArgPointee<1>(1));
 
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, testing::_))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, testing::_))
         .Times(1);
-    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_BUFFER, sizeof(unsigned char) * 5, testing::_, GL_STATIC_DRAW))
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned char) * 5, testing::_, GL_STATIC_DRAW))
         .Times(1);
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, 0))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
         .Times(1);
 
     b.initialize(data, Scryver::OpenGL::Buffer::ElementBuffer);
 
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, 0))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
         .Times(1);
 
     b.unbind();
@@ -319,7 +319,7 @@ TEST(Buffer, UnbindMapsType)
 
     EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 0))
         .Times(1);
-    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_BUFFER, 0))
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
         .Times(1);
     Scryver::OpenGL::Buffer::unbind(Scryver::OpenGL::Buffer::ArrayBuffer);
     Scryver::OpenGL::Buffer::unbind(Scryver::OpenGL::Buffer::ElementBuffer);

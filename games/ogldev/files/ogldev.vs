@@ -5,13 +5,14 @@ layout(location = 0) in vec3 position;
 
 // out vec3 vertColour;
 
+uniform float gScale;
 // uniform mat4 model;
 
 void main()
 {
     // vertColour = colour;
     // gl_Position = model * vec4(position, 1.0);
-    gl_Position = vec4(0.5 * position.x, 0.5 * position.y, position.z, 1.0);
+    gl_Position = vec4(gScale * position.x, gScale * position.y, position.z, 1.0);
     // gl_Position = vec4(position, 1.0);
 }
 

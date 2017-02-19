@@ -9,17 +9,26 @@ namespace Scryver {
 
 namespace OpenGL {
 
+typedef uint32_t buffer_t;
+typedef uint32_t vertexArray_t;
+
 class GLManager
 {
 public:
-    bool initialize();
+    bool initialize(size_t reserveBuffers = 512, size_t reserveVertexArrays = 128);
     void destroy();
 
-    uint32_t createBuffer();
-    std::vector<uint32_t> createBuffers(size_t nrBuffers);
+    buffer_t createBuffer();
+    std::vector<buffer_t> createBuffers(size_t nrBuffers);
+    void bindArrayBuffer(buffer_t buffer);
+    void unbindArrayBuffer();
+    void bindElementBuffer(buffer_t buffer);
+    void unbindElementBuffer();
 
-    uint32_t createVertexArray();
-    std::vector<uint32_t> createVertexArrays(size_t nrVertexArrays);
+    vertexArray_t createVertexArray();
+    std::vector<vertexArray_t> createVertexArrays(size_t nrVertexArrays);
+    void bindVertexArray(vertexArray_t vertexArray);
+    void unbindVertexArray();
 
     static GLManager& getInstance();
 
@@ -30,8 +39,8 @@ private:
     GLManager();
     ~GLManager();
 
-    std::vector<uint32_t>   m_vBuffers;
-    std::vector<uint32_t>   m_vVertexArrays;
+    std::vector<buffer_t>       m_vBuffers;
+    std::vector<vertexArray_t>  m_vVertexArrays;
 };
 
 }  // namespace OpenGL

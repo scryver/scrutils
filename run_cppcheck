@@ -16,6 +16,7 @@ cppcheck --enable=all \
          -rp="." \
          -I "$SourceDir/include" \
          -D$1 \
+         -DTESTING_ENABLED \
          --suppress=missingIncludeSystem \
          --xml \
          --std=c++11 \
