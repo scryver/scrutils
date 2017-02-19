@@ -1,8 +1,14 @@
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 #include "Scryver/Math/Matrix4.hpp"
+#include "Scryver/Math/Conversions.hpp"
+#include "Scryver/Math/Vector3D.hpp"
 
 using Scryver::Math::Matrix4f;
+using Scryver::Math::Vector3Df;
+using Scryver::Math::toRadian;
 
 
 TEST(Matrix4, Multiplication)
@@ -36,4 +42,132 @@ TEST(Matrix4, Multiplication)
 
     ASSERT_FLOAT_EQ(1.0f * 0.0f + 2.0f * 6.0f + 3.0f * 2.0f + 4.0f * 8.0f, m3.m[0][0]);
     ASSERT_FLOAT_EQ(0.0f * 1.0f + 9.0f * 5.0f + 8.0f * 9.0f + 7.0f * 3.0f, m4.m[0][0]);
+}
+
+TEST(Matrix4, InitIdentity)
+{
+    Matrix4f m;
+    m.initIdentity();
+    ASSERT_FLOAT_EQ(1.0f, m.m[0][0]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[1][1]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[2][2]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[3][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][2]);
+}
+
+TEST(Matrix4, InitScaling)
+{
+    Matrix4f m;
+    m.initScaling(Vector3Df(0.2f, 0.3f, 0.4f));
+    ASSERT_FLOAT_EQ(0.2f, m.m[0][0]);
+    ASSERT_FLOAT_EQ(0.3f, m.m[1][1]);
+    ASSERT_FLOAT_EQ(0.4f, m.m[2][2]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][2]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[3][3]);
+}
+
+TEST(Matrix4, InitRotation)
+{
+    Matrix4f m;
+    m.initRotation(0.0f, 0.0f, 90.0f);
+
+    ASSERT_FLOAT_EQ(cos(toRadian(90.0f)), m.m[0][0]);
+    ASSERT_FLOAT_EQ(-sin(toRadian(90.0f)), m.m[0][1]);
+    ASSERT_FLOAT_EQ(sin(toRadian(90.0f)), m.m[1][0]);
+    ASSERT_FLOAT_EQ(cos(toRadian(90.0f)), m.m[1][1]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][1]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[2][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][2]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[3][3]);
+
+    m.initRotation(90.0f, 0.0f, 0.0f);
+
+    ASSERT_FLOAT_EQ(cos(toRadian(90.0f)), m.m[1][1]);
+    ASSERT_FLOAT_EQ(-sin(toRadian(90.0f)), m.m[1][2]);
+    ASSERT_FLOAT_EQ(sin(toRadian(90.0f)), m.m[2][1]);
+    ASSERT_FLOAT_EQ(cos(toRadian(90.0f)), m.m[2][2]);
+
+    ASSERT_FLOAT_EQ(1.0f, m.m[0][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][2]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][3]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][2]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[3][3]);
+}
+
+TEST(Matrix4, InitTranslation)
+{
+    Matrix4f m;
+    m.initTranslation(Vector3Df(0.2f, 0.3f, 0.4f));
+    ASSERT_FLOAT_EQ(0.2f, m.m[0][3]);
+    ASSERT_FLOAT_EQ(0.3f, m.m[1][3]);
+    ASSERT_FLOAT_EQ(0.4f, m.m[2][3]);
+
+    ASSERT_FLOAT_EQ(1.0f, m.m[0][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[0][2]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][0]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[1][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[1][2]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[2][1]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[2][2]);
+
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][0]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][1]);
+    ASSERT_FLOAT_EQ(0.0f, m.m[3][2]);
+    ASSERT_FLOAT_EQ(1.0f, m.m[3][3]);
 }

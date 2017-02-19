@@ -12,22 +12,18 @@ template <typename N = float>
 class Transform3D
 {
 public:
-    Transform3D();
-    ~Transform3D();
+    inline Transform3D();
 
-    bool initialize();
-    void destroy();
+    inline void scale(const Vector3D<N> s);
+    inline void scale(N x, N y, N z);
 
-    void scale(const Vector3D<N> s);
-    void scale(N x, N y, N z);
+    inline void worldPos(const Vector3D<N> wp);
+    inline void worldPos(N x, N y, N z);
 
-    void worldPos(const Vector3D<N> s);
-    void worldPos(N x, N y, N z);
+    inline void rotate(const Vector3D<N> r);
+    inline void rotate(N x, N y, N z);
 
-    void rotate(const Vector3D<N> s);
-    void rotate(N x, N y, N z);
-
-    const Matrix4<N>* get();
+    inline const Matrix4<N>& get();
 
 private:
     Vector3D<N>     m_scale;
