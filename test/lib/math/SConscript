@@ -10,6 +10,7 @@ testScrAth = mathEnv.Program('testScrAth',
                         'test_vector_include.cpp',
                         'test_matrix4.cpp',
                         'test_conversions.cpp',
+                        'test_transform.cpp',
                     ])
 
 testEnv.Install('$PREFIX/test', testScrAth)

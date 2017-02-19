@@ -6,15 +6,16 @@ display_usage() {
     echo "Usage: run_tests [arguments]"
     echo ""
     echo "Arguments:"
-    echo "  -h|--help       : Display this help text"
-    echo "  -a|--all        : Build and run all tests and analysis"
-    echo "  -b|--build      : Build all sources"
-    echo "  -c|--check      : Static analysis of all sources"
-    echo "  -o|--coverage   : Run coverage based on executed code"
-    echo "  -t|--test       : Run all unit tests"
+    echo "  -h|--help           : Display this help text"
+    echo "  -a|--all            : Build and run all tests and analysis"
+    echo "  -b|--build          : Build all sources"
+    echo "  -c|--check          : Static analysis of all sources"
+    echo "  -o|--coverage       : Run coverage based on executed code"
+    echo "  -t|--test           : Run all unit tests"
+    echo "  -tname|--test=name  : Run unit test for name"
 }
 
-TEMP=$(getopt -o abtoch -l all,build,test,coverage,check,help \
+TEMP=$(getopt -o abt::och -l all,build,test::,coverage,check,help \
      -n 'run_tests' -- "$@")
 
 if [ $? != 0 ] || [ $# == 0 ] ; then
@@ -26,7 +27,12 @@ fi
 eval set -- "$TEMP"
 
 RunBuild=0
-RunTests=0
+RunTestScrAth=0
+RunTestScrIlity=0
+RunTestScrUts=0
+RunTestScrIng=0
+RunTestScrIles=0
+RunTestScrOgl=0
 RunCoverage=0
 RunStaticCheck=0
 
@@ -35,7 +41,12 @@ while true; do
         -a|--all)
             echo "Running everything"
             RunBuild=1
-            RunTests=1
+            RunTestScrAth=1
+            RunTestScrIlity=1
+            RunTestScrUts=1
+            RunTestScrIng=1
+            RunTestScrIles=1
+            RunTestScrOgl=1
             RunCoverage=1
             RunStaticCheck=1
             shift
@@ -47,8 +58,24 @@ while true; do
             ;;
         -t|--test)
             echo "Running tests"
-            RunTests=1
-            shift
+            case "$2" in
+                ""|"all")
+                    RunTestScrAth=1
+                    RunTestScrIlity=1
+                    RunTestScrUts=1
+                    RunTestScrIng=1
+                    RunTestScrIles=1
+                    RunTestScrOgl=1
+                    shift 2
+                    ;;
+                "math")     RunTestScrAth=1;    shift 2 ;;
+                "utility")  RunTestScrIlity=1;  shift 2 ;;
+                "inputs")   RunTestScrUts=1;    shift 2 ;;
+                "timing")   RunTestScrIng=1;    shift 2 ;;
+                "files")    RunTestScrIles=1;   shift 2 ;;
+                "opengl")   RunTestScrOgl=1;    shift 2 ;;
+                *)          echo "Unrecognized test $2"; exit 1 ;;
+            esac
             ;;
         -o|--coverage)
             echo "Running coverage"
@@ -82,12 +109,22 @@ if [ $RunBuild == 1 ]; then
     scons -Q --coverage --backend=glfw      || exit 1
 fi
 
-if [ $RunTests == 1 ]; then
+if [ $RunTestScrAth == 1 ]; then
     ./build/test/testScrAth                 || exit 1
+fi
+if [ $RunTestScrIlity == 1 ]; then
     ./build/test/testScrIlity               || exit 1
+fi
+if [ $RunTestScrUts == 1 ]; then
     ./build/test/testScrUts                 || exit 1
+fi
+if [ $RunTestScrIng == 1 ]; then
     ./build/test/testScrIng                 || exit 1
+fi
+if [ $RunTestScrIles == 1 ]; then
     ./build/test/testScrIles                || exit 1
+fi
+if [ $RunTestScrOgl == 1 ]; then
     ./build/test/testScrOgl                 || exit 1
 fi
 
