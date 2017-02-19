@@ -13,11 +13,14 @@ headers = [
     'vector2d.hpp',
     'vector3d.hpp',
     'matrix4.hpp',
+    'constants.hpp',
+    'conversions.hpp',
 ]
 
 inlines = [
     'vector2d.inl',
     'vector3d.inl',
+    'matrix4_inl.hpp',
 ]
 
 install_headers(env, 'Scryver/Math', headers, inlines)

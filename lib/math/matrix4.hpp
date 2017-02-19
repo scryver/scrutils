@@ -9,7 +9,11 @@ template <typename N = float>
 struct Matrix4
 {
     N m[4][4];
+
+    inline Matrix4<N> operator*(const Matrix4<N>& right) const;
 };
+
+#include "matrix4_inl.hpp"
 
 typedef Matrix4<double>         Matrix4d;
 typedef Matrix4<float>          Matrix4f;

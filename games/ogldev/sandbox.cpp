@@ -46,15 +46,28 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    Scryver::Math::Vector3Df vertices[3];
+    Scryver::Math::Vector3Df vertices[4];
     vertices[0] = Scryver::Math::Vector3Df(-1.0f, -1.0f, 0.0f);
-    vertices[1] = Scryver::Math::Vector3Df(1.0f, -1.0f, 0.0f);
-    vertices[2] = Scryver::Math::Vector3Df(0.0f, 1.0f, 0.0f);
+    vertices[1] = Scryver::Math::Vector3Df( 0.0f, -1.0f, 1.0f);
+    vertices[2] = Scryver::Math::Vector3Df( 1.0f, -1.0f, 0.0f);
+    vertices[3] = Scryver::Math::Vector3Df( 0.0f,  1.0f, 0.0f);
 
     Scryver::OpenGL::buffer_t VBO = glManager.createBuffer();
     glManager.bindArrayBuffer(VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glManager.unbindArrayBuffer();
+
+    uint8_t indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2
+    };
+
+    Scryver::OpenGL::buffer_t IBO = glManager.createBuffer();
+    glManager.bindElementBuffer(IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glManager.unbindElementBuffer();
 
     Scryver::OpenGL::vertexArray_t VAO = glManager.createVertexArray();
     glManager.bindVertexArray(VAO);
@@ -95,9 +108,11 @@ int main(int argc, char* argv[]) {
         glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &world.m[0][0]);
         // Drawing calls
         glManager.bindVertexArray(VAO);
+        glManager.bindElementBuffer(IBO);
         glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, 0);
         glDisableVertexAttribArray(0);
+        glManager.unbindElementBuffer();
         glManager.unbindVertexArray();
 
         window.display();
