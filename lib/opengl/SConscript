@@ -5,15 +5,20 @@ Import('env')
 staticScrOgl = env.Library(
     'scrogl',   # SCRyver timING
     source=[
+        'manager.cpp',
         'shader.cpp',
     ]
 )
 
 headers = [
+    'manager.hpp',
     'shader.hpp',
+    'buffer.hpp',
 ]
 
-inlines = None
+inlines = [
+    'buffer_inl.hpp',
+]
 
 install_headers(env, 'Scryver/OpenGL', headers, inlines)
 # @TODO: Implement copy-in file strategy for headers and inline/implementation

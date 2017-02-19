@@ -3,9 +3,11 @@
 #include <cassert>
 #include <string>
 
-#include <GL/glew.h>
+// #include <GL/glew.h>
 
 #include <GLFW/glfw3.h>
+
+#include "Scryver/Debug/Printer.hpp"
 
 #include "Scryver/Inputs/UserInput.hpp"
 #include "Scryver/Inputs/KeyboardCodes.hpp"
@@ -28,7 +30,7 @@ bool GLFWWindow::initialize(uint16_t width, uint16_t height,
 
     if (!glfwInit())
     {
-        // std::cerr << "Failed to initialize GLFW" << std::endl;
+        errorPrint("Failed to initialize GLFW");
         return false;
     }
 
@@ -45,18 +47,18 @@ bool GLFWWindow::initialize(uint16_t width, uint16_t height,
     m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
     if( m_window == NULL ){
-        // std::cerr << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible." << std::endl;
+        errorPrint("Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.");
         glfwTerminate();
         return false;
     }
     glfwMakeContextCurrent(m_window);
 
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        // @TODO: Create a report system
-        // std::cerr << "Failed to initialize GLEW!" << std::endl;
-        return false;
-    }
+    // glewExperimental = GL_TRUE;
+    // if (glewInit() != GLEW_OK) {
+    //     // @TODO: Create a report system
+    //     // errorPrint("Failed to initialize GLEW!");
+    //     return false;
+    // }
 
     glfwSetWindowUserPointer(m_window, this);
     glfwSetKeyCallback(m_window, keyCallback);

@@ -1,6 +1,9 @@
 #ifndef SCRYVER_ENGINE_WINDOW_INTERFACE_HPP
 #define SCRYVER_ENGINE_WINDOW_INTERFACE_HPP
 
+#include <cstdint>
+#include <string>
+
 namespace Scryver {
 
 namespace Engine {

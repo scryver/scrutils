@@ -11,7 +11,7 @@ sandboxEnv['VERSION_MAJOR'] = 1
 sandboxEnv['VERSION_MINOR'] = 0
 sandboxEnv.Header('config')
 
-sandboxEnv.Prepend(LIBS=['scrine', 'scruts', 'scring'])
+sandboxEnv.Prepend(LIBS=['scrogl', 'scrine', 'scruts', 'scring', 'scriles'])
 
 main = sandboxEnv.Program('sandbox',
                           source=[
@@ -19,3 +19,5 @@ main = sandboxEnv.Program('sandbox',
                           ])
 
 env.Install('$PREFIX/bin', main)
+env.Install('$PREFIX/resources/shaders', 'files/sandbox.vs')
+env.Install('$PREFIX/resources/shaders', 'files/sandbox.fs')

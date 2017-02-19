@@ -11,6 +11,7 @@ staticScrIlity = env.Library(
 
 headers = [
     'dictionary.hpp',
+    'macros.hpp',
 ]
 
 inlines = [

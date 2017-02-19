@@ -5,7 +5,9 @@ openglEnv.Prepend(LIBS=['scrogl', 'scriles', 'scrine', 'scruts'])
 
 testScrOgl = openglEnv.Program('testScrOgl',
                              source=[
+                                 'test_opengl_manager.cpp',
                                  'test_shader.cpp',
+                                 'test_buffer.cpp',
                              ])
 
 testEnv.Install('$PREFIX/test', testScrOgl)
