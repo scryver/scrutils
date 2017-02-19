@@ -1,9 +1,19 @@
 from utility.headers import install_headers
+from SCons.Errors import UserError
 
-Import('env')
+name = 'scrogl'     # SCRyver OpenGL
+
+try:
+    Import('env')
+    lib_dir = '$PREFIX/lib'
+except UserError:
+    Import('testEnv')
+    env = testEnv
+    name = 'test_' + name
+    lib_dir = '$PREFIX/test/lib'
 
 staticScrOgl = env.Library(
-    'scrogl',   # SCRyver timING
+    name,
     source=[
         'manager.cpp',
         'shader.cpp',
@@ -20,7 +30,8 @@ inlines = [
     'buffer_inl.hpp',
 ]
 
-install_headers(env, 'Scryver/OpenGL', headers, inlines)
+if 'testEnv' not in locals():
+    install_headers(env, 'Scryver/OpenGL', headers, inlines)
 # @TODO: Implement copy-in file strategy for headers and inline/implementation
 
-env.Install('$PREFIX/lib', staticScrOgl)
+env.Install(lib_dir, staticScrOgl)

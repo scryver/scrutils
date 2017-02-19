@@ -14,7 +14,8 @@ incPath, libPath = google_test_init(testEnv)
 testEnv.Append(CPPFLAGS=['-pthread'])
 testEnv.Append(CPPPATH=[incPath])
 testEnv.Append(LIBS=['gtest', 'gtest_main', 'gmock', 'gmock_main', 'pthread'])
-testEnv.Append(LIBPATH=[libPath])
+testEnv.Append(LIBPATH=[libPath, '$PREFIX/test/lib'])
+testEnv.Append(CPPDEFINES=['TESTING_ENABLED'])
 
 if '-Werror' in testEnv['CPPFLAGS']:
     flags = testEnv['CPPFLAGS']

@@ -72,22 +72,25 @@ else:
 backend = GetOption('backend')
 
 if backend == 'glfw':
+    env['USING_BACKEND'] = 'glfw'
+    env.Append(CPPDEFINES=['USING_GLFW'])
     env.ParseConfig('pkg-config glfw3 --cflags --libs')
 elif backend == 'sfml':
+    env['USING_BACKEND'] = 'sfml'
+    env.Append(CPPDEFINES=['USING_SFML'])
     env.ParseConfig('pkg-config sfml-window --cflags --libs')
 else:
     print("Backend '{}' not supported!".format(backend))
     Exit(1)
 
-env.ParseConfig('pkg-config gl --cflags --libs')
-env.ParseConfig('pkg-config glew --cflags --libs')
+testEnv = SConscript(['test/SConscript'], 'env')
 
 if backend == 'glfw':
-    env['USING_BACKEND'] = 'glfw'
-    env.Append(CPPDEFINES=['USING_GLFW'])
+    env.ParseConfig('pkg-config glfw3 --cflags --libs')
 else:
-    env['USING_BACKEND'] = 'sfml'
-    env.Append(CPPDEFINES=['USING_SFML'])
+    env.ParseConfig('pkg-config sfml-window --cflags --libs')
+env.ParseConfig('pkg-config gl --cflags --libs')
+env.ParseConfig('pkg-config glew --cflags --libs')
 
 sub_dirs = [
     'lib/debug',
@@ -99,6 +102,7 @@ sub_dirs = [
     'lib/timing',
     'lib/utility',
     'games/sandbox',
+    'games/ogldev',
 ]
 
 test_dirs = [
@@ -113,6 +117,6 @@ test_dirs = [
 for d in sub_dirs:
     SConscript([d + '/SConscript'], 'env', variant_dir='build/src/' + d)
 
-testEnv = SConscript(['test/SConscript'], 'env')
 for d in test_dirs:
     SConscript(['test/' + d + '/SConscript'], 'testEnv', variant_dir='build/src/test/' + d)
+SConscript(['lib/opengl/SConscript'], 'testEnv', variant_dir='build/src/testlib/opengl')

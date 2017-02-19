@@ -1,15 +1,101 @@
 #!/bin/bash
 
-scons -Q --coverage                     || exit 1
-# scons -Q --coverage --backend=glfw      || exit 1
+display_usage() {
+    echo "This script can build and run tests and analysis."
+    echo ""
+    echo "Usage: run_tests [arguments]"
+    echo ""
+    echo "Arguments:"
+    echo "  -h|--help       : Display this help text"
+    echo "  -a|--all        : Build and run all tests and analysis"
+    echo "  -b|--build      : Build all sources"
+    echo "  -c|--check      : Static analysis of all sources"
+    echo "  -o|--coverage   : Run coverage based on executed code"
+    echo "  -t|--test       : Run all unit tests"
+}
 
-./build/test/testScrAth                 || exit 1
-./build/test/testScrIlity               || exit 1
-./build/test/testScrUts                 || exit 1
-./build/test/testScrIng                 || exit 1
-./build/test/testScrIles                || exit 1
-./build/test/testScrOgl                 || exit 1
+TEMP=$(getopt -o abtoch -l all,build,test,coverage,check,help \
+     -n 'run_tests' -- "$@")
 
-./run_gcoverage
-./run_cppcheck USING_SFML
-# ./run_cppcheck USING_GLFW
+if [ $? != 0 ] || [ $# == 0 ] ; then
+    display_usage
+    exit 1
+fi
+
+# Note the quotes around `$TEMP': they are essential!
+eval set -- "$TEMP"
+
+RunBuild=0
+RunTests=0
+RunCoverage=0
+RunStaticCheck=0
+
+while true; do
+    case "$1" in
+        -a|--all)
+            echo "Running everything"
+            RunBuild=1
+            RunTests=1
+            RunCoverage=1
+            RunStaticCheck=1
+            shift
+            ;;
+        -b|--build)
+            echo "Building sources"
+            RunBuild=1
+            shift
+            ;;
+        -t|--test)
+            echo "Running tests"
+            RunTests=1
+            shift
+            ;;
+        -o|--coverage)
+            echo "Running coverage"
+            RunCoverage=1
+            shift
+            ;;
+        -c|--check)
+            echo "Running CppCheck static analyzer"
+            RunStaticCheck=1
+            shift
+            ;;
+        -h|--help)
+            display_usage
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Unrecognized option '$1'"
+            display_usage
+            exit 1
+            ;;
+    esac
+done
+for arg do echo "Unrecognized option '$arg'" ; display_usage ; exit 1 ; done
+
+if [ $RunBuild == 1 ]; then
+    # scons -Q --coverage                     || exit 1
+    scons -Q --coverage --backend=glfw      || exit 1
+fi
+
+if [ $RunTests == 1 ]; then
+    ./build/test/testScrAth                 || exit 1
+    ./build/test/testScrIlity               || exit 1
+    ./build/test/testScrUts                 || exit 1
+    ./build/test/testScrIng                 || exit 1
+    ./build/test/testScrIles                || exit 1
+    ./build/test/testScrOgl                 || exit 1
+fi
+
+if [ $RunCoverage == 1 ]; then
+    ./run_gcoverage
+fi
+
+if [ $RunStaticCheck == 1 ]; then
+    # ./run_cppcheck USING_SFML
+    ./run_cppcheck USING_GLFW
+fi

@@ -1,10 +1,11 @@
 Import('testEnv')
 
 openglEnv = testEnv.Clone()
-openglEnv.Prepend(LIBS=['scrogl', 'scriles', 'scrine', 'scruts'])
 
+openglEnv.Prepend(LIBS=['test_scrogl', 'scriles', 'scrine', 'scruts'])
 testScrOgl = openglEnv.Program('testScrOgl',
                              source=[
+                                 'glmock.cpp',
                                  'test_opengl_manager.cpp',
                                  'test_shader.cpp',
                                  'test_buffer.cpp',

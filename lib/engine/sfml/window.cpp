@@ -38,6 +38,7 @@ bool SFMLWindow::initialize(uint16_t width, uint16_t height,
     // create the window
     m_window = new sf::Window(sf::VideoMode(width, height), title.c_str(), sf::Style::Default, settings);
 
+    m_window->setVerticalSyncEnabled(false);
     // glewExperimental = GL_TRUE;
     // if (glewInit() != GLEW_OK) {
     //     // @TODO: Create a report system

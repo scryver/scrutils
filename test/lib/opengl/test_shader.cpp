@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <GL/glew.h>
-
+#include "glmock.hpp"
 #include "Scryver/OpenGL/Shader.hpp"
-#include "Scryver/Engine/Window.hpp"
 
 using Scryver::OpenGL::Shader;
 
@@ -15,9 +13,6 @@ const std::string linkErrorFile = "build/test/files/linker_error.glsl";
 
 TEST(Shader, FailForNoPath)
 {
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
-
     Shader s;
 
     ASSERT_FALSE(s.initialize("some", "thing", true));
@@ -27,8 +22,46 @@ TEST(Shader, FailForNoPath)
 
 TEST(Shader, FailOnShaderFileCompilation)
 {
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(2)
+        .WillOnce(testing::Return(1))
+        .WillOnce(testing::Return(2));
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(3));
+
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_FALSE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, ShaderSource(3, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(3)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(3, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_FALSE));
+    EXPECT_CALL(GLMock, GetShaderiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, DeleteShader(3)).Times(1);
 
     Shader s;
 
@@ -38,18 +71,107 @@ TEST(Shader, FailOnShaderFileCompilation)
 
 TEST(Shader, CompileLinkSimpleShaderFiles)
 {
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(1));
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(2));
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateProgram()).Times(1).WillOnce(testing::Return(3));
+    EXPECT_CALL(GLMock, AttachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, AttachShader(3, 2)).Times(1);
+    EXPECT_CALL(GLMock, LinkProgram(3));
+
+    EXPECT_CALL(GLMock, DetachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, DetachShader(3, 2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_LINK_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
 
     Shader s;
 
     ASSERT_TRUE(s.initialize(vertexFile, fragmentFile));
+
+    // Ignore deletion check
+    s.identifier = 0;
 }
 
 TEST(Shader, FailOnShaderFileLinking)
 {
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(1));
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(2));
+
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateProgram()).Times(1).WillOnce(testing::Return(3));
+    EXPECT_CALL(GLMock, AttachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, AttachShader(3, 2)).Times(1);
+    EXPECT_CALL(GLMock, LinkProgram(3));
+
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_LINK_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_FALSE));
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, DetachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, DetachShader(3, 2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteProgram(3)).Times(1);
 
     Shader s;
 
@@ -58,8 +180,47 @@ TEST(Shader, FailOnShaderFileLinking)
 
 TEST(Shader, FailOnShaderCompilation)
 {
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(2)
+        .WillOnce(testing::Return(1))
+        .WillOnce(testing::Return(2));
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(3));
+
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, ShaderSource(3, 1, testing::_, testing::_))
+        .Times(1);
+
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+    EXPECT_CALL(GLMock, CompileShader(3)).Times(1);
+
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_FALSE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, GetShaderiv(3, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_FALSE));
+    EXPECT_CALL(GLMock, GetShaderiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(3)).Times(1);
 
     Shader s;
 
@@ -74,10 +235,55 @@ TEST(Shader, FailOnShaderCompilation)
 
 TEST(Shader, CompileLinkSimpleShader)
 {
-    const char* simpleSrc = "#version 330 core\nvoid main() {}";
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(1));
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(2));
 
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateProgram()).Times(1).WillOnce(testing::Return(3));
+    EXPECT_CALL(GLMock, AttachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, AttachShader(3, 2)).Times(1);
+    EXPECT_CALL(GLMock, LinkProgram(3));
+
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_LINK_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, DetachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, DetachShader(3, 2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteProgram(3)).Times(1);
+
+    const char* simpleSrc = "#version 330 core\nvoid main() {}";
 
     Shader s;
 
@@ -89,8 +295,56 @@ TEST(Shader, FailOnShaderLinking)
     const char* vertex = "#version 330 core\nlayout(location=0) in vec3 position;\nout vec3 colour;\nvoid main() { colour = vec3(1, 0, 0.4);}";
     const char* fragment = "#version 330 core\nin vec2 colour;\nout vec3 col;\nvoid main() { col = vec3(colour,0); }";
 
-    Scryver::Engine::Window window;
-    ASSERT_TRUE(window.initialize());
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(1));
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(2));
+
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateProgram()).Times(1).WillOnce(testing::Return(3));
+    EXPECT_CALL(GLMock, AttachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, AttachShader(3, 2)).Times(1);
+    EXPECT_CALL(GLMock, LinkProgram(3));
+
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_LINK_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_FALSE));
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(12));
+    EXPECT_CALL(GLMock, GetProgramInfoLog(3, 12, testing::_, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<3>(*"Linker error"));
+
+    EXPECT_CALL(GLMock, DetachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, DetachShader(3, 2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteProgram(3)).Times(1);
 
     Shader s;
 

@@ -53,6 +53,7 @@ bool GLFWWindow::initialize(uint16_t width, uint16_t height,
     }
     glfwMakeContextCurrent(m_window);
 
+    glfwSwapInterval(0);
     // glewExperimental = GL_TRUE;
     // if (glewInit() != GLEW_OK) {
     //     // @TODO: Create a report system

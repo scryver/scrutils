@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <results>
+    <error file="../../build/src/test/lib/opengl/glmock.cpp" line="4" id="uninitMemberVar" severity="style" msg="Member variable &apos;CGLMock::GlewExperimental&apos; is not initialized in the constructor."/>
     <error file="../../build/include/Scryver/Utility/dictionary_inl.hpp" line="2" id="uninitMemberVar" severity="style" msg="Member variable &apos;Dictionary::m_itemTypeId&apos; is not initialized in the constructor."/>
 </results>

@@ -8,6 +8,8 @@ cd "$OutputDir"
 SourceDir="../../build"
 GeneratedFile="cppcheck.txt"
 
+rm -rf "$OutputDir/*"
+
 cppcheck --enable=all \
          --library=../../cppcheck/opengl.cfg \
          --library=../../cppcheck/gtest.cfg \

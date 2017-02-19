@@ -1,0 +1,23 @@
+Import('env')
+
+oglDevEnv = env.Clone()
+# oglDevEnv.Append(LIBS=['grapher'])
+# # For loading of shared libs set the origin
+# oglDevEnv.Append(LINKFLAGS = Split('-z origin'))
+# # And set the exe to point to ../lib for shared libs
+# oglDevEnv.Append(RPATH = env.Literal(os.path.join('\\$$ORIGIN', os.pardir, 'lib')))
+
+# oglDevEnv['VERSION_MAJOR'] = 1
+# oglDevEnv['VERSION_MINOR'] = 0
+# oglDevEnv.Header('config')
+
+oglDevEnv.Prepend(LIBS=['scrogl', 'scrine', 'scruts', 'scring', 'scriles'])
+
+main = oglDevEnv.Program('ogldev',
+                          source=[
+                              'sandbox.cpp',
+                          ])
+
+env.Install('$PREFIX/bin', main)
+env.Install('$PREFIX/resources/shaders', 'files/ogldev.vs')
+env.Install('$PREFIX/resources/shaders', 'files/ogldev.fs')

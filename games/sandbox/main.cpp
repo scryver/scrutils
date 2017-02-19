@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     if (window.initialize(800, 600, "Main") == false)
         return -1;
 
-    Scryver::OpenGL::GLManager glManager;
+    // Scryver::OpenGL::GLManager glManager;
     if (glManager.initialize() == false)
     {
         window.destroy();

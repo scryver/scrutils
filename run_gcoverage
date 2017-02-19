@@ -5,6 +5,8 @@ OutputDir="$DIR/analysis/coverage"
 
 # echo "For nice html use '--html --html-details -o index.html'."
 
+rm -rf "$OutputDir/*"
+
 gcovr -r "$DIR" -b \
     --html --html-details --html-absolute-paths \
     -o "$OutputDir/index.html" \

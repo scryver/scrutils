@@ -3,7 +3,11 @@
 #include <cstdint>
 #include <string>
 
+#ifndef TESTING_ENABLED
 #include <GL/glew.h>
+#else
+#include "../../test/lib/opengl/glmock.hpp"
+#endif
 
 #include "Scryver/Files/FileReader.hpp"
 #include "Scryver/Debug/Printer.hpp"
@@ -89,6 +93,12 @@ bool Shader::initialize(const std::string& vertex, const std::string& fragment,
     debugPrint("Linking program");
     glLinkProgram(identifier);
 
+    glDetachShader(identifier, vertexShaderID);
+    glDetachShader(identifier, fragmentShaderID);
+
+    glDeleteShader(fragmentShaderID);
+    glDeleteShader(vertexShaderID);
+
     GLint result = GL_FALSE;
     int infoLogLength;
 
@@ -105,12 +115,6 @@ bool Shader::initialize(const std::string& vertex, const std::string& fragment,
         identifier = 0;
         return false;
     }
-
-    glDetachShader(identifier, vertexShaderID);
-    glDetachShader(identifier, fragmentShaderID);
-
-    glDeleteShader(fragmentShaderID);
-    glDeleteShader(vertexShaderID);
 
     return true;
 }

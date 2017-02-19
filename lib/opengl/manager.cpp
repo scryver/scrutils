@@ -1,11 +1,21 @@
 #include "manager.hpp"
 
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+#include <string>
+
+#ifndef TESTING_ENABLED
 #include <GL/glew.h>
+#else
+#include "../../test/lib/opengl/glmock.hpp"
+#endif
 
 #include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::GLManager;
 
+#ifndef TESTING_ENABLED
 // The ARB_debug_output extension, which is used in this tutorial as an example,
 // can call a function of ours with error messages.
 // This function must have this precise prototype ( parameters and return value )
@@ -53,6 +63,7 @@ static void DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum se
     // and the callstack will immediately show you the offending call.
     std::cout << "Message : " << message << std::endl;
 }
+#endif
 
 
 GLManager::GLManager()
@@ -73,6 +84,7 @@ bool GLManager::initialize()
         return false;
     }
 
+#ifndef TESTING_ENABLED
     if (GLEW_ARB_debug_output)
     {
         debugPrint("The OpenGL implementation provides debug output. Let's use it !");
@@ -84,11 +96,61 @@ bool GLManager::initialize()
         debugPrint("ARB_debug_output unavailable. "
                    << "You have to use glGetError() and/or gDebugger to catch mistakes.");
     }
+#endif
+
+    m_vBuffers.reserve(512);
+    m_vVertexArrays.reserve(128);
 
     return true;
 }
 
 void GLManager::destroy()
 {
-    // Empty
+    if (m_vVertexArrays.size() > 0)
+        glDeleteVertexArrays(m_vVertexArrays.size(), &m_vVertexArrays.front());
+    if (m_vBuffers.size() > 0)
+        glDeleteBuffers(m_vBuffers.size(), &m_vBuffers.front());
+    m_vVertexArrays.clear();
+    m_vBuffers.clear();
+}
+
+uint32_t GLManager::createBuffer()
+{
+    uint32_t buf;
+    glGenBuffers(1, &buf);
+    m_vBuffers.push_back(buf);
+    return buf;
+}
+
+std::vector<uint32_t> GLManager::createBuffers(size_t nrBuffers)
+{
+    std::vector<uint32_t> buf;
+    buf.resize(nrBuffers);
+    glGenBuffers(nrBuffers, &buf.front());
+    m_vBuffers.insert(m_vBuffers.end(), buf.begin(), buf.end());
+    return buf;
+}
+
+uint32_t GLManager::createVertexArray()
+{
+    uint32_t vao;
+    glGenVertexArrays(1, &vao);
+    m_vVertexArrays.push_back(vao);
+    return vao;
+}
+
+std::vector<uint32_t> GLManager::createVertexArrays(size_t nrVertexArrays)
+{
+    std::vector<uint32_t> vaos;
+    vaos.resize(nrVertexArrays);
+    glGenBuffers(nrVertexArrays, &vaos.front());
+    m_vVertexArrays.insert(m_vVertexArrays.end(), vaos.begin(), vaos.end());
+    return vaos;
+}
+
+GLManager& GLManager::getInstance()
+{
+    static GLManager manager;
+
+    return manager;
 }
