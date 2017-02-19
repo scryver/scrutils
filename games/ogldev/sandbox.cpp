@@ -13,6 +13,7 @@
 #include "Scryver/Debug/Printer.hpp"
 #include "Scryver/Utility/Macros.hpp"
 #include "Scryver/Math/Vector3D.hpp"
+#include "Scryver/Math/Matrix4.hpp"
 
 
 static const std::string vertexFile = "build/resources/shaders/ogldev.vs";
@@ -67,11 +68,18 @@ int main(int argc, char* argv[]) {
     shader.use();
 
     Scryver::OpenGL::uniform_t scaleLoc = shader.getUniform("gScale");
+    Scryver::OpenGL::uniform_t worldLoc = shader.getUniform("world");
     float scale = 0.0f;
+    Scryver::Math::Matrix4f world;
+    world.m[0][0] = 1.0f;   world.m[0][1] = 0.0f;   world.m[0][2] = 0.0f;   world.m[0][3] = 0.0f;
+    world.m[1][0] = 0.0f;   world.m[1][1] = 1.0f;   world.m[1][2] = 0.0f;   world.m[1][3] = 0.0f;
+    world.m[2][0] = 0.0f;   world.m[2][1] = 0.0f;   world.m[2][2] = 1.0f;   world.m[2][3] = 0.0f;
+    world.m[3][0] = 0.0f;   world.m[3][1] = 0.0f;   world.m[3][2] = 0.0f;   world.m[3][3] = 1.0f;
 
     while (window.isOpen())
     {
         scale += gameClock.newFrame();
+        world.m[0][3] = sinf(scale);
 
         window.pollEvents();
         // if (window.isKeyPressed(Scryver::Keys::Number_1))
@@ -84,6 +92,7 @@ int main(int argc, char* argv[]) {
         window.clear();
 
         glUniform1f(scaleLoc, sinf(scale));
+        glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &world.m[0][0]);
         // Drawing calls
         glManager.bindVertexArray(VAO);
         glEnableVertexAttribArray(0);

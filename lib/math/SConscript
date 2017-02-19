@@ -12,6 +12,7 @@ staticScrAth = env.Library(
 headers = [
     'vector2d.hpp',
     'vector3d.hpp',
+    'matrix4.hpp',
 ]
 
 inlines = [
