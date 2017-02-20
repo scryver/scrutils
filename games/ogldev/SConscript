@@ -21,3 +21,5 @@ main = oglDevEnv.Program('ogldev',
 env.Install('$PREFIX/bin', main)
 env.Install('$PREFIX/resources/shaders', 'files/ogldev.vs')
 env.Install('$PREFIX/resources/shaders', 'files/ogldev.fs')
+env.Install('$PREFIX/resources/shaders', 'files/skybox.vs')
+env.Install('$PREFIX/resources/shaders', 'files/skybox.fs')

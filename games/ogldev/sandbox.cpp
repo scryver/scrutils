@@ -19,6 +19,8 @@
 
 static const std::string vertexFile = "build/resources/shaders/ogldev.vs";
 static const std::string fragmentFile = "build/resources/shaders/ogldev.fs";
+static const std::string skyBoxVertexFile = "build/resources/shaders/skybox.vs";
+static const std::string skyBoxFragmentFile = "build/resources/shaders/skybox.fs";
 
 int main(int argc, char* argv[]) {
     gameClock.initialize();
@@ -79,12 +81,79 @@ int main(int argc, char* argv[]) {
     glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
 
-    shader.use();
 
     Scryver::OpenGL::uniform_t worldLoc = shader.getUniform("world");
 
     float count = 0.0f;
     Scryver::Math::Transform3Df transform;
+
+    Scryver::OpenGL::texture_t skyBox = glManager.createSkyBox("resources/textures/cubemaps/stairs_in_forest");
+    Scryver::Math::Vector3Df skyboxVertices[] = {
+        // Positions
+        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+
+        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+
+        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+
+        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+
+        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+
+        Scryver::Math::Vector3Df(-1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df( 1.0f, -1.0f,  1.0f)
+    };
+    Scryver::OpenGL::buffer_t skyBoxBuf = glManager.createBuffer();
+    glManager.bindArrayBuffer(skyBoxBuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+    glManager.unbindArrayBuffer();
+
+    Scryver::OpenGL::vertexArray_t skyBoxVAO = glManager.createVertexArray();
+    glManager.bindVertexArray(skyBoxVAO);
+    glEnableVertexAttribArray(0);
+    glManager.bindArrayBuffer(skyBoxBuf);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glManager.unbindArrayBuffer();
+    glDisableVertexAttribArray(0);
+    glManager.unbindVertexArray();
+    Scryver::OpenGL::Shader skyBoxShader;
+    if (skyBoxShader.initialize(skyBoxVertexFile, skyBoxFragmentFile) == false)
+    {
+        shader.destroy();
+        glManager.destroy();
+        window.destroy();
+        return -1;
+    }
+    // Scryver::OpenGL::uniform_t skyboxMapper = skyBoxShader.getUniform("skybox");
 
     while (window.isOpen())
     {
@@ -105,6 +174,16 @@ int main(int argc, char* argv[]) {
 
         window.clear();
 
+        skyBoxShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glManager.bindSkyBox(skyBox);
+        glManager.bindVertexArray(skyBoxVAO);
+        glEnableVertexAttribArray(0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDisableVertexAttribArray(0);
+        glManager.unbindVertexArray();
+
+        shader.use();
         glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &transform.get().m[0][0]);
         // Drawing calls
         glManager.bindVertexArray(VAO);

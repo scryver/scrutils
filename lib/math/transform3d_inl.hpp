@@ -9,13 +9,13 @@ Transform3D<N>::Transform3D()
 }
 
 template <typename N>
-void Transform3D<N>::scale(const Vector3D<N> s)
+void Transform3D<N>::scale(const Vector3D<N>& s)
 {
     scale(s.x, s.y, s.z);
 }
 
 template <typename N>
-void Transform3D<N>::scale(N x, N y, N z)
+void Transform3D<N>::scale(const N& x, const N& y, const N& z)
 {
     m_scale.x = x;
     m_scale.y = y;
@@ -23,13 +23,13 @@ void Transform3D<N>::scale(N x, N y, N z)
 }
 
 template <typename N>
-void Transform3D<N>::worldPos(const Vector3D<N> wp)
+void Transform3D<N>::worldPos(const Vector3D<N>& wp)
 {
     worldPos(wp.x, wp.y, wp.z);
 }
 
 template <typename N>
-void Transform3D<N>::worldPos(N x, N y, N z)
+void Transform3D<N>::worldPos(const N& x, const N& y, const N& z)
 {
     m_worldPosition.x = x;
     m_worldPosition.y = y;
@@ -37,13 +37,13 @@ void Transform3D<N>::worldPos(N x, N y, N z)
 }
 
 template <typename N>
-void Transform3D<N>::rotate(const Vector3D<N> r)
+void Transform3D<N>::rotate(const Vector3D<N>& r)
 {
     rotate(r.x, r.y, r.z);
 }
 
 template <typename N>
-void Transform3D<N>::rotate(N x, N y, N z)
+void Transform3D<N>::rotate(const N& x, const N& y, const N& z)
 {
     m_rotation.x = x;
     m_rotation.y = y;

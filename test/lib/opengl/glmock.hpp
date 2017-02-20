@@ -8,6 +8,7 @@ typedef unsigned int GLenum;
 typedef size_t GLsizei;
 typedef unsigned int GLuint;
 typedef int GLint;
+typedef void GLvoid;
 
 const GLenum GL_ARRAY_BUFFER = 0;
 const GLenum GL_ELEMENT_ARRAY_BUFFER = 1;
@@ -36,6 +37,29 @@ const GLenum GL_COMPILE_STATUS = 17;
 const GLenum GL_LINK_STATUS = 18;
 
 const GLenum GL_INFO_LOG_LENGTH = 19;
+
+const GLenum GL_TEXTURE_2D = 50;
+const GLenum GL_TEXTURE_CUBE_MAP = 51;
+const GLenum GL_TEXTURE_CUBE_MAP_POSITIVE_X = 52;
+const GLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_X = 53;
+const GLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Y = 54;
+const GLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Y = 55;
+const GLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Z = 56;
+const GLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = 57;
+
+const GLenum GL_TEXTURE_MAG_FILTER = 70;
+const GLenum GL_TEXTURE_MIN_FILTER = 71;
+const GLenum GL_TEXTURE_WRAP_S = 72;
+const GLenum GL_TEXTURE_WRAP_T = 73;
+const GLenum GL_TEXTURE_WRAP_R = 74;
+
+const GLint  GL_LINEAR = 75;
+const GLint  GL_CLAMP_TO_EDGE = 76;
+
+const GLenum GL_COMPRESSED_RGBA_S3TC_DXT1_EXT = 180;
+const GLenum GL_COMPRESSED_RGBA_S3TC_DXT3_EXT = 181;
+const GLenum GL_COMPRESSED_RGBA_S3TC_DXT5_EXT = 182;
+
 
 class CGLMock {
 public:
@@ -94,6 +118,18 @@ public:
 
     MOCK_METHOD2( GetUniformLocation,       GLuint(GLuint program, const GLchar* name) );
 
+    /**
+     * Textures
+     */
+    MOCK_METHOD2( GenTextures,              void(GLsizei n, GLuint* textures) );
+    MOCK_METHOD2( DeleteTextures,           void(GLsizei n, GLuint* textures) );
+    MOCK_METHOD2( BindTexture,              void(GLenum t, GLuint texure) );
+    MOCK_METHOD3( TexParameteri,            void(GLenum t, GLenum name, GLint param) );
+    MOCK_METHOD8( CompressedTexImage2D,     void(GLenum t, GLint level, GLenum internalFmt,
+                                                 GLsizei width, GLsizei height, GLint border,
+                                                 GLsizei imageSize, const GLvoid* data) );
+
+
     static CGLMock& getInstance();
 };
 
@@ -131,5 +167,11 @@ public:
 #define glDeleteProgram             GLMock.DeleteProgram
 #define glUseProgram                GLMock.UseProgram
 #define glGetUniformLocation        GLMock.GetUniformLocation
+
+#define glGenTextures               GLMock.GenTextures
+#define glDeleteTextures            GLMock.DeleteTextures
+#define glBindTexture               GLMock.BindTexture
+#define glTexParameteri             GLMock.TexParameteri
+#define glCompressedTexImage2D      GLMock.CompressedTexImage2D
 
 #endif  // SCRYVER_TEST_OPEN_GL_MOCK_HPP

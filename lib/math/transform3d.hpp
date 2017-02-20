@@ -14,14 +14,14 @@ class Transform3D
 public:
     inline Transform3D();
 
-    inline void scale(const Vector3D<N> s);
-    inline void scale(N x, N y, N z);
+    inline void scale(const Vector3D<N>& s);
+    inline void scale(const N& x, const N& y, const N& z);
 
-    inline void worldPos(const Vector3D<N> wp);
-    inline void worldPos(N x, N y, N z);
+    inline void worldPos(const Vector3D<N>& wp);
+    inline void worldPos(const N& x, const N& y, const N& z);
 
-    inline void rotate(const Vector3D<N> r);
-    inline void rotate(N x, N y, N z);
+    inline void rotate(const Vector3D<N>& r);
+    inline void rotate(const N& x, const N& y, const N& z);
 
     inline const Matrix4<N>& get();
 

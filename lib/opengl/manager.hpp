@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <string>
 #include <vector>
 
 namespace Scryver {
@@ -11,11 +12,14 @@ namespace OpenGL {
 
 typedef uint32_t buffer_t;
 typedef uint32_t vertexArray_t;
+typedef uint32_t texture_t;
 
 class GLManager
 {
 public:
-    bool initialize(size_t reserveBuffers = 512, size_t reserveVertexArrays = 128);
+    bool initialize(size_t reserveBuffers = 512,
+                    size_t reserveVertexArrays = 128,
+                    size_t reserveTextures = 128);
     void destroy();
 
     buffer_t createBuffer();
@@ -30,6 +34,13 @@ public:
     void bindVertexArray(vertexArray_t vertexArray);
     void unbindVertexArray();
 
+    texture_t createTexture(const std::string& ddsPath);
+    void bindTexture(texture_t texture);
+    void unbindTexture();
+    texture_t createSkyBox(const std::string& skyBoxFolderPath);
+    void bindSkyBox(texture_t skyBox);
+    void unbindSkyBox();
+
     static GLManager& getInstance();
 
     GLManager(const GLManager&) = delete;
@@ -41,6 +52,18 @@ private:
 
     std::vector<buffer_t>       m_vBuffers;
     std::vector<vertexArray_t>  m_vVertexArrays;
+    std::vector<texture_t>      m_vTextures;
+
+    struct ImageData
+    {
+        unsigned int format;
+        unsigned int mipMapCount;
+        unsigned int width;
+        unsigned int height;
+        unsigned char* buffer;
+    };
+
+    bool openDdsImage(const std::string& file, ImageData* output);
 };
 
 }  // namespace OpenGL

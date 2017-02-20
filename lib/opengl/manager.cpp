@@ -1,7 +1,10 @@
 #include "manager.hpp"
 
+#include <cassert>
 #include <cstdint>
 #include <cstddef>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 #include <string>
 
@@ -16,6 +19,7 @@
 using Scryver::OpenGL::GLManager;
 using Scryver::OpenGL::buffer_t;
 using Scryver::OpenGL::vertexArray_t;
+using Scryver::OpenGL::texture_t;
 
 #ifndef TESTING_ENABLED
 // The ARB_debug_output extension, which is used in this tutorial as an example,
@@ -78,7 +82,8 @@ GLManager::~GLManager()
     destroy();
 }
 
-bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays)
+bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays,
+                           size_t reserveTextures)
 {
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -102,16 +107,20 @@ bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays)
 
     m_vBuffers.reserve(reserveBuffers);
     m_vVertexArrays.reserve(reserveVertexArrays);
+    m_vTextures.reserve(reserveTextures);
 
     return true;
 }
 
 void GLManager::destroy()
 {
+    if (m_vTextures.size() > 0)
+        glDeleteTextures(m_vTextures.size(), &m_vTextures.front());
     if (m_vVertexArrays.size() > 0)
         glDeleteVertexArrays(m_vVertexArrays.size(), &m_vVertexArrays.front());
     if (m_vBuffers.size() > 0)
         glDeleteBuffers(m_vBuffers.size(), &m_vBuffers.front());
+    m_vTextures.clear();
     m_vVertexArrays.clear();
     m_vBuffers.clear();
 }
@@ -180,9 +189,181 @@ void GLManager::unbindVertexArray()
     glBindVertexArray(0);
 }
 
+texture_t GLManager::createTexture(const std::string& ddsPath)
+{
+    ImageData data;
+    bool success = openDdsImage(ddsPath, &data);
+    if (success == false)
+        return 0;
+
+    // Create the texture
+    texture_t textureID;
+    glGenTextures(1, &textureID);
+    m_vTextures.push_back(textureID);
+
+    // Bind the newly created texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Fill the mipmaps
+    unsigned int blockSize = (data.format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
+    unsigned int offset = 0;
+
+    for (unsigned int level = 0; level < data.mipMapCount && (data.width || data.height); ++level)
+    {
+        unsigned int size = ((data.width + 3) / 4) * ((data.height + 3) / 4) * blockSize;
+        glCompressedTexImage2D(GL_TEXTURE_2D, level, data.format, data.width, data.height, 0, size, data.buffer + offset);
+
+        offset += size;
+        data.width /= 2;
+        data.height /= 2;
+    }
+    free(data.buffer);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return textureID;
+}
+
+void GLManager::bindTexture(texture_t texture)
+{
+    glBindTexture(GL_TEXTURE_2D, texture);
+}
+
+void GLManager::unbindTexture()
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
+{
+    static const GLenum types[6] = {
+        GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+        GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+        GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+        GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+    };
+
+    static const std::string names[6] = {
+        "posx.dds", "negx.dds",
+        "posy.dds", "negy.dds",
+        "posz.dds", "negz.dds"
+    };
+
+    std::string::const_iterator it = skyBoxFolderPath.end();
+    --it;
+    std::string baseDir = (*it == '/') ? skyBoxFolderPath : skyBoxFolderPath + "/";
+
+    texture_t textureID;
+    glGenTextures(1, &textureID);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    for (size_t i = 0; i < 6; ++i)
+    {
+        std::string name = baseDir + names[i];
+        ImageData data;
+        bool success = openDdsImage(name, &data);
+        if (success == false)
+        {
+            glDeleteTextures(1, &textureID);
+            return 0;
+        }
+        // assert(data.mipMapCount == 1);
+
+        unsigned int blockSize = (data.format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
+        unsigned int size = ((data.width + 3) / 4) * ((data.height + 3) / 4) * blockSize;
+
+        glCompressedTexImage2D(types[i], 0, data.format, data.width, data.height, 0, size, data.buffer);
+
+        free(data.buffer);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    m_vTextures.push_back(textureID);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    return textureID;
+}
+
+void GLManager::bindSkyBox(texture_t skyBox)
+{
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox);
+}
+
+void GLManager::unbindSkyBox()
+{
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
 GLManager& GLManager::getInstance()
 {
     static GLManager manager;
 
     return manager;
+}
+
+bool GLManager::openDdsImage(const std::string& filename, ImageData* output)
+{
+    const uint32_t FOURCC_DXT1 = 0x31545844;    // Equivalent to "DXT1" in ASCII
+    const uint32_t FOURCC_DXT3 = 0x33545844;    // Equivalent to "DXT3" in ASCII
+    const uint32_t FOURCC_DXT5 = 0x35545844;    // Equivalent to "DXT5" in ASCII
+
+    // Try to open the file
+    FILE* fp = fopen(filename.c_str(), "rb");
+    if (fp == NULL)
+        return false;
+
+    // Verify the file type
+    char filecode[4];
+    fread(filecode, 1, 4, fp);
+    if (strncmp(filecode, "DDS ", 4) != 0)
+    {
+        fclose(fp);
+        return false;
+    }
+
+    // Get the surface description
+    unsigned char header[124];
+    fread(&header, 124, 1, fp);
+
+    output->height              = *(unsigned int*)&(header[ 8]);
+    output->width               = *(unsigned int*)&(header[12]);
+    unsigned int linearSize     = *(unsigned int*)&(header[16]);
+    output->mipMapCount         = *(unsigned int*)&(header[24]);
+    unsigned int fourCC         = *(unsigned int*)&(header[80]);
+
+    unsigned int bufSize;
+
+    // How big is it going to be including all mipmaps?
+    bufSize = output->mipMapCount > 1 ? linearSize * 2 : linearSize;
+    output->buffer = (unsigned char*)malloc(bufSize * sizeof(unsigned char));
+    fread(output->buffer, 1, bufSize, fp);
+    // Close the file pointer
+    fclose(fp);
+
+    // Deal with the 3 different formats, DXT1, DXT3 and DXT5
+    // unsigned int components = (fourCC == FOURCC_DXT1) ? 3 : 4;
+    switch (fourCC)
+    {
+        case FOURCC_DXT1:
+            output->format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            break;
+        case FOURCC_DXT3:
+            output->format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+            break;
+        case FOURCC_DXT5:
+            output->format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+            break;
+        default:
+            free(output->buffer);
+            return false;
+    }
+
+    return true;
 }
