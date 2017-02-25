@@ -235,7 +235,7 @@ void GLManager::unbindTexture()
 
 texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
 {
-    static const GLenum types[6] = {
+    const GLenum types[6] = {
         GL_TEXTURE_CUBE_MAP_POSITIVE_X,
         GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
         GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
@@ -244,7 +244,7 @@ texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
         GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     };
 
-    static const std::string names[6] = {
+    const std::string names[6] = {
         "posx.dds", "negx.dds",
         "posy.dds", "negy.dds",
         "posz.dds", "negz.dds"
@@ -310,9 +310,9 @@ GLManager& GLManager::getInstance()
 
 bool GLManager::openDdsImage(const std::string& filename, ImageData* output)
 {
-    const uint32_t FOURCC_DXT1 = 0x31545844;    // Equivalent to "DXT1" in ASCII
-    const uint32_t FOURCC_DXT3 = 0x33545844;    // Equivalent to "DXT3" in ASCII
-    const uint32_t FOURCC_DXT5 = 0x35545844;    // Equivalent to "DXT5" in ASCII
+    #define FOURCC_DXT1 0x31545844      // Equivalent to "DXT1" in ASCII
+    #define FOURCC_DXT3 0x33545844      // Equivalent to "DXT3" in ASCII
+    #define FOURCC_DXT5 0x35545844      // Equivalent to "DXT5" in ASCII
 
     // Try to open the file
     FILE* fp = fopen(filename.c_str(), "rb");

@@ -94,3 +94,20 @@ void Matrix4<N>::initTranslation(const N& x, const N& y, const N& z)
     m[1][3] = y;
     m[2][3] = z;
 }
+
+template <typename N>
+void Matrix4<N>::initPerspective(const N& fov,
+                                 const N& width, const N& height,
+                                 const N& near, const N& far)
+{
+    const N aspectRatio = width / height;
+    const N depthRange = near - far;
+    const N tanHalfFOV = tan(toRadian(fov / 2.0));
+    initIdentity();
+    m[0][0] = 1.0 / (tanHalfFOV * aspectRatio);
+    m[1][1] = 1.0 / tanHalfFOV;
+    m[2][2] = (-near - far) / depthRange;
+    m[2][3] = 2.0 * far * near / depthRange;
+    m[3][2] = 1.0;
+    m[3][3] = 0.0;
+}

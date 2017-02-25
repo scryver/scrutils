@@ -171,3 +171,29 @@ TEST(Matrix4, InitTranslation)
     ASSERT_FLOAT_EQ(0.0f, m.m[3][2]);
     ASSERT_FLOAT_EQ(1.0f, m.m[3][3]);
 }
+
+TEST(Matrix4, InitPerspective)
+{
+    Matrix4f m;
+    m.initPerspective(60.0f, 1024.0f, 768.0f, 0.1f, 100.0f);
+
+    ASSERT_FLOAT_EQ(1.299038105676658f, m.m[0][0]); // 1 / (tan(FOV / 2) * aspectRatio)
+    ASSERT_FLOAT_EQ(0.0f,               m.m[0][1]);
+    ASSERT_FLOAT_EQ(0.0f,               m.m[0][2]);
+    ASSERT_FLOAT_EQ(0.0f,               m.m[0][3]);
+
+    ASSERT_FLOAT_EQ(0.0f,               m.m[1][0]);
+    ASSERT_FLOAT_EQ(1.732050807568877f, m.m[1][1]); // 1 / tan(FOV / 2)
+    ASSERT_FLOAT_EQ(0.0f,               m.m[1][2]);
+    ASSERT_FLOAT_EQ(0.0f,               m.m[1][3]);
+
+    ASSERT_FLOAT_EQ(0.0f,               m.m[2][0]);
+    ASSERT_FLOAT_EQ(0.0f,               m.m[2][1]);
+    ASSERT_FLOAT_EQ(1.002002002002002f, m.m[2][2]); // (-zNear - zFar) / zRange (zRange = zNear - zFar)
+    ASSERT_FLOAT_EQ(-0.20020020020020f, m.m[2][3]); // 2 * zFar * zNear / zRange
+
+    ASSERT_FLOAT_EQ(0.0f,               m.m[3][0]);
+    ASSERT_FLOAT_EQ(0.0f,               m.m[3][1]);
+    ASSERT_FLOAT_EQ(1.0f,               m.m[3][2]); // Save original Z-value
+    ASSERT_FLOAT_EQ(0.0f,               m.m[3][3]);
+}

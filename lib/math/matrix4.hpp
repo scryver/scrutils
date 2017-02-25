@@ -24,6 +24,9 @@ struct Matrix4
     inline void initRotation(const N& x, const N& y, const N& z);
     inline void initTranslation(const Vector3D<N>& position);
     inline void initTranslation(const N& x, const N& y, const N& z);
+    inline void initPerspective(const N& fov,
+                                const N& width, const N& height,
+                                const N& near, const N& far);
 };
 
 #include "matrix4_inl.hpp"

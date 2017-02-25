@@ -20,6 +20,45 @@ Vector3D<N>::Vector3D(const N& x_, const N& y_, const N& z_) :
 }
 
 template <typename N>
+N Vector3D<N>::length() const
+{
+    return sqrt(lengthSquared());
+}
+
+template <typename N>
+N Vector3D<N>::lengthSquared() const
+{
+    return x * x + y * y + z * z;
+}
+
+template <typename N>
+Vector3D<N> Vector3D<N>::normalized() const
+{
+    Vector3D<N> norm(x, y, z);
+    norm.normalize();
+    return norm;
+}
+
+template <typename N>
+Vector3D<N>& Vector3D<N>::normalize()
+{
+    const N l = length();
+    x /= l;
+    y /= l;
+    z /= l;
+    return *this;
+}
+
+template <typename N>
+Vector3D<N> Vector3D<N>::cross(const Vector3D<N>& right)
+{
+    const N newX = y * right.z - z * right.y;
+    const N newY = z * right.x - x * right.z;
+    const N newZ = x * right.y - y * right.x;
+    return Vector3D<N>(newX, newY, newZ);
+}
+
+template <typename N>
 Vector3D<N>& Vector3D<N>::operator+=(const N& right)
 {
     this->x += right;

@@ -254,3 +254,40 @@ TEST(Vector3D, ScalarMultiplication)
     EXPECT_FLOAT_EQ(result3.y, result4.y);
     EXPECT_FLOAT_EQ(result3.z, result4.z);
 }
+
+TEST(Vector3D, Length)
+{
+    Vector3Df v(2, 0, 0);
+    EXPECT_FLOAT_EQ(2.0f, v.length());
+    EXPECT_FLOAT_EQ(4.0f, v.lengthSquared());
+    v.x = 1.0f;
+    v.y = 2.0f;
+    v.z = 3.0f;
+    EXPECT_FLOAT_EQ(3.7416573867739413f, v.length());
+    EXPECT_FLOAT_EQ(14.0f, v.lengthSquared());
+}
+
+TEST(Vector3D, Normalize)
+{
+    Vector3Df vector(1, 2, 3);
+
+    Vector3Df vn = vector.normalized();
+
+    Vector3Df vector2(3, 4, 5);
+    vector2.normalize();
+
+    EXPECT_FLOAT_EQ(1.0f, vn.length());
+    EXPECT_GT(vector.length(), 1.0f);
+    EXPECT_FLOAT_EQ(1.0f, vector2.length());
+}
+
+TEST(Vector3D, CrossProduct)
+{
+    Vector3Df v1(1, 0, 0);
+    Vector3Df v2(0, 1, 0);
+
+    Vector3Df cross = v1.cross(v2);
+    EXPECT_FLOAT_EQ(0.0f, cross.x);
+    EXPECT_FLOAT_EQ(0.0f, cross.y);
+    EXPECT_FLOAT_EQ(1.0f, cross.z);
+}

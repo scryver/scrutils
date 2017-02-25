@@ -81,8 +81,12 @@ int main(int argc, char* argv[]) {
     glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
 
+    Scryver::Math::Matrix4f camera;
+    camera.initPerspective(65.0f, 800.0f, 600.0f, 0.1f, 100.0f);
+
 
     Scryver::OpenGL::uniform_t worldLoc = shader.getUniform("world");
+    Scryver::OpenGL::uniform_t cameraLoc = shader.getUniform("camera");
 
     float count = 0.0f;
     Scryver::Math::Transform3Df transform;
@@ -90,47 +94,47 @@ int main(int argc, char* argv[]) {
     Scryver::OpenGL::texture_t skyBox = glManager.createSkyBox("resources/textures/cubemaps/stairs_in_forest");
     Scryver::Math::Vector3Df skyboxVertices[] = {
         // Positions
-        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
 
-        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
-        Scryver::Math::Vector3Df(-1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
 
-        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
 
-        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f,  1.0f),
-        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
 
-        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f,  1.0f),
-        Scryver::Math::Vector3Df(-1.0f,  1.0f, -1.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
 
-        Scryver::Math::Vector3Df(-1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f, -1.0f),
-        Scryver::Math::Vector3Df(-1.0f, -1.0f,  1.0f),
-        Scryver::Math::Vector3Df( 1.0f, -1.0f,  1.0f)
+        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
+        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f)
     };
     Scryver::OpenGL::buffer_t skyBoxBuf = glManager.createBuffer();
     glManager.bindArrayBuffer(skyBoxBuf);
@@ -153,7 +157,7 @@ int main(int argc, char* argv[]) {
         window.destroy();
         return -1;
     }
-    // Scryver::OpenGL::uniform_t skyboxMapper = skyBoxShader.getUniform("skybox");
+    Scryver::OpenGL::uniform_t skyCameraLoc = skyBoxShader.getUniform("camera");
 
     while (window.isOpen())
     {
@@ -161,7 +165,7 @@ int main(int argc, char* argv[]) {
         count += dt;
         float scale = 0.5f * sinf(count * 0.1f) + 0.5f;
         transform.scale(scale, scale, scale);
-        transform.worldPos(sinf(count), 0.0f, 0.0f);
+        transform.worldPos(sinf(count), 0.0f, 5.0f);
         transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
         window.pollEvents();
@@ -175,6 +179,7 @@ int main(int argc, char* argv[]) {
         window.clear();
 
         skyBoxShader.use();
+        glUniformMatrix4fv(skyCameraLoc, 1, GL_TRUE, &camera.m[0][0]);
         glActiveTexture(GL_TEXTURE0);
         glManager.bindSkyBox(skyBox);
         glManager.bindVertexArray(skyBoxVAO);
@@ -184,6 +189,7 @@ int main(int argc, char* argv[]) {
         glManager.unbindVertexArray();
 
         shader.use();
+        glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.m[0][0]);
         glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &transform.get().m[0][0]);
         // Drawing calls
         glManager.bindVertexArray(VAO);

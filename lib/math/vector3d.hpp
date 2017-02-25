@@ -1,6 +1,8 @@
 #ifndef SCRYVER_MATH_VECTOR_3D_HPP
 #define SCRYVER_MATH_VECTOR_3D_HPP
 
+#include <cmath>
+
 namespace Scryver {
 
 namespace Math {
@@ -15,6 +17,14 @@ struct Vector3D
     inline Vector3D();
     inline explicit Vector3D(const N& all);
     inline Vector3D(const N& x, const N& y, const N& z);
+
+    inline N length() const;
+    inline N lengthSquared() const;
+
+    inline Vector3D<N> normalized() const;
+    inline Vector3D<N>& normalize();
+
+    inline Vector3D<N> cross(const Vector3D<N>& right);
 
     inline Vector3D<N>& operator+=(const N& right);
     inline Vector3D<N>& operator+=(const Vector3D<N>& right);
