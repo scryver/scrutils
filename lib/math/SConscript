@@ -19,8 +19,9 @@ headers = [
 ]
 
 inlines = [
-    'vector2d.inl',
-    'vector3d.inl',
+    'vector2d_inl.hpp',
+    'vector3d_inl.hpp',
+    'quaternion_inl.hpp',
     'matrix4_inl.hpp',
     'transform3d_inl.hpp',
 ]

@@ -111,3 +111,18 @@ void Matrix4<N>::initPerspective(const N& fov,
     m[3][2] = 1.0;
     m[3][3] = 0.0;
 }
+
+template <typename Nr>
+void Matrix4<Nr>::initLookAt(const Vector3D<Nr>& target,
+                             const Vector3D<Nr>& up)
+{
+    Vector3D<Nr> N = target.normalized();
+    Vector3D<Nr> U = up.cross(N);
+    U.normalize();
+    Vector3D<Nr> V = N.cross(U);
+
+    m[0][0] = U.x;  m[0][1] = U.y;  m[0][2] = U.z;  m[0][3] = 0.0f;
+    m[1][0] = V.x;  m[1][1] = V.y;  m[1][2] = V.z;  m[1][3] = 0.0f;
+    m[2][0] = N.x;  m[2][1] = N.y;  m[2][2] = N.z;  m[2][3] = 0.0f;
+    m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
+}

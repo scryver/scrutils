@@ -97,6 +97,7 @@ sub_dirs = [
     'lib/inputs',
     'lib/math',
     'lib/opengl',
+    'lib/render',
     'lib/timing',
     'lib/utility',
     'games/sandbox',

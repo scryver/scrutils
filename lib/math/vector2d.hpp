@@ -39,7 +39,7 @@ template <typename N>
 inline Vector2D<N> operator*(const Vector2D<N>& vector, float scalar);
 
 // This include only works when the default constructor is already defined
-#include "vector2d.inl"
+#include "vector2d_inl.hpp"
 
 typedef Vector2D<double>         Vector2Dd;
 typedef Vector2D<float>          Vector2Df;

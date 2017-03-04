@@ -1,0 +1,21 @@
+from utility.headers import install_headers
+
+Import('env')
+
+staticScrEnder = env.Library(
+    'scrender',   # SCRyver rENDER
+    source=[
+        'camera.cpp',
+    ]
+)
+
+headers = [
+    'camera.hpp',
+]
+
+inlines = None
+
+install_headers(env, 'Scryver/Render', headers, inlines)
+# @TODO: Implement copy-in file strategy for headers and inline/implementation
+
+env.Install('$PREFIX/lib', staticScrEnder)

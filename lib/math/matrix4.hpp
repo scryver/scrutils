@@ -27,6 +27,8 @@ struct Matrix4
     inline void initPerspective(const N& fov,
                                 const N& width, const N& height,
                                 const N& near, const N& far);
+    inline void initLookAt(const Vector3D<N>& target,
+                           const Vector3D<N>& up = Vector3D<N>(0, 1, 0));
 };
 
 #include "matrix4_inl.hpp"

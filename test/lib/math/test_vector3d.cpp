@@ -105,6 +105,18 @@ TEST(Vector3D, AssingmentConstructor)
     EXPECT_FLOAT_EQ(0.0f, vec3.z);
 }
 
+TEST(Vector3D, UnaryMinus)
+{
+    Vector3Df v1(1, 2, 3);
+    Vector3Df v2 = -v1;
+    EXPECT_FLOAT_EQ(1.0f, v1.x);
+    EXPECT_FLOAT_EQ(2.0f, v1.y);
+    EXPECT_FLOAT_EQ(3.0f, v1.z);
+    EXPECT_FLOAT_EQ(-1.0f, v2.x);
+    EXPECT_FLOAT_EQ(-2.0f, v2.y);
+    EXPECT_FLOAT_EQ(-3.0f, v2.z);
+}
+
 TEST(Vector3D, AssignmentAddition)
 {
     const int NR_TESTS = vec3DnrTestGen(vec3DrandEngine);
@@ -290,4 +302,29 @@ TEST(Vector3D, CrossProduct)
     EXPECT_FLOAT_EQ(0.0f, cross.x);
     EXPECT_FLOAT_EQ(0.0f, cross.y);
     EXPECT_FLOAT_EQ(1.0f, cross.z);
+}
+
+TEST(Vector3D, RotateAroundAxis)
+{
+    Vector3Df v1(1, 0, 0);
+
+    v1.rotate(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(0.0f, v1.x);
+    EXPECT_FLOAT_EQ(0.0f, v1.y);
+    EXPECT_FLOAT_EQ(-1.0f, v1.z);
+
+    v1.rotate(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(-1.0f, v1.x);
+    EXPECT_FLOAT_EQ(0.0f, v1.y);
+    EXPECT_FLOAT_EQ(0.0f, v1.z);
+
+    v1.rotate(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(0.0f, v1.x);
+    EXPECT_FLOAT_EQ(0.0f, v1.y);
+    EXPECT_FLOAT_EQ(1.0f, v1.z);
+
+    v1.rotate(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(1.0f, v1.x);
+    EXPECT_FLOAT_EQ(0.0f, v1.y);
+    EXPECT_FLOAT_EQ(0.0f, v1.z);
 }

@@ -15,6 +15,7 @@
 #include "Scryver/Math/Vector3D.hpp"
 #include "Scryver/Math/Matrix4.hpp"
 #include "Scryver/Math/Transform3D.hpp"
+#include "Scryver/Render/Camera.hpp"
 
 
 static const std::string vertexFile = "build/resources/shaders/ogldev.vs";
@@ -81,9 +82,11 @@ int main(int argc, char* argv[]) {
     glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
 
-    Scryver::Math::Matrix4f camera;
-    camera.initPerspective(65.0f, 800.0f, 600.0f, 0.1f, 100.0f);
-
+    Scryver::Render::Camera camera;
+    camera.initialize(Scryver::Math::Vector3Df(0, 0, -5.0f),
+                      Scryver::Math::Vector3Df(0, 0, 1),
+                      Scryver::Math::Vector3Df(0, 1, 0),
+                      800.0f, 600.0f);
 
     Scryver::OpenGL::uniform_t worldLoc = shader.getUniform("world");
     Scryver::OpenGL::uniform_t cameraLoc = shader.getUniform("camera");
@@ -169,6 +172,16 @@ int main(int argc, char* argv[]) {
         transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
         window.pollEvents();
+        if (window.isKeyDown(Scryver::Keys::W))
+            camera.position(camera.position() + camera.target() * dt);
+        if (window.isKeyDown(Scryver::Keys::S))
+            camera.position(camera.position() - camera.target() * dt);
+
+        if (window.isKeyDown(Scryver::Keys::A))
+            camera.position(camera.position() + camera.target().cross(camera.up()).normalized() * dt);
+        if (window.isKeyDown(Scryver::Keys::D))
+            camera.position(camera.position() - camera.target().cross(camera.up()).normalized() * dt);
+
         // if (window.isKeyPressed(Scryver::Keys::Number_1))
         //     debugPrint("Keyboard: Number 1");
         // if (window.isKeyPressed(Scryver::Keys::Space))
@@ -179,7 +192,7 @@ int main(int argc, char* argv[]) {
         window.clear();
 
         skyBoxShader.use();
-        glUniformMatrix4fv(skyCameraLoc, 1, GL_TRUE, &camera.m[0][0]);
+        glUniformMatrix4fv(skyCameraLoc, 1, GL_TRUE, &camera.getViewProjection().m[0][0]);
         glActiveTexture(GL_TEXTURE0);
         glManager.bindSkyBox(skyBox);
         glManager.bindVertexArray(skyBoxVAO);
@@ -189,7 +202,7 @@ int main(int argc, char* argv[]) {
         glManager.unbindVertexArray();
 
         shader.use();
-        glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.m[0][0]);
+        glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.getViewProjection().m[0][0]);
         glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &transform.get().m[0][0]);
         // Drawing calls
         glManager.bindVertexArray(VAO);
@@ -206,6 +219,7 @@ int main(int argc, char* argv[]) {
         if (frames >= 0.0f)
         {
             debugPrint("Frames: " << frames);
+            debugPrint("Camera(" << camera.position().x << ", " << camera.position().y << ", " << camera.position().z << ")");
         }
     }
 
