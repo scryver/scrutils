@@ -13,9 +13,10 @@ display_usage() {
     echo "  -o|--coverage       : Run coverage based on executed code"
     echo "  -t|--test           : Run all unit tests"
     echo "  -tname|--test=name  : Run unit test for name"
+    echo "  --backend=name      : Use library name for window and input (sfml or glfw)"
 }
 
-TEMP=$(getopt -o abt::och -l all,build,test::,coverage,check,help \
+TEMP=$(getopt -o abt::och -l all,build,test::,coverage,check,backend:,help \
      -n 'run_tests' -- "$@")
 
 if [ $? != 0 ] || [ $# == 0 ] ; then
@@ -35,6 +36,7 @@ RunTestScrIles=0
 RunTestScrOgl=0
 RunCoverage=0
 RunStaticCheck=0
+Backend="glfw"
 
 while true; do
     case "$1" in
@@ -74,7 +76,7 @@ while true; do
                 "timing")   RunTestScrIng=1;    shift 2 ;;
                 "files")    RunTestScrIles=1;   shift 2 ;;
                 "opengl")   RunTestScrOgl=1;    shift 2 ;;
-                *)          echo "Unrecognized test $2"; exit 1 ;;
+                *)          echo "Unrecognised test $2"; exit 1 ;;
             esac
             ;;
         -o|--coverage)
@@ -86,6 +88,20 @@ while true; do
             echo "Running CppCheck static analyzer"
             RunStaticCheck=1
             shift
+            ;;
+        --backend)
+            echo "Using $2 as backend"
+            case "$2" in
+                "glfw"|"GLFW")
+                    Backend="glfw"
+                    shift 2
+                    ;;
+                "sfml"|"SFML")
+                    Backend="sfml"
+                    shift 2
+                    ;;
+                *)          echo "Unrecognised backend $2"; exit 1 ;;
+            esac
             ;;
         -h|--help)
             display_usage
@@ -105,8 +121,11 @@ done
 for arg do echo "Unrecognized option '$arg'" ; display_usage ; exit 1 ; done
 
 if [ $RunBuild == 1 ]; then
-    # scons -Q --coverage                     || exit 1
-    scons -Q --coverage --backend=glfw      || exit 1
+    if [ $Backend == "glfw" ]; then
+        scons -Q --coverage --backend=glfw      || exit 1
+    elif [ $Backend == "sfml" ]; then
+        scons -Q --coverage                     || exit 1
+    fi
 fi
 
 if [ $RunTestScrAth == 1 ]; then
@@ -129,10 +148,13 @@ if [ $RunTestScrOgl == 1 ]; then
 fi
 
 if [ $RunCoverage == 1 ]; then
-    ./run_gcoverage
+    ./gcoverager
 fi
 
 if [ $RunStaticCheck == 1 ]; then
-    # ./run_cppcheck USING_SFML
-    ./run_cppcheck USING_GLFW
+    if [ $Backend == "glfw" ]; then
+        ./cppchecker USING_GLFW
+    elif [ $Backend == "sfml" ]; then
+        ./cppchecker USING_SFML
+    fi
 fi

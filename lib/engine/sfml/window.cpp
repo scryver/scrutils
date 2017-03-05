@@ -14,6 +14,7 @@
 #include "Scryver/Math/Vector2D.hpp"
 
 using Scryver::Engine::SFMLWindow;
+using Scryver::Engine::CursorMode;
 using Scryver::Math::Vector2D;
 using Scryver::Math::Vector2Df;
 using namespace Scryver::Keys;
@@ -27,13 +28,13 @@ SFMLWindow::SFMLWindow()
 }
 
 bool SFMLWindow::initialize(uint16_t width, uint16_t height,
-                            const std::string& title)
+                            const std::string& title, CursorMode cm)
 {
-    return initialize(Vector2D<uint16_t>(width, height), title);
+    return initialize(Vector2D<uint16_t>(width, height), title, cm);
 }
 
 bool SFMLWindow::initialize(const Vector2D<uint16_t>& size,
-                            const std::string& title)
+                            const std::string& title, CursorMode cm)
 {
     assert(m_window == nullptr && "Window already initialized!");
     assert(m_userInput == nullptr && "User input already initialized!");
@@ -52,6 +53,8 @@ bool SFMLWindow::initialize(const Vector2D<uint16_t>& size,
     m_window = new sf::Window(sf::VideoMode(m_size.x, m_size.y), title.c_str(), sf::Style::Default, settings);
 
     m_window->setVerticalSyncEnabled(false);
+
+    cursorMode(cm);
 
     m_userInput = new Scryver::Inputs::UserInput;
 
@@ -115,6 +118,26 @@ void SFMLWindow::height(uint16_t h)
     m_window->setSize(s);
 }
 
+void SFMLWindow::cursorMode(CursorMode cm)
+{
+    m_cursorMode = cm;
+    if (m_cursorMode == CursorMode::Centered)
+    {
+        m_window->setMouseCursorVisible(false);
+        // m_window->setMouseCursorGrabbed(true);
+    }
+    else if (m_cursorMode == CursorMode::Hidden)
+    {
+        m_window->setMouseCursorVisible(false);
+        // m_window->setMouseCursorGrabbed(false);
+    }
+    else if (m_cursorMode == CursorMode::Normal)
+    {
+        m_window->setMouseCursorVisible(true);
+        // m_window->setMouseCursorGrabbed(false);
+    }
+}
+
 bool SFMLWindow::isOpen() const
 {
     return m_window != nullptr && m_window->isOpen();
@@ -144,6 +167,12 @@ bool SFMLWindow::pollEvents()
         {
             m_mousePosition.x = static_cast<float>(event.mouseMove.x);
             m_mousePosition.y = static_cast<float>(event.mouseMove.y);
+
+            if (m_cursorMode == CursorMode::Centered)
+            {
+                m_mousePosition.x -= static_cast<float>(m_size.x) / 2.0f;
+                m_mousePosition.y -= static_cast<float>(m_size.y) / 2.0f;
+            }
         }
         else if (event.type == sf::Event::KeyPressed)
         {
@@ -291,6 +320,13 @@ bool SFMLWindow::pollEvents()
             else
                 errorPrint("Key " << event.key.code << " is not implemented yet.");
         }
+    }
+
+    if (m_cursorMode == CursorMode::Centered)
+    {
+        sf::Mouse::setPosition(sf::Vector2i(static_cast<int>((m_size.x / 2)),
+                                            static_cast<int>((m_size.y / 2))),
+                               *m_window);
     }
 
     return shouldClose;

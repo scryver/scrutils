@@ -14,6 +14,11 @@ typedef uint32_t buffer_t;
 typedef uint32_t vertexArray_t;
 typedef uint32_t texture_t;
 
+enum class Option
+{
+    DepthTest,
+};
+
 class GLManager
 {
 public:
@@ -22,6 +27,9 @@ public:
                     size_t reserveTextures = 128,
                     bool depthTest = false);
     void destroy();
+
+    void enable(Option o);
+    void disable(Option o);
 
     buffer_t createBuffer();
     std::vector<buffer_t> createBuffers(size_t nrBuffers);

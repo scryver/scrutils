@@ -62,8 +62,8 @@ struct Quaternion
     inline Quaternion<N>& operator*=(const Quaternion<N>& right);
 };
 
-template <typename N>
-inline const Vector3D<N> operator-(const Vector3D<N>& vector);
+// template <typename N>
+// inline const Vector3D<N> operator-(const Vector3D<N>& vector);
 template <typename N>
 inline const Vector3D<N> operator+(const Vector3D<N>& left, const N& right);
 template <typename N>

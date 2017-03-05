@@ -84,6 +84,7 @@ public:
      * Generic
      */
     MOCK_METHOD1( Enable,                   void(GLenum mode) );
+    MOCK_METHOD1( Disable,                  void(GLenum mode) );
     MOCK_METHOD1( Clear,                    void(GLenum flags) );
     MOCK_METHOD2( PolygonMode,              void(GLenum face, GLenum mode));
     MOCK_METHOD4( Viewport,                 void(GLint x, GLint y, GLsizei width, GLsizei height));
@@ -149,6 +150,7 @@ public:
 #define glewInit                    GLMock.GlewInit
 
 #define glEnable                    GLMock.Enable
+#define glDisable                   GLMock.Disable
 #define glClear                     GLMock.Clear
 #define glPolygonMode               GLMock.PolygonMode
 #define glViewport                  GLMock.Viewport

@@ -17,6 +17,7 @@
 #include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::GLManager;
+using Scryver::OpenGL::Option;
 using Scryver::OpenGL::buffer_t;
 using Scryver::OpenGL::vertexArray_t;
 using Scryver::OpenGL::texture_t;
@@ -127,6 +128,24 @@ void GLManager::destroy()
     m_vTextures.clear();
     m_vVertexArrays.clear();
     m_vBuffers.clear();
+}
+
+void GLManager::enable(Option o)
+{
+    GLenum opt;
+    if (o == Option::DepthTest)
+        opt = GL_DEPTH_TEST;
+
+    glEnable(opt);
+}
+
+void GLManager::disable(Option o)
+{
+    GLenum opt;
+    if (o == Option::DepthTest)
+        opt = GL_DEPTH_TEST;
+
+    glDisable(opt);
 }
 
 buffer_t GLManager::createBuffer()

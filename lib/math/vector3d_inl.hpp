@@ -151,64 +151,56 @@ Vector3D<N>& Vector3D<N>::operator*=(const N& right)
     return *this;
 }
 
-template <typename N>
-const Vector3D<N> operator-(const Vector3D<N>& vector)
-{
-    return -Vector3D<N>(vector);
-}
+// template <typename N>
+// const Vector3D<N> operator-(const Vector3D<N>& vector)
+// {
+//     return -Vector3D<N>(vector);
+// }
 
 template <typename N>
 const Vector3D<N> operator+(const Vector3D<N>& left, const N& right)
 {
     return Vector3D<N>(left) += right;
-    // return Vector3D<N>(left.x + right, left.y + right, left.z + right);
 }
 
 template <typename N>
 const Vector3D<N> operator+(const N& left, const Vector3D<N>& right)
 {
     return Vector3D<N>(right) += left;
-    // return right + left;
 }
 
 template <typename N>
 const Vector3D<N> operator+(const Vector3D<N>& left, const Vector3D<N>& right)
 {
     return Vector3D<N>(left) += right;
-    // return Vector3D<N>(left.x + right.x, left.y + right.y, left.z + right.z);
 }
 
 template <typename N>
 const Vector3D<N> operator-(const Vector3D<N>& left, const N& right)
 {
     return Vector3D<N>(left) -= right;
-    // return Vector3D<N>(left.x - right, left.y - right, left.z - right);
 }
 
 template <typename N>
 const Vector3D<N> operator-(const N& left, const Vector3D<N>& right)
 {
     return Vector3D<N>(-right) += left;
-    // return Vector3D<N>(left - right.x, left - right.y, left - right.z);
 }
 
 template <typename N>
 const Vector3D<N> operator-(const Vector3D<N>& left, const Vector3D<N>& right)
 {
     return Vector3D<N>(left) -= right;
-    // return Vector3D<N>(left.x - right.x, left.y - right.y, left.z - right.z);
 }
 
 template <typename N>
 const Vector3D<N> operator*(float scalar, const Vector3D<N>& vector)
 {
     return Vector3D<N>(vector) *= scalar;
-    // return Vector3D<N>(scalar * vector.x, scalar * vector.y, scalar * vector.z);
 }
 
 template <typename N>
 const Vector3D<N> operator*(const Vector3D<N>& vector, float scalar)
 {
     return Vector3D<N>(vector) *= scalar;
-    // return scalar * vector;
 }

@@ -14,6 +14,7 @@
 #include "Scryver/Math/Vector2D.hpp"
 
 using Scryver::Engine::GLFWWindow;
+using Scryver::Engine::CursorMode;
 using Scryver::Math::Vector2D;
 using Scryver::Math::Vector2Df;
 using namespace Scryver::Keys;
@@ -27,13 +28,13 @@ GLFWWindow::GLFWWindow()
 }
 
 bool GLFWWindow::initialize(uint16_t width, uint16_t height,
-                            const std::string& title)
+                            const std::string& title, CursorMode cm)
 {
-    return initialize(Vector2D<uint16_t>(width, height), title);
+    return initialize(Vector2D<uint16_t>(width, height), title, cm);
 }
 
 bool GLFWWindow::initialize(const Vector2D<uint16_t>& size,
-                            const std::string& title)
+                            const std::string& title, CursorMode cm)
 {
     assert(m_window == nullptr && "Window already initialized!");
     assert(m_userInput == nullptr && "User input already initialized!");
@@ -65,11 +66,14 @@ bool GLFWWindow::initialize(const Vector2D<uint16_t>& size,
     }
     glfwMakeContextCurrent(m_window);
 
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
+
+    cursorMode(cm);
 
     glfwSetWindowUserPointer(m_window, this);
     glfwSetKeyCallback(m_window, keyCallback);
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);
+    // glfwSetCursorPosCallback(m_window, mouseMoveCallback);
 
     m_userInput = new Scryver::Inputs::UserInput;
 
@@ -129,6 +133,17 @@ void GLFWWindow::height(uint16_t h)
     glfwSetWindowSize(m_window, m_size.x, m_size.y);
 }
 
+void GLFWWindow::cursorMode(CursorMode cm)
+{
+    m_cursorMode = cm;
+    if (m_cursorMode == CursorMode::Centered)
+        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    else if (m_cursorMode == CursorMode::Hidden)
+        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    else if (m_cursorMode == CursorMode::Normal)
+        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
 bool GLFWWindow::isOpen() const
 {
     return m_window != nullptr && !glfwWindowShouldClose(m_window);
@@ -146,6 +161,12 @@ bool GLFWWindow::pollEvents()
     glfwGetCursorPos(m_window, &x, &y);
     m_mousePosition.x = static_cast<float>(x);
     m_mousePosition.y = static_cast<float>(y);
+    if (m_cursorMode == CursorMode::Centered)
+    {
+        m_mousePosition.x -= static_cast<float>(m_size.x) / 2.0f;
+        m_mousePosition.y -= static_cast<float>(m_size.y) / 2.0f;
+        glfwSetCursorPos(m_window, static_cast<double>(m_size.x) / 2.0, static_cast<double>(m_size.y) / 2.0);
+    }
 
     return glfwWindowShouldClose(m_window);
 }
@@ -211,3 +232,8 @@ void GLFWWindow::resizeCallback(GLFWwindow* window, int width, int height)
     w->m_size.x = static_cast<uint16_t>(width);
     w->m_size.y = static_cast<uint16_t>(height);
 }
+
+// void GLFWWindow::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
+// {
+//     debugPrint("Mouse move: (" << xpos << ", " << ypos << ")");
+// }

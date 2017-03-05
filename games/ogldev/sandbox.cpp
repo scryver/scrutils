@@ -12,6 +12,7 @@
 #include "Scryver/Timing/GameClock.hpp"
 #include "Scryver/Debug/Printer.hpp"
 #include "Scryver/Utility/Macros.hpp"
+#include "Scryver/Math/Vector2D.hpp"
 #include "Scryver/Math/Vector3D.hpp"
 #include "Scryver/Math/Matrix4.hpp"
 #include "Scryver/Math/Transform3D.hpp"
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]) {
     debugPrint("Initializing window for SFML");
 #endif
 
-    if (window.initialize(800, 600, "Main") == false)
+    if (window.initialize(800, 600, "Main", Scryver::Engine::CursorMode::Normal) == false)
         return -1;
 
     debugPrint(window.size().x << "x" << window.size().y);
@@ -164,13 +165,15 @@ int main(int argc, char* argv[]) {
     }
     Scryver::OpenGL::uniform_t skyCameraLoc = skyBoxShader.getUniform("camera");
 
+    bool depthTest = true;
+
     while (window.isOpen())
     {
         float dt = gameClock.newFrame();
         count += dt;
-        float scale = 0.5f * sinf(count * 0.1f) + 0.5f;
-        transform.scale(scale, scale, scale);
-        transform.worldPos(sinf(count), 0.0f, 5.0f);
+        // float scale = 0.5f * sinf(count * 1.0f) + 0.5f;
+        // transform.scale(scale, scale, scale);
+        transform.worldPos(5.0f * sinf(count * 1.0f), 0, 5.0f * cosf(count * 1.0f));
         transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
         if (window.pollEvents())
@@ -178,6 +181,25 @@ int main(int argc, char* argv[]) {
 
         if (window.isKeyPressed(Scryver::Keys::Number_1))
             glManager.wireMode(!glManager.wireMode());
+
+        if (window.isKeyPressed(Scryver::Keys::M))
+        {
+            if (window.cursorMode() == Scryver::Engine::CursorMode::Normal)
+                window.cursorMode(Scryver::Engine::CursorMode::Hidden);
+            else if (window.cursorMode() == Scryver::Engine::CursorMode::Hidden)
+                window.cursorMode(Scryver::Engine::CursorMode::Centered);
+            else if (window.cursorMode() == Scryver::Engine::CursorMode::Centered)
+                window.cursorMode(Scryver::Engine::CursorMode::Normal);
+        }
+
+        if (window.isKeyPressed(Scryver::Keys::N))
+        {
+            if (depthTest)
+                glManager.disable(Scryver::OpenGL::Option::DepthTest);
+            else
+                glManager.enable(Scryver::OpenGL::Option::DepthTest);
+            depthTest = !depthTest;
+        }
 
         if (window.isKeyDown(Scryver::Keys::W))
             camera.position(camera.position() + camera.target() * dt);
@@ -189,15 +211,23 @@ int main(int argc, char* argv[]) {
         if (window.isKeyDown(Scryver::Keys::D))
             camera.position(camera.position() - camera.target().cross(camera.up()).normalized() * dt);
 
-        if (window.isKeyDown(Scryver::Keys::Q))
-            camera.target(camera.target().rotated(-50.0 * dt, camera.up()));
-        if (window.isKeyDown(Scryver::Keys::E))
-            camera.target(camera.target().rotated(50.0 * dt, camera.up()));
-        if (window.isKeyDown(Scryver::Keys::R))
-            camera.target(camera.target().rotated(50.0 * dt, camera.target().cross(camera.up())));
-        if (window.isKeyDown(Scryver::Keys::F))
-            camera.target(camera.target().rotated(-50.0 * dt, camera.target().cross(camera.up())));
-
+        if (window.cursorMode() == Scryver::Engine::CursorMode::Centered)
+        {
+            Scryver::Math::Vector2Df mouse = window.mousePosition();
+            camera.target(camera.target().rotated(mouse.x * 0.05f, camera.up()));
+            camera.target(camera.target().rotated(-mouse.y * 0.05f, camera.target().cross(camera.up())));
+        }
+        else
+        {
+            if (window.isKeyDown(Scryver::Keys::Q))
+                camera.target(camera.target().rotated(-50.0 * dt, camera.up()));
+            if (window.isKeyDown(Scryver::Keys::E))
+                camera.target(camera.target().rotated(50.0 * dt, camera.up()));
+            if (window.isKeyDown(Scryver::Keys::R))
+                camera.target(camera.target().rotated(50.0 * dt, camera.target().cross(camera.up())));
+            if (window.isKeyDown(Scryver::Keys::F))
+                camera.target(camera.target().rotated(-50.0 * dt, camera.target().cross(camera.up())));
+        }
         // if (window.isKeyPressed(Scryver::Keys::Number_1))
         //     debugPrint("Keyboard: Number 1");
         // if (window.isKeyPressed(Scryver::Keys::Space))
@@ -242,8 +272,6 @@ int main(int argc, char* argv[]) {
         {
             debugPrint("Frames: " << frames);
             debugPrint("Camera(" << camera.position().x << ", " << camera.position().y << ", " << camera.position().z << ")");
-            debugPrint("Mouse(" << window.mousePosition().x << ", " << window.mousePosition().y << ")");
-            debugPrint("Window(" << window.size().x << "x" << window.size().y << ")");
         }
     }
 

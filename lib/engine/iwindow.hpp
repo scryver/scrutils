@@ -10,15 +10,27 @@ namespace Scryver {
 
 namespace Engine {
 
+enum class CursorMode
+{
+    Centered,
+    Hidden,
+    Normal
+};
+
 class IWindow
 {
 public:
-    IWindow() {}
+    IWindow()
+        : m_size(0, 0)
+        , m_mousePosition(0, 0)
+        , m_cursorMode(CursorMode::Normal) {}
     virtual ~IWindow() {}
     virtual bool initialize(uint16_t width = 800, uint16_t height = 600,
-                            const std::string& title = "Abstract Window")   = 0;
+                            const std::string& title = "Abstract Window",
+                            CursorMode cm = CursorMode::Normal)             = 0;
     virtual bool initialize(const Math::Vector2D<uint16_t>& size,
-                            const std::string& title = "Abstract Window")   = 0;
+                            const std::string& title = "Abstract Window",
+                            CursorMode cm = CursorMode::Normal)             = 0;
     virtual void destroy()                                                  = 0;
 
     Math::Vector2D<uint16_t> size() const { return m_size; }
@@ -27,6 +39,9 @@ public:
     virtual void width(uint16_t w)                                          = 0;
     uint16_t height() const { return m_size.y; }
     virtual void height(uint16_t h)                                         = 0;
+
+    CursorMode cursorMode() const { return m_cursorMode; }
+    virtual void cursorMode(CursorMode cm)                                  = 0;
 
     virtual bool isOpen()                                           const   = 0;
     // Return true if window should close
@@ -48,6 +63,7 @@ public:
 protected:
     Math::Vector2D<uint16_t>    m_size;
     Math::Vector2Df             m_mousePosition;
+    CursorMode                  m_cursorMode;
 };
 
 }  // namespace Engine

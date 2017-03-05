@@ -22,19 +22,24 @@ public:
     using IWindow::size;
     using IWindow::width;
     using IWindow::height;
+    using IWindow::cursorMode;
     using IWindow::mousePosition;
 
     GLFWWindow();
     ~GLFWWindow() { destroy(); }
     bool initialize(uint16_t width = 800, uint16_t height = 600,
-                    const std::string& title = "GLFW Window") override;
+                    const std::string& title = "GLFW Window",
+                    CursorMode cm = CursorMode::Normal) override;
     bool initialize(const Math::Vector2D<uint16_t>& size,
-                    const std::string& title = "GLFW Window") override;
+                    const std::string& title = "GLFW Window",
+                    CursorMode cm = CursorMode::Normal) override;
     void destroy() override;
 
     void size(const Math::Vector2D<uint16_t>& size) override;
     void width(uint16_t w) override;
     void height(uint16_t h) override;
+
+    void cursorMode(CursorMode cm) override;
 
     bool isOpen()                       const override;
     bool pollEvents() override;
@@ -56,6 +61,7 @@ private:
     static void keyCallback(GLFWwindow* window, int key, int scancode,
                             int action, int mods);
     static void resizeCallback(GLFWwindow* window, int width, int height);
+    // static void mouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
 };
 
 }  // namespace Engine

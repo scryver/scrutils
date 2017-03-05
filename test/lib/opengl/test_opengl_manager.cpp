@@ -7,7 +7,9 @@
 #include "Scryver/OpenGL/Manager.hpp"
 // #include "Scryver/Engine/Window.hpp"
 
+
 using Scryver::OpenGL::GLManager;
+using Scryver::OpenGL::Option;
 using Scryver::OpenGL::buffer_t;
 using Scryver::OpenGL::vertexArray_t;
 // using Scryver::Engine::Window;
@@ -295,4 +297,18 @@ TEST(GLManager, ViewportChange)
 
     manager.viewport(160, 240);
     manager.viewport(320, 140);
+}
+
+TEST(GLManager, DepthTest)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    EXPECT_CALL(GLMock, Enable(GL_DEPTH_TEST))
+        .Times(2);
+    EXPECT_CALL(GLMock, Disable(GL_DEPTH_TEST))
+        .Times(1);
+
+    manager.enable(Option::DepthTest);
+    manager.disable(Option::DepthTest);
+    manager.enable(Option::DepthTest);
 }
