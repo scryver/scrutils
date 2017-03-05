@@ -24,8 +24,7 @@ class GLManager
 public:
     bool initialize(size_t reserveBuffers = 512,
                     size_t reserveVertexArrays = 128,
-                    size_t reserveTextures = 128,
-                    bool depthTest = false);
+                    size_t reserveTextures = 128);
     void destroy();
 
     void enable(Option o);

@@ -60,7 +60,7 @@ bool UserInput::isKeyUp(uint16_t keyID) const
 
 bool UserInput::isKeyPressed(uint16_t keyID) const
 {
-    if (isKeyDown(keyID) && !wasKeyDown(keyID)) {
+    if (isKeyDown(keyID) && wasKeyUp(keyID)) {
         return true;
     }
     return false;
@@ -68,7 +68,10 @@ bool UserInput::isKeyPressed(uint16_t keyID) const
 
 bool UserInput::isKeyReleased(uint16_t keyID) const
 {
-    return !isKeyPressed(keyID);
+    if (isKeyUp(keyID) && wasKeyDown(keyID)) {
+        return true;
+    }
+    return false;
 }
 
 bool UserInput::wasKeyDown(uint16_t keyID) const

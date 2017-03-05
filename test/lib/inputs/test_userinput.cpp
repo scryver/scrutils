@@ -37,10 +37,20 @@ TEST(UserInput, ReleaseKey)
 
     uinp.releaseKey(123);
     EXPECT_FALSE(uinp.isKeyPressed(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123)); // Never been pressed
     uinp.pressKey(123);
     EXPECT_TRUE(uinp.isKeyPressed(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123));
     uinp.releaseKey(123);
     EXPECT_FALSE(uinp.isKeyPressed(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123)); // No update in between
+    uinp.pressKey(123);
+    EXPECT_TRUE(uinp.isKeyPressed(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123));
+    uinp.update();
+    uinp.releaseKey(123);
+    EXPECT_FALSE(uinp.isKeyPressed(123));
+    EXPECT_TRUE(uinp.isKeyReleased(123)); // After an update we can detect it
 }
 
 TEST(UserInput, SetMouseCoords)
@@ -92,10 +102,25 @@ TEST(UserInput, UpdateResetsKeyPressed)
 
     uinp.pressKey(123);
     EXPECT_TRUE(uinp.isKeyPressed(123));
+    EXPECT_TRUE(uinp.isKeyDown(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123));
 
     uinp.update();
     EXPECT_FALSE(uinp.isKeyPressed(123));
     EXPECT_TRUE(uinp.isKeyDown(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123));
+
+    uinp.releaseKey(123);
+    EXPECT_FALSE(uinp.isKeyPressed(123));
+    EXPECT_FALSE(uinp.isKeyDown(123));
+    EXPECT_TRUE(uinp.isKeyUp(123));
+    EXPECT_TRUE(uinp.isKeyReleased(123));
+
+    uinp.update();
+    EXPECT_FALSE(uinp.isKeyPressed(123));
+    EXPECT_FALSE(uinp.isKeyDown(123));
+    EXPECT_TRUE(uinp.isKeyUp(123));
+    EXPECT_FALSE(uinp.isKeyReleased(123));
 }
 
 TEST(UserInput, Destroy)

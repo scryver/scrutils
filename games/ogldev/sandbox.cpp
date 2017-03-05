@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
     debugPrint(window.size().x << "x" << window.size().y);
 
-    if (glManager.initialize(10, 10, 10, true) == false)
+    if (glManager.initialize(10, 10, 10) == false)
     {
         window.destroy();
         return -1;
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
     }
     Scryver::OpenGL::uniform_t skyCameraLoc = skyBoxShader.getUniform("camera");
 
-    bool depthTest = true;
+    bool depthTest = false;
 
     while (window.isOpen())
     {

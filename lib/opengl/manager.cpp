@@ -85,7 +85,7 @@ GLManager::~GLManager()
 }
 
 bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays,
-                           size_t reserveTextures, bool depthTest)
+                           size_t reserveTextures)
 {
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -106,9 +106,6 @@ bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays,
                    << "You have to use glGetError() and/or gDebugger to catch mistakes.");
     }
 #endif
-
-    if (depthTest)
-        glEnable(GL_DEPTH_TEST);
 
     m_vBuffers.reserve(reserveBuffers);
     m_vVertexArrays.reserve(reserveVertexArrays);

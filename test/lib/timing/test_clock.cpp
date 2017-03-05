@@ -131,3 +131,26 @@ TEST(GameClock, IsReallyStatic)
     tick = gameClock.newFrame();
     EXPECT_FLOAT_EQ(tick, gameClock.dt());
 }
+
+TEST(GameClock, FrameCounter)
+{
+    float tick = gameClock.newFrame();
+    EXPECT_GT(tick, 0.0f);
+    int32_t frames = gameClock.getFrames(-1);
+    EXPECT_EQ(5, frames);
+    tick = gameClock.newFrame();
+    frames = gameClock.getFrames(0);
+    EXPECT_EQ(6, frames);
+    tick = gameClock.newFrame();
+    frames = gameClock.getFrames(0);
+    EXPECT_EQ(1, frames);
+    tick = gameClock.newFrame();
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    tick = gameClock.newFrame();
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    tick = gameClock.newFrame();
+    frames = gameClock.getFrames(0.1f);
+    EXPECT_EQ(-1, frames);
+    frames = gameClock.getFrames(0.05f);
+    EXPECT_EQ(3, frames);
+}
