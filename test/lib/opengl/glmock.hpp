@@ -60,6 +60,14 @@ const GLenum GL_COMPRESSED_RGBA_S3TC_DXT1_EXT = 180;
 const GLenum GL_COMPRESSED_RGBA_S3TC_DXT3_EXT = 181;
 const GLenum GL_COMPRESSED_RGBA_S3TC_DXT5_EXT = 182;
 
+const GLenum GL_DEPTH_TEST = 200;
+
+const GLenum GL_FRONT = 251;
+const GLenum GL_BACK = 252;
+const GLenum GL_FRONT_AND_BACK = 253;
+
+const GLenum GL_LINE = 300;
+const GLenum GL_FILL = 301;
 
 class CGLMock {
 public:
@@ -77,6 +85,8 @@ public:
      */
     MOCK_METHOD1( Enable,                   void(GLenum mode) );
     MOCK_METHOD1( Clear,                    void(GLenum flags) );
+    MOCK_METHOD2( PolygonMode,              void(GLenum face, GLenum mode));
+    MOCK_METHOD4( Viewport,                 void(GLint x, GLint y, GLsizei width, GLsizei height));
 
     /**
      * Buffers
@@ -140,6 +150,8 @@ public:
 
 #define glEnable                    GLMock.Enable
 #define glClear                     GLMock.Clear
+#define glPolygonMode               GLMock.PolygonMode
+#define glViewport                  GLMock.Viewport
 
 #define glGenBuffers                GLMock.GenBuffers
 #define glDeleteBuffers             GLMock.DeleteBuffers

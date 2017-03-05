@@ -31,6 +31,8 @@ struct Vector3D
 
     inline Vector3D<N> cross(const Vector3D<N>& right) const;
 
+    inline Vector3D<N> rotated(const N& angleDegree, const Vector3D<N>& rotationAxis) const;
+    inline Vector3D<N> rotated(const Quaternion<N>& rotor) const;
     inline Vector3D<N>& rotate(const N& angleDegree, const Vector3D<N>& rotationAxis);
     inline Vector3D<N>& rotate(const Quaternion<N>& rotor);
 

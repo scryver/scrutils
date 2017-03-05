@@ -65,6 +65,20 @@ Vector3D<N> Vector3D<N>::cross(const Vector3D<N>& right) const
 }
 
 template <typename N>
+Vector3D<N> Vector3D<N>::rotated(const N& angleDegree, const Vector3D<N>& rotationAxis) const
+{
+    return rotated(Quaternion<N>(angleDegree, rotationAxis));
+}
+
+template <typename N>
+Vector3D<N> Vector3D<N>::rotated(const Quaternion<N>& rotor) const
+{
+    Vector3D<N> result = *this;
+    result.rotate(rotor);
+    return result;
+}
+
+template <typename N>
 Vector3D<N>& Vector3D<N>::rotate(const N& angleDegree, const Vector3D<N>& rotationAxis)
 {
     return rotate(Quaternion<N>(angleDegree, rotationAxis));

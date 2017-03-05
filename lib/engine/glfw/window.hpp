@@ -19,22 +19,35 @@ namespace Engine {
 class GLFWWindow : public IWindow
 {
 public:
+    using IWindow::size;
+    using IWindow::width;
+    using IWindow::height;
+    using IWindow::mousePosition;
+
     GLFWWindow();
     ~GLFWWindow() { destroy(); }
     bool initialize(uint16_t width = 800, uint16_t height = 600,
-                    const std::string& title = "GLFW Window");
-    void destroy();
+                    const std::string& title = "GLFW Window") override;
+    bool initialize(const Math::Vector2D<uint16_t>& size,
+                    const std::string& title = "GLFW Window") override;
+    void destroy() override;
 
-    bool isOpen()                       const;
-    void pollEvents();
-    void clear();
-    void display();
-    void close();
+    void size(const Math::Vector2D<uint16_t>& size) override;
+    void width(uint16_t w) override;
+    void height(uint16_t h) override;
 
-    bool isKeyPressed(uint16_t key)     const;
-    bool isKeyReleased(uint16_t key)    const;
-    bool isKeyDown(uint16_t key)        const;
-    bool isKeyUp(uint16_t key)          const;
+    bool isOpen()                       const override;
+    void pollEvents() override;
+    void clear() override;
+    void display() override;
+    void close() override;
+
+    bool isKeyPressed(uint16_t key)     const override;
+    bool isKeyReleased(uint16_t key)    const override;
+    bool isKeyDown(uint16_t key)        const override;
+    bool isKeyUp(uint16_t key)          const override;
+
+    void mousePosition(const Math::Vector2Df& pos) override;
 
 private:
     GLFWwindow*             m_window;
@@ -42,6 +55,7 @@ private:
 
     static void keyCallback(GLFWwindow* window, int key, int scancode,
                             int action, int mods);
+    static void resizeCallback(GLFWwindow* window, int width, int height);
 };
 
 }  // namespace Engine

@@ -16,11 +16,11 @@
 
 #define debugPrint(msg) \
     do { \
-        std::cout << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": " \
+        std::cout << "DEBUG::" << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": " \
                   << msg << std::endl; } while (0)
 
 #define debugPrintStart() \
-    do { std::cout << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": "; } while (0)
+    do { std::cout << "DEBUG::" << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": "; } while (0)
 
 #define debugPrintMessage(msg) \
     do { std::cout << msg; } while (0)
@@ -30,11 +30,11 @@
 
 #define errorPrint(msg) \
     do { \
-        std::cerr << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": " \
+        std::cerr << "ERROR::" << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": " \
                   << msg << std::endl; } while (0)
 
 #define errorPrintStart() \
-    do { std::cerr << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": "; } while (0)
+    do { std::cerr << "ERROR::" << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": "; } while (0)
 
 #define errorPrintMessage(msg) \
     do { std::cerr << msg; } while (0)

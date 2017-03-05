@@ -19,7 +19,8 @@ class GLManager
 public:
     bool initialize(size_t reserveBuffers = 512,
                     size_t reserveVertexArrays = 128,
-                    size_t reserveTextures = 128);
+                    size_t reserveTextures = 128,
+                    bool depthTest = false);
     void destroy();
 
     buffer_t createBuffer();
@@ -41,6 +42,11 @@ public:
     void bindSkyBox(texture_t skyBox);
     void unbindSkyBox();
 
+    bool wireMode() const;
+    void wireMode(bool on);
+
+    void viewport(uint16_t width, uint16_t height);
+
     static GLManager& getInstance();
 
     GLManager(const GLManager&) = delete;
@@ -53,6 +59,8 @@ private:
     std::vector<buffer_t>       m_vBuffers;
     std::vector<vertexArray_t>  m_vVertexArrays;
     std::vector<texture_t>      m_vTextures;
+
+    bool                        m_wireMode;
 
     struct ImageData
     {

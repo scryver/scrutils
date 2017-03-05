@@ -73,6 +73,7 @@ static void DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 
 GLManager::GLManager()
+    : m_wireMode(false)
 {
 
 }
@@ -83,7 +84,7 @@ GLManager::~GLManager()
 }
 
 bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays,
-                           size_t reserveTextures)
+                           size_t reserveTextures, bool depthTest)
 {
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -104,6 +105,9 @@ bool GLManager::initialize(size_t reserveBuffers, size_t reserveVertexArrays,
                    << "You have to use glGetError() and/or gDebugger to catch mistakes.");
     }
 #endif
+
+    if (depthTest)
+        glEnable(GL_DEPTH_TEST);
 
     m_vBuffers.reserve(reserveBuffers);
     m_vVertexArrays.reserve(reserveVertexArrays);
@@ -299,6 +303,22 @@ void GLManager::bindSkyBox(texture_t skyBox)
 void GLManager::unbindSkyBox()
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
+bool GLManager::wireMode() const
+{
+    return m_wireMode;
+}
+
+void GLManager::wireMode(bool on)
+{
+    m_wireMode = on;
+    glPolygonMode(GL_FRONT_AND_BACK, m_wireMode ? GL_LINE : GL_FILL);
+}
+
+void GLManager::viewport(uint16_t width, uint16_t height)
+{
+    glViewport(0, 0, static_cast<GLint>(width), static_cast<GLint>(height));
 }
 
 GLManager& GLManager::getInstance()

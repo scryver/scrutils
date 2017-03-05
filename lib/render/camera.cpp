@@ -5,9 +5,11 @@
 
 #include "Scryver/Math/Conversions.hpp"
 #include "Scryver/Math/Matrix4.hpp"
+#include "Scryver/Math/Vector2D.hpp"
 #include "Scryver/Math/Vector3D.hpp"
 
 using Scryver::Render::Camera;
+using Scryver::Math::Vector2Df;
 using Scryver::Math::Vector3Df;
 using Scryver::Math::Matrix4f;
 
@@ -35,10 +37,14 @@ bool Camera::initialize(const Vector3Df& position,
     m_lookAtTarget = lookAt;
     m_upDirection = up;
     // calculateProjection();
-    m_projection.initPerspective(fieldOfView, width, height, near, far);
+    m_projectionInfo.width = width;
+    m_projectionInfo.height = height;
+    m_projectionInfo.fieldOfView = fieldOfView;
+    m_projectionInfo.near = near;
+    m_projectionInfo.far = far;
+    calculateProjection();
     calculateViewTarget();
     calculateViewPosition();
-    m_transform = m_projection * m_viewTarget * m_viewPosition;
 
     Vector3Df hTarget(m_lookAtTarget.x, 0.0, m_lookAtTarget.z);
     hTarget.normalize();
@@ -73,6 +79,22 @@ void Camera::destroy()
     // Empty
 }
 
+void Camera::screenSize(const Vector2Df& size)
+{
+    screenSize(size.x, size.y);
+}
+
+void Camera::screenSize(float width, float height)
+{
+    if (m_projectionInfo.width == width || m_projectionInfo.height == height)
+        return;
+    m_projectionInfo.width = width;
+    m_projectionInfo.height = height;
+    calculateProjection();
+    m_viewProjection = m_projection * m_viewTarget;
+    m_transform = m_viewProjection * m_viewPosition;
+}
+
 const Vector3Df& Camera::position() const
 {
     return m_position;
@@ -82,7 +104,6 @@ void Camera::position(const Vector3Df& p)
 {
     m_position = p;
     calculateViewPosition();
-    m_transform = m_projection * m_viewTarget * m_viewPosition;
 }
 
 const Vector3Df& Camera::target() const
@@ -94,7 +115,7 @@ void Camera::target(const Vector3Df& t)
 {
     m_lookAtTarget = t.normalized();
     calculateViewTarget();
-    m_transform = m_projection * m_viewTarget * m_viewPosition;
+    m_transform = m_viewProjection * m_viewPosition;
 }
 
 const Vector3Df& Camera::up() const
@@ -106,15 +127,26 @@ void Camera::up(const Vector3Df& u)
 {
     m_upDirection = u.normalized();
     calculateViewTarget();
-    m_transform = m_projection * m_viewTarget * m_viewPosition;
+    m_transform = m_viewProjection * m_viewPosition;
+}
+
+void Camera::calculateProjection()
+{
+    m_projection.initPerspective(m_projectionInfo.fieldOfView,
+                                 m_projectionInfo.width,
+                                 m_projectionInfo.height,
+                                 m_projectionInfo.near,
+                                 m_projectionInfo.far);
 }
 
 void Camera::calculateViewTarget()
 {
     m_viewTarget.initLookAt(m_lookAtTarget, m_upDirection);
+    m_viewProjection = m_projection * m_viewTarget;
 }
 
 void Camera::calculateViewPosition()
 {
     m_viewPosition.initTranslation(-m_position.x, -m_position.y, -m_position.z);
+    m_transform = m_viewProjection * m_viewPosition;
 }

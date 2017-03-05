@@ -265,3 +265,34 @@ TEST(GLManager, UnbindingVertexArray)
 
     manager.destroy();
 }
+
+TEST(GLManager, WireMode)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    EXPECT_CALL(GLMock, PolygonMode(GL_FRONT_AND_BACK, GL_LINE))
+        .Times(2);
+    EXPECT_CALL(GLMock, PolygonMode(GL_FRONT_AND_BACK, GL_FILL))
+        .Times(1);
+
+    EXPECT_FALSE(manager.wireMode());
+    manager.wireMode(true);
+    EXPECT_TRUE(manager.wireMode());
+    manager.wireMode(false);
+    EXPECT_FALSE(manager.wireMode());
+    manager.wireMode(true);
+    EXPECT_TRUE(manager.wireMode());
+}
+
+TEST(GLManager, ViewportChange)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    EXPECT_CALL(GLMock, Viewport(0, 0, 160, 240))
+        .Times(1);
+    EXPECT_CALL(GLMock, Viewport(0, 0, 320, 140))
+        .Times(1);
+
+    manager.viewport(160, 240);
+    manager.viewport(320, 140);
+}

@@ -36,7 +36,9 @@ int main(int argc, char* argv[]) {
     if (window.initialize(800, 600, "Main") == false)
         return -1;
 
-    if (glManager.initialize() == false)
+    debugPrint(window.size().x << "x" << window.size().y);
+
+    if (glManager.initialize(10, 10, 10, true) == false)
     {
         window.destroy();
         return -1;
@@ -172,6 +174,9 @@ int main(int argc, char* argv[]) {
         transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
         window.pollEvents();
+        if (window.isKeyPressed(Scryver::Keys::Number_1))
+            glManager.wireMode(!glManager.wireMode());
+
         if (window.isKeyDown(Scryver::Keys::W))
             camera.position(camera.position() + camera.target() * dt);
         if (window.isKeyDown(Scryver::Keys::S))
@@ -182,12 +187,27 @@ int main(int argc, char* argv[]) {
         if (window.isKeyDown(Scryver::Keys::D))
             camera.position(camera.position() - camera.target().cross(camera.up()).normalized() * dt);
 
+        if (window.isKeyDown(Scryver::Keys::Q))
+            camera.target(camera.target().rotated(-50.0 * dt, camera.up()));
+        if (window.isKeyDown(Scryver::Keys::E))
+            camera.target(camera.target().rotated(50.0 * dt, camera.up()));
+        if (window.isKeyDown(Scryver::Keys::R))
+            camera.target(camera.target().rotated(50.0 * dt, camera.target().cross(camera.up())));
+        if (window.isKeyDown(Scryver::Keys::F))
+            camera.target(camera.target().rotated(-50.0 * dt, camera.target().cross(camera.up())));
+
         // if (window.isKeyPressed(Scryver::Keys::Number_1))
         //     debugPrint("Keyboard: Number 1");
         // if (window.isKeyPressed(Scryver::Keys::Space))
         //     debugPrint("Keyboard: Space");
         if (window.isKeyPressed(Scryver::Keys::Escape))
+        {
             window.close();
+            break;
+        }
+
+        camera.screenSize(window.size().x, window.size().y);
+        glManager.viewport(window.size().x, window.size().y);
 
         window.clear();
 
@@ -202,7 +222,7 @@ int main(int argc, char* argv[]) {
         glManager.unbindVertexArray();
 
         shader.use();
-        glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.getViewProjection().m[0][0]);
+        glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.getWorldViewProjection().m[0][0]);
         glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &transform.get().m[0][0]);
         // Drawing calls
         glManager.bindVertexArray(VAO);
@@ -220,6 +240,8 @@ int main(int argc, char* argv[]) {
         {
             debugPrint("Frames: " << frames);
             debugPrint("Camera(" << camera.position().x << ", " << camera.position().y << ", " << camera.position().z << ")");
+            debugPrint("Mouse(" << window.mousePosition().x << ", " << window.mousePosition().y << ")");
+            debugPrint("Window(" << window.size().x << "x" << window.size().y << ")");
         }
     }
 
