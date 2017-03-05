@@ -173,7 +173,9 @@ int main(int argc, char* argv[]) {
         transform.worldPos(sinf(count), 0.0f, 5.0f);
         transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
-        window.pollEvents();
+        if (window.pollEvents())
+            break;
+
         if (window.isKeyPressed(Scryver::Keys::Number_1))
             glManager.wireMode(!glManager.wireMode());
 

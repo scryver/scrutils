@@ -120,20 +120,21 @@ bool SFMLWindow::isOpen() const
     return m_window != nullptr && m_window->isOpen();
 }
 
-void SFMLWindow::pollEvents()
+bool SFMLWindow::pollEvents()
 {
     if (m_userInput == nullptr || m_window == nullptr)
     {
         errorPrint("Window not initialized!");
-        return;
+        return true;
     }
 
     m_userInput->update();
     sf::Event event;
+    bool shouldClose = false;
     while (m_window->pollEvent(event))
     {
         if(event.type == sf::Event::Closed)
-            m_window->close();
+            shouldClose = true;
         else if (event.type == sf::Event::Resized)
         {
             m_size.x = static_cast<uint16_t>(event.size.width);
@@ -291,6 +292,8 @@ void SFMLWindow::pollEvents()
                 errorPrint("Key " << event.key.code << " is not implemented yet.");
         }
     }
+
+    return shouldClose;
 }
 
 void SFMLWindow::clear()

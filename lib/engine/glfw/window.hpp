@@ -37,7 +37,7 @@ public:
     void height(uint16_t h) override;
 
     bool isOpen()                       const override;
-    void pollEvents() override;
+    bool pollEvents() override;
     void clear() override;
     void display() override;
     void close() override;

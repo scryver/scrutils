@@ -134,10 +134,10 @@ bool GLFWWindow::isOpen() const
     return m_window != nullptr && !glfwWindowShouldClose(m_window);
 }
 
-void GLFWWindow::pollEvents()
+bool GLFWWindow::pollEvents()
 {
     if (m_userInput == nullptr || m_window == nullptr)
-        return;
+        return true;
 
     m_userInput->update();
     glfwPollEvents();
@@ -146,6 +146,8 @@ void GLFWWindow::pollEvents()
     glfwGetCursorPos(m_window, &x, &y);
     m_mousePosition.x = static_cast<float>(x);
     m_mousePosition.y = static_cast<float>(y);
+
+    return glfwWindowShouldClose(m_window);
 }
 
 void GLFWWindow::clear()

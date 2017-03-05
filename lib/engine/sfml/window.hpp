@@ -39,7 +39,7 @@ public:
     void height(uint16_t h);
 
     bool isOpen()                       const;
-    void pollEvents();
+    bool pollEvents();
     void clear();
     void display();
     void close();

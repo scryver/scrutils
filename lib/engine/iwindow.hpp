@@ -29,7 +29,8 @@ public:
     virtual void height(uint16_t h)                                         = 0;
 
     virtual bool isOpen()                                           const   = 0;
-    virtual void pollEvents()                                               = 0;
+    // Return true if window should close
+    virtual bool pollEvents()                                               = 0;
 
     virtual void clear()                                                    = 0;
     virtual void display()                                                  = 0;
