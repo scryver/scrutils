@@ -86,7 +86,7 @@ void Camera::screenSize(const Vector2Df& size)
 
 void Camera::screenSize(float width, float height)
 {
-    if (m_projectionInfo.width == width || m_projectionInfo.height == height)
+    if (m_projectionInfo.width == width && m_projectionInfo.height == height)
         return;
     m_projectionInfo.width = width;
     m_projectionInfo.height = height;
