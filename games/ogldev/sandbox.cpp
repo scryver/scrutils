@@ -85,8 +85,10 @@ int main(int argc, char* argv[]) {
     glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
 
+    Scryver::OpenGL::texture_t statueCol = glManager.createTexture("resources/textures/statue.dds");
+
     Scryver::Render::Camera camera;
-    camera.initialize(Scryver::Math::Vector3Df(0, 0, -1.0f),
+    camera.initialize(Scryver::Math::Vector3Df(0, 5, -15.0f),
                       Scryver::Math::Vector3Df(0, 0, 1),
                       Scryver::Math::Vector3Df(0, 1, 0),
                       800.0f, 600.0f);
@@ -174,8 +176,8 @@ int main(int argc, char* argv[]) {
         count += dt;
         // float scale = 0.5f * sinf(count * 1.0f) + 0.5f;
         // transform.scale(scale, scale, scale);
-        transform.worldPos(5.0f * sinf(count * 1.0f), 0, 5.0f * cosf(count * 1.0f));
-        transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
+        // transform.worldPos(5.0f * sinf(count * 1.0f), 0, 5.0f * cosf(count * 1.0f));
+        // transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
         if (window.pollEvents())
             break;
@@ -256,10 +258,13 @@ int main(int argc, char* argv[]) {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDisableVertexAttribArray(0);
         glManager.unbindVertexArray();
+        glManager.unbindSkyBox();
 
         shader.use();
         glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.getWorldViewProjection().m[0][0]);
         glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &transform.get().m[0][0]);
+        glActiveTexture(GL_TEXTURE0);
+        glManager.bindTexture(statueCol);
         // Drawing calls
         glManager.bindVertexArray(VAO);
         glManager.bindElementBuffer(IBO);
@@ -268,6 +273,7 @@ int main(int argc, char* argv[]) {
         glDisableVertexAttribArray(0);
         glManager.unbindElementBuffer();
         glManager.unbindVertexArray();
+        glManager.unbindTexture();
 
         window.display();
 
