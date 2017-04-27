@@ -10,13 +10,13 @@ Dictionary<T>::Dictionary(uint16_t itemTypeId, size_t reserveCount)
 template <typename T>
 T& Dictionary<T>::at(DictKey handle)
 {
-    assert(handle.index < m_sparseIds.size() && "outer index out of range");
+    makeSure(handle.index < m_sparseIds.size(), "outer index out of range");
 
     DictKey innerId = m_sparseIds[handle.index];
 
-    assert(handle.typeId == m_itemTypeId && "typeId mismatch");
-    assert(handle.generation == innerId.generation && "at called with old generation");
-    assert(innerId.index < m_items.size() && "inner index out of range");
+    makeSure(handle.typeId == m_itemTypeId, "typeId mismatch");
+    makeSure(handle.generation == innerId.generation, "at called with old generation");
+    makeSure(innerId.index < m_items.size(), "inner index out of range");
 
     return m_items[innerId.index];
 }
@@ -24,13 +24,13 @@ T& Dictionary<T>::at(DictKey handle)
 template <typename T>
 const T& Dictionary<T>::at(DictKey handle) const
 {
-    assert(handle.index < m_sparseIds.size() && "outer index out of range");
+    makeSure(handle.index < m_sparseIds.size(), "outer index out of range");
 
     DictKey innerId = m_sparseIds[handle.index];
 
-    assert(handle.typeId == m_itemTypeId && "typeId mismatch");
-    assert(handle.generation == innerId.generation && "at called with old generation");
-    assert(innerId.index < m_items.size() && "inner index out of range");
+    makeSure(handle.typeId == m_itemTypeId, "typeId mismatch");
+    makeSure(handle.generation == innerId.generation, "at called with old generation");
+    makeSure(innerId.index < m_items.size(), "inner index out of range");
 
     return m_items[innerId.index];
 }
@@ -58,7 +58,7 @@ template <typename... Params>
 KeySet Dictionary<T>::emplaceItems(int n, Params... args)
 {
     KeySet handles(n);
-    assert(n > 0 && "emplaceItems called with n = 0");
+    makeSure(n > 0, "emplaceItems called with n = 0");
     m_fragmented = 1;
 
     m_items.reserve(m_items.size() + n); // reserve the space we need (if not already there)
@@ -377,13 +377,13 @@ uint16_t Dictionary<T>::getItemTypeId() const
 template <typename T>
 uint32_t Dictionary<T>::getInnerIndex(DictKey handle) const
 {
-    assert(handle.index < m_sparseIds.size() && "outer index out of range");
+    makeSure(handle.index < m_sparseIds.size(), "outer index out of range");
 
     DictKey innerId = m_sparseIds[handle.index];
 
-    assert(handle.typeId == m_itemTypeId && "typeId mismatch");
-    assert(handle.generation == innerId.generation && "at called with old generation");
-    assert(innerId.index < m_items.size() && "inner index out of range");
+    makeSure(handle.typeId == m_itemTypeId, "typeId mismatch");
+    makeSure(handle.generation == innerId.generation, "at called with old generation");
+    makeSure(innerId.index < m_items.size(), "inner index out of range");
 
     return innerId.index;
 }

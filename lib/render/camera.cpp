@@ -1,7 +1,8 @@
 #include "camera.hpp"
 
-#include <cassert>
 #include <cmath>
+
+#include "Scryver/Debug/Expector.hpp"
 
 #include "Scryver/Math/Conversions.hpp"
 #include "Scryver/Math/Matrix4.hpp"
@@ -32,7 +33,7 @@ bool Camera::initialize(const Vector3Df& position,
                         float width, float height,
                         float fieldOfView, float near, float far)
 {
-    assert(!(lookAt.x == 0 && lookAt.y == 0 && lookAt.z == 0));
+    makeSure(!(lookAt.x == 0 && lookAt.y == 0 && lookAt.z == 0), "LookAt can not be the zero vector");
     m_position = position;
     m_lookAtTarget = lookAt;
     m_upDirection = up;

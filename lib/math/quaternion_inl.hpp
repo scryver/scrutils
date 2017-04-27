@@ -1,6 +1,6 @@
 template <typename N>
 Quaternion<N>::Quaternion() :
-    Quaternion(0, 0, 0, 0)
+    Quaternion(1, 0, 0, 0)
 {
     // Empty
 }
@@ -21,6 +21,9 @@ template <typename N>
 Quaternion<N>::Quaternion(const N& s_, const N& i_, const N& j_, const N& k_) :
     s(s_), i(i_), j(j_), k(k_)
 {
+    // debugPrint("<Quaternion(" << s << ", " << i << ", " << j << ", " << k << "), l=" << (s * s + i * i + j * j + k * k) << ">");
+    makeSure((s * s + i * i + j * j + k * k) > static_cast<N>(1 - 0.001)
+             && (s * s + i * i + j * j + k * k) < static_cast<N>(1 + 0.001), "Quaternion must be normalized");
     // Empty
 }
 

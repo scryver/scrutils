@@ -1,6 +1,5 @@
 #include "window.hpp"
 
-#include <cassert>
 #include <string>
 
 // #include <GL/glew.h>
@@ -8,9 +7,12 @@
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 
+#include "Scryver/Debug/Expector.hpp"
 #include "Scryver/Debug/Printer.hpp"
+
 #include "Scryver/Inputs/UserInput.hpp"
 #include "Scryver/Inputs/KeyboardCodes.hpp"
+
 #include "Scryver/Math/Vector2D.hpp"
 
 using Scryver::Engine::SFMLWindow;
@@ -36,8 +38,8 @@ bool SFMLWindow::initialize(uint16_t width, uint16_t height,
 bool SFMLWindow::initialize(const Vector2D<uint16_t>& size,
                             const std::string& title, CursorMode cm)
 {
-    assert(m_window == nullptr && "Window already initialized!");
-    assert(m_userInput == nullptr && "User input already initialized!");
+    makeSure(m_window == nullptr, "Window already initialized!");
+    makeSure(m_userInput == nullptr, "User input already initialized!");
 
     sf::ContextSettings settings;
     settings.depthBits = 24;

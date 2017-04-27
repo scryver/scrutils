@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+#include "Scryver/Debug/Expector.hpp"
+#include "Scryver/Debug/Printer.hpp"
 #include "Scryver/Math/Conversions.hpp"
 
 namespace Scryver {
@@ -54,12 +56,14 @@ struct Quaternion
 
     inline Quaternion();
     inline Quaternion(const N& angleDegree, const Vector3D<N>& rotationAxis);
-    inline Quaternion(const N& s, const N& i, const N& j, const N& k);
 
     inline Quaternion<N> conjugate() const;
 
     inline Quaternion<N>& operator*=(const Vector3D<N>& right);
     inline Quaternion<N>& operator*=(const Quaternion<N>& right);
+
+private:
+    inline Quaternion(const N& s, const N& i, const N& j, const N& k);
 };
 
 // template <typename N>

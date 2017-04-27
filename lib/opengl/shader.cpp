@@ -1,6 +1,5 @@
 #include "shader.hpp"
 
-#include <cassert>
 #include <cstdint>
 #include <string>
 
@@ -11,6 +10,7 @@
 #endif
 
 #include "Scryver/Files/FileReader.hpp"
+#include "Scryver/Debug/Expector.hpp"
 #include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::Shader;
@@ -132,15 +132,15 @@ void Shader::destroy()
 
 void Shader::use()
 {
-    assert(identifier != 0);
+    makeSure(identifier != 0, "Shader not initialized");
     glUseProgram(identifier);
 }
 
 uniform_t Shader::getUniform(const std::string& uniform)
 {
-    assert(identifier != 0);
+    makeSure(identifier != 0, "Shader not initialized");
     uniform_t location = glGetUniformLocation(identifier, uniform.c_str());
-    assert(location != 0xFFFFFFFF);
+    makeSure(location != static_cast<uint32_t>(-1), "Uniform does not exist");
     return location;
 }
 

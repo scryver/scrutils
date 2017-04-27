@@ -3,9 +3,10 @@
 
 #include <cstdint>
 #include <vector>
-#include <cassert>
 #include <algorithm>
 #include <type_traits>
+
+#include "Scryver/Debug/Expector.hpp"
 
 // https://github.com/y2kiah/griffin-containers/blob/master/handle_map.h
 // https://www.gamedev.net/resources/_/technical/general-programming/game-engine-containers-handle-map-r4495

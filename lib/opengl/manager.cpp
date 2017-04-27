@@ -1,6 +1,5 @@
 #include "manager.hpp"
 
-#include <cassert>
 #include <cstdint>
 #include <cstddef>
 #include <cstdio>
@@ -14,6 +13,7 @@
 #include "../../test/lib/opengl/glmock.hpp"
 #endif
 
+#include "Scryver/Debug/Expector.hpp"
 #include "Scryver/Debug/Printer.hpp"
 
 using Scryver::OpenGL::GLManager;
@@ -289,7 +289,7 @@ texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
             glDeleteTextures(1, &textureID);
             return 0;
         }
-        // assert(data.mipMapCount == 1);
+        // makeSure(data.mipMapCount == 1, "Mipmap count of 1 only supported for skyboxes");
 
         unsigned int blockSize = (data.format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
         unsigned int size = ((data.width + 3) / 4) * ((data.height + 3) / 4) * blockSize;

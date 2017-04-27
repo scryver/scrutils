@@ -84,7 +84,7 @@ else:
 testEnv = SConscript(['test/SConscript'], 'env')
 
 if backend == 'glfw':
-    env.ParseConfig('pkg-config glfw3 --cflags --libs')
+    env.ParseConfig('pkg-config glfw3 --cflags --libs --static')
 else:
     env.ParseConfig('pkg-config sfml-window --cflags --libs')
 env.ParseConfig('pkg-config gl --cflags --libs')
