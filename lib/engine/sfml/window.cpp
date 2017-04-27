@@ -54,7 +54,7 @@ bool SFMLWindow::initialize(const Vector2D<uint16_t>& size,
     // create the window
     m_window = new sf::Window(sf::VideoMode(m_size.x, m_size.y), title.c_str(), sf::Style::Default, settings);
 
-    m_window->setVerticalSyncEnabled(false);
+    m_window->setVerticalSyncEnabled(true);
 
     cursorMode(cm);
 
@@ -138,6 +138,11 @@ void SFMLWindow::cursorMode(CursorMode cm)
         m_window->setMouseCursorVisible(true);
         // m_window->setMouseCursorGrabbed(false);
     }
+}
+
+void SFMLWindow::synced(bool syncEnable)
+{
+    m_window->setVerticalSyncEnabled(syncEnable);
 }
 
 bool SFMLWindow::isOpen() const

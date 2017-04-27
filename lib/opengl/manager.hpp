@@ -68,6 +68,8 @@ private:
     std::vector<texture_t>      m_vTextures;
 
     bool                        m_wireMode;
+    uint16_t                    m_width;
+    uint16_t                    m_height;
 
     struct ImageData
     {

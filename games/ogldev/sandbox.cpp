@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     glManager.unbindVertexArray();
 
     Scryver::Render::Camera camera;
-    camera.initialize(Scryver::Math::Vector3Df(0, 0, -5.0f),
+    camera.initialize(Scryver::Math::Vector3Df(0, 0, -1.0f),
                       Scryver::Math::Vector3Df(0, 0, 1),
                       Scryver::Math::Vector3Df(0, 1, 0),
                       800.0f, 600.0f);
@@ -166,6 +166,7 @@ int main(int argc, char* argv[]) {
     Scryver::OpenGL::uniform_t skyCameraLoc = skyBoxShader.getUniform("camera");
 
     bool depthTest = false;
+    bool synced = true;
 
     while (window.isOpen())
     {
@@ -201,6 +202,12 @@ int main(int argc, char* argv[]) {
             depthTest = !depthTest;
         }
 
+        if (window.isKeyPressed(Scryver::Keys::L))
+        {
+            synced = !synced;
+            window.synced(synced);
+        }
+
         if (window.isKeyDown(Scryver::Keys::W))
             camera.position(camera.position() + camera.target() * dt);
         if (window.isKeyDown(Scryver::Keys::S))
@@ -228,10 +235,7 @@ int main(int argc, char* argv[]) {
             if (window.isKeyDown(Scryver::Keys::F))
                 camera.target(camera.target().rotated(-50.0 * dt, camera.target().cross(camera.up())));
         }
-        // if (window.isKeyPressed(Scryver::Keys::Number_1))
-        //     debugPrint("Keyboard: Number 1");
-        // if (window.isKeyPressed(Scryver::Keys::Space))
-        //     debugPrint("Keyboard: Space");
+
         if (window.isKeyPressed(Scryver::Keys::Escape))
         {
             window.close();

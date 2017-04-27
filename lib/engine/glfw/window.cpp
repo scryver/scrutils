@@ -144,6 +144,11 @@ void GLFWWindow::cursorMode(CursorMode cm)
         glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
+void GLFWWindow::synced(bool syncEnable)
+{
+    glfwSwapInterval(syncEnable ? 1 : 0);
+}
+
 bool GLFWWindow::isOpen() const
 {
     return m_window != nullptr && !glfwWindowShouldClose(m_window);

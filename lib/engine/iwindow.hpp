@@ -40,9 +40,6 @@ public:
     uint16_t height() const { return m_size.y; }
     virtual void height(uint16_t h)                                         = 0;
 
-    CursorMode cursorMode() const { return m_cursorMode; }
-    virtual void cursorMode(CursorMode cm)                                  = 0;
-
     virtual bool isOpen()                                           const   = 0;
     // Return true if window should close
     virtual bool pollEvents()                                               = 0;
@@ -51,6 +48,11 @@ public:
     virtual void display()                                                  = 0;
 
     virtual void close()                                                    = 0;
+
+    virtual void synced(bool syncEnable)                                    = 0;
+
+    CursorMode cursorMode() const { return m_cursorMode; }
+    virtual void cursorMode(CursorMode cm)                                  = 0;
 
     virtual bool isKeyPressed(uint16_t key)                         const   = 0;
     virtual bool isKeyReleased(uint16_t key)                        const   = 0;

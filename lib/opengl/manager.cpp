@@ -75,6 +75,8 @@ static void DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 GLManager::GLManager()
     : m_wireMode(false)
+    , m_width(0)
+    , m_height(0)
 {
 
 }
@@ -334,6 +336,10 @@ void GLManager::wireMode(bool on)
 
 void GLManager::viewport(uint16_t width, uint16_t height)
 {
+    if (width == m_width && height == m_height)
+        return;
+    m_width = width;
+    m_height = height;
     glViewport(0, 0, static_cast<GLint>(width), static_cast<GLint>(height));
 }
 

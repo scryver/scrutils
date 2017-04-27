@@ -112,6 +112,20 @@ void Matrix4<N>::initPerspective(const N& fov,
     m[3][3] = 0.0;
 }
 
+template <typename N>
+void Matrix4<N>::initOrtho(const N& left, const N& right,
+                           const N& top, const N& bottom,
+                           const N& near, const N& far)
+{
+    initIdentity();
+    m[0][0] = 2.0f / (right - left);
+    m[1][1] = 2.0f / (top - bottom);
+    m[2][2] = 2.0f / (far - near);
+    m[0][3] = -(right + left) / (right - left);
+    m[1][3] = -(top + bottom) / (top - bottom);
+    m[2][3] = -(far + near) / (far - near);
+}
+
 template <typename Nr>
 void Matrix4<Nr>::initLookAt(const Vector3D<Nr>& target,
                              const Vector3D<Nr>& up)

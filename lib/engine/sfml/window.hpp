@@ -42,6 +42,7 @@ public:
     void height(uint16_t h) override;
 
     void cursorMode(CursorMode cm) override;
+    void synced(bool syncEnable) override;
 
     bool isOpen()                       const override;
     bool pollEvents() override;
