@@ -15,6 +15,7 @@ const GLenum GL_ELEMENT_ARRAY_BUFFER = 1;
 
 const GLenum GL_STATIC_DRAW = 2;
 const GLenum GL_DYNAMIC_DRAW = 3;
+const GLenum GL_STREAM_DRAW = 33;
 
 const GLenum GL_FALSE = 4;
 const GLenum GL_TRUE = 5;

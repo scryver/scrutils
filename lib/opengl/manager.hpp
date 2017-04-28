@@ -19,6 +19,13 @@ enum class Option
     DepthTest,
 };
 
+enum class DrawMethod
+{
+    StaticDraw,
+    DynamicDraw,
+    StreamDraw,
+};
+
 class GLManager
 {
 public:
@@ -32,6 +39,35 @@ public:
 
     buffer_t createBuffer();
     std::vector<buffer_t> createBuffers(size_t nrBuffers);
+
+    template <class ContainerType>
+    buffer_t createArrayBuffer(const ContainerType& data,
+                               DrawMethod d = DrawMethod::StaticDraw);
+    template <typename T>
+    buffer_t createArrayBuffer(const T data[], size_t size,
+                               DrawMethod d = DrawMethod::StaticDraw);
+
+    template <class ContainerType>
+    buffer_t createElementBuffer(const ContainerType& data,
+                                 DrawMethod d = DrawMethod::StaticDraw);
+    template <typename T>
+    buffer_t createElementBuffer(const T data[], size_t size,
+                                 DrawMethod d = DrawMethod::StaticDraw);
+
+    template <class ContainerType>
+    void bufferArrayData(buffer_t buffer, const ContainerType& data,
+                         DrawMethod d = DrawMethod::StaticDraw);
+    template <typename T>
+    void bufferArrayData(buffer_t buffer, const T data[], size_t size,
+                         DrawMethod d = DrawMethod::StaticDraw);
+
+    template <class ContainerType>
+    void bufferElementData(buffer_t buffer, const ContainerType& data,
+                           DrawMethod d = DrawMethod::StaticDraw);
+    template <typename T>
+    void bufferElementData(buffer_t buffer, const T data[], size_t size,
+                           DrawMethod d = DrawMethod::StaticDraw);
+
     void bindArrayBuffer(buffer_t buffer);
     void unbindArrayBuffer();
     void bindElementBuffer(buffer_t buffer);
@@ -60,6 +96,12 @@ public:
     GLManager& operator=(const GLManager&) = delete;
 
 private:
+    enum class BufferType
+    {
+        Array,
+        Element
+    };
+
     GLManager();
     ~GLManager();
 
@@ -81,7 +123,12 @@ private:
     };
 
     bool openDdsImage(const std::string& file, ImageData* output);
+
+    void bufferData(const void* data, size_t size, BufferType b,
+                    DrawMethod d = DrawMethod::StaticDraw);
 };
+
+#include "./manager_inl.hpp"
 
 }  // namespace OpenGL
 

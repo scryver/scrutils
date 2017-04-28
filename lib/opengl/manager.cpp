@@ -413,3 +413,19 @@ bool GLManager::openDdsImage(const std::string& filename, ImageData* output)
 
     return true;
 }
+
+void GLManager::bufferData(const void* data, size_t size, BufferType b, DrawMethod d)
+{
+    GLenum drawMethod;
+    switch (d)
+    {
+        default:
+        case DrawMethod::StaticDraw:    drawMethod = GL_STATIC_DRAW;    break;
+        case DrawMethod::DynamicDraw:   drawMethod = GL_DYNAMIC_DRAW;   break;
+        case DrawMethod::StreamDraw:    drawMethod = GL_STREAM_DRAW;    break;
+    }
+    if (b == BufferType::Array)
+        glBufferData(GL_ARRAY_BUFFER, size, data, drawMethod);
+    else if (b == BufferType::Element)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, drawMethod);
+}

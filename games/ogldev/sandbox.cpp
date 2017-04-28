@@ -1,3 +1,4 @@
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <string>
@@ -23,6 +24,22 @@ static const std::string vertexFile = "build/resources/shaders/ogldev.vs";
 static const std::string fragmentFile = "build/resources/shaders/ogldev.fs";
 static const std::string skyBoxVertexFile = "build/resources/shaders/skybox.vs";
 static const std::string skyBoxFragmentFile = "build/resources/shaders/skybox.fs";
+
+#pragma pack(push, 0)
+struct Vertex
+{
+    Scryver::Math::Vector3Df position;
+    Scryver::Math::Vector2Df texCoord;
+
+    Vertex(const Scryver::Math::Vector3Df& pos,
+           const Scryver::Math::Vector2Df& coord)
+        : position(pos)
+        , texCoord(coord)
+    {
+        // Empty
+    }
+};
+#pragma pack(pop)
 
 int main(int argc, char* argv[]) {
     gameClock.initialize();
@@ -53,16 +70,13 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    Scryver::Math::Vector3Df vertices[4];
-    vertices[0] = Scryver::Math::Vector3Df(-1.0f, -1.0f, 0.0f);
-    vertices[1] = Scryver::Math::Vector3Df( 0.0f, -1.0f, 1.0f);
-    vertices[2] = Scryver::Math::Vector3Df( 1.0f, -1.0f, 0.0f);
-    vertices[3] = Scryver::Math::Vector3Df( 0.0f,  1.0f, 0.0f);
-
-    Scryver::OpenGL::buffer_t VBO = glManager.createBuffer();
-    glManager.bindArrayBuffer(VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glManager.unbindArrayBuffer();
+    Vertex vertices[] = {
+        {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+        {{ 0.0f, -1.0f, 1.0f}, {0.0f, 1.0f}},
+        {{ 1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{ 0.0f,  1.0f, 0.0f}, {1.0f, 1.0f}}
+    };
+    Scryver::OpenGL::buffer_t VBO = glManager.createArrayBuffer(vertices, sizeof(vertices));
 
     uint8_t indices[] = {
         0, 3, 1,
@@ -70,18 +84,17 @@ int main(int argc, char* argv[]) {
         2, 3, 0,
         0, 1, 2
     };
-
-    Scryver::OpenGL::buffer_t IBO = glManager.createBuffer();
-    glManager.bindElementBuffer(IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glManager.unbindElementBuffer();
+    Scryver::OpenGL::buffer_t IBO = glManager.createElementBuffer(indices, sizeof(indices));
 
     Scryver::OpenGL::vertexArray_t VAO = glManager.createVertexArray();
     glManager.bindVertexArray(VAO);
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     glManager.bindArrayBuffer(VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, texCoord)));
     glManager.unbindArrayBuffer();
+    glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
 
@@ -100,54 +113,34 @@ int main(int argc, char* argv[]) {
     Scryver::Math::Transform3Df transform;
 
     Scryver::OpenGL::texture_t skyBox = glManager.createSkyBox("resources/textures/cubemaps/stairs_in_forest");
-    Scryver::Math::Vector3Df skyboxVertices[] = {
+    std::array<Scryver::Math::Vector3Df, 8> skyboxVertices = {
         // Positions
-        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
-
-        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
-        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
-
-        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
-
-        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f),
-        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
-
-        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),
-        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),
-
-        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),
-        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),
-        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f)
+        Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),   // 0:
+        Scryver::Math::Vector3Df(-50.0f, -50.0f, -50.0f),   // 1:
+        Scryver::Math::Vector3Df( 50.0f, -50.0f, -50.0f),   // 2:
+        Scryver::Math::Vector3Df( 50.0f,  50.0f, -50.0f),   // 3:
+        Scryver::Math::Vector3Df(-50.0f, -50.0f,  50.0f),   // 4:
+        Scryver::Math::Vector3Df(-50.0f,  50.0f,  50.0f),   // 5:
+        Scryver::Math::Vector3Df( 50.0f, -50.0f,  50.0f),   // 6:
+        Scryver::Math::Vector3Df( 50.0f,  50.0f,  50.0f),   // 7:
     };
-    Scryver::OpenGL::buffer_t skyBoxBuf = glManager.createBuffer();
-    glManager.bindArrayBuffer(skyBoxBuf);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
-    glManager.unbindArrayBuffer();
+
+    std::array<uint8_t, 36> skyboxIndices = {
+        0, 1, 2,
+        2, 3, 0,
+        4, 1, 0,
+        0, 5, 4,
+        2, 6, 7,
+        7, 3, 2,
+        4, 5, 7,
+        7, 6, 4,
+        0, 3, 7,
+        7, 5, 0,
+        1, 4, 2,
+        2, 4, 6
+    };
+    Scryver::OpenGL::buffer_t skyBoxBuf = glManager.createArrayBuffer(skyboxVertices);
+    Scryver::OpenGL::buffer_t skyBoxIdx = glManager.createElementBuffer(skyboxIndices);
 
     Scryver::OpenGL::vertexArray_t skyBoxVAO = glManager.createVertexArray();
     glManager.bindVertexArray(skyBoxVAO);
@@ -177,7 +170,7 @@ int main(int argc, char* argv[]) {
         // float scale = 0.5f * sinf(count * 1.0f) + 0.5f;
         // transform.scale(scale, scale, scale);
         // transform.worldPos(5.0f * sinf(count * 1.0f), 0, 5.0f * cosf(count * 1.0f));
-        // transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
+        transform.rotate(count * 50.0f, count * 50.0f, count * 50.0f);
 
         if (window.pollEvents())
             break;
@@ -254,9 +247,12 @@ int main(int argc, char* argv[]) {
         glActiveTexture(GL_TEXTURE0);
         glManager.bindSkyBox(skyBox);
         glManager.bindVertexArray(skyBoxVAO);
+        glManager.bindElementBuffer(skyBoxIdx);
         glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
         glDisableVertexAttribArray(0);
+        glManager.unbindElementBuffer();
         glManager.unbindVertexArray();
         glManager.unbindSkyBox();
 
@@ -269,7 +265,9 @@ int main(int argc, char* argv[]) {
         glManager.bindVertexArray(VAO);
         glManager.bindElementBuffer(IBO);
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, 0);
+        glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(0);
         glManager.unbindElementBuffer();
         glManager.unbindVertexArray();

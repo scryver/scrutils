@@ -5,14 +5,30 @@
 
 #include "glmock.hpp"
 #include "Scryver/OpenGL/Manager.hpp"
+#include "Scryver/Math/Vector3D.hpp"
 // #include "Scryver/Engine/Window.hpp"
 
 
 using Scryver::OpenGL::GLManager;
 using Scryver::OpenGL::Option;
+using Scryver::OpenGL::DrawMethod;
 using Scryver::OpenGL::buffer_t;
 using Scryver::OpenGL::vertexArray_t;
 // using Scryver::Engine::Window;
+using Scryver::Math::Vector3Df;
+
+struct Vertex
+{
+    Vector3Df position;
+    float     alpha;
+
+    Vertex(const Vector3Df& pos, float a)
+        : position(pos)
+        , alpha(a)
+    {
+        // Empty
+    }
+};
 
 
 TEST(GLManager, Constructor)
@@ -311,4 +327,160 @@ TEST(GLManager, DepthTest)
     manager.enable(Option::DepthTest);
     manager.disable(Option::DepthTest);
     manager.enable(Option::DepthTest);
+}
+
+TEST(GLManager, ArrayBufferData)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    std::array<float, 7> arrayVertices = {
+        1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f
+    };
+    std::vector<float> vectorVertices = {
+        4.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f
+    };
+    Vector3Df vector3DVertices[] = {
+        {1.0f, 6.0f, 3.0f}, {4.0f, 5.0f, 6.0f}
+    };
+    std::array<Vertex, 2> vertexVertices = {{
+        {{1.0f, 2.0f, 3.0f}, 1.0f},
+        {{2.0f, 6.0f, 6.0f}, 44.0f}
+    }};
+
+    EXPECT_CALL(GLMock, GenBuffers(1, testing::_))
+        .WillOnce(testing::SetArgPointee<1>(1))
+        .WillOnce(testing::SetArgPointee<1>(2))
+        .WillOnce(testing::SetArgPointee<1>(3))
+        .WillOnce(testing::SetArgPointee<1>(4))
+        .WillOnce(testing::SetArgPointee<1>(5))
+        .WillOnce(testing::SetArgPointee<1>(6))
+        .WillOnce(testing::SetArgPointee<1>(7))
+        .WillOnce(testing::SetArgPointee<1>(8));
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 2u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 3u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 4u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 5u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 6u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 7u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 8u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BufferData(GL_ARRAY_BUFFER, sizeof(float) * 7,
+                                   arrayVertices.data(), GL_STATIC_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BufferData(GL_ARRAY_BUFFER, sizeof(float) * 7,
+                                   vectorVertices.data(), GL_DYNAMIC_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BufferData(GL_ARRAY_BUFFER, sizeof(float) * 6,
+                                   vector3DVertices, GL_STREAM_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BufferData(GL_ARRAY_BUFFER, sizeof(float) * 8,
+                                   vertexVertices.data(), GL_STATIC_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ARRAY_BUFFER, 0))
+        .Times(8);
+    EXPECT_CALL(GLMock, DeleteBuffers(8, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<1>(0));
+
+    buffer_t buffer1 = manager.createBuffer();
+    buffer_t buffer2 = manager.createBuffer();
+    buffer_t buffer3 = manager.createBuffer();
+    buffer_t buffer4 = manager.createBuffer();
+    manager.bufferArrayData(buffer1, arrayVertices);
+    manager.bufferArrayData(buffer2, vectorVertices, DrawMethod::DynamicDraw);
+    manager.bufferArrayData(buffer3, vector3DVertices, sizeof(vector3DVertices), DrawMethod::StreamDraw);
+    manager.bufferArrayData(buffer4, vertexVertices, DrawMethod::StaticDraw);
+
+    manager.createArrayBuffer(arrayVertices);
+    manager.createArrayBuffer(vectorVertices, DrawMethod::DynamicDraw);
+    manager.createArrayBuffer(vector3DVertices, sizeof(vector3DVertices), DrawMethod::StreamDraw);
+    manager.createArrayBuffer(vertexVertices, DrawMethod::StaticDraw);
+
+    manager.destroy();
+}
+
+TEST(GLManager, ElementBufferData)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    std::array<uint32_t, 7> arrayIndices = {
+        1, 2, 3, 4, 5, 6, 7
+    };
+    std::vector<uint16_t> vectorIndices = {
+        4, 2, 3, 4, 5, 6, 7
+    };
+    uint8_t cStyleIndices[] = {
+        1, 6, 3, 4, 5, 6
+    };
+    std::array<uint16_t, 8> otherArrayIndices = {
+        1, 2, 3, 1,
+        2, 6, 6, 44
+    };
+
+    EXPECT_CALL(GLMock, GenBuffers(1, testing::_))
+        .WillOnce(testing::SetArgPointee<1>(1))
+        .WillOnce(testing::SetArgPointee<1>(2))
+        .WillOnce(testing::SetArgPointee<1>(3))
+        .WillOnce(testing::SetArgPointee<1>(4))
+        .WillOnce(testing::SetArgPointee<1>(5))
+        .WillOnce(testing::SetArgPointee<1>(6))
+        .WillOnce(testing::SetArgPointee<1>(7))
+        .WillOnce(testing::SetArgPointee<1>(8));
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 2u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 3u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 4u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 5u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 6u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 7u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 8u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 7,
+                                   arrayIndices.data(), GL_STATIC_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 7,
+                                   vectorIndices.data(), GL_DYNAMIC_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint8_t) * 6,
+                                   cStyleIndices, GL_STREAM_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 8,
+                                   otherArrayIndices.data(), GL_STATIC_DRAW))
+        .Times(2);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0))
+        .Times(8);
+    EXPECT_CALL(GLMock, DeleteBuffers(8, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<1>(0));
+
+    buffer_t buffer1 = manager.createBuffer();
+    buffer_t buffer2 = manager.createBuffer();
+    buffer_t buffer3 = manager.createBuffer();
+    buffer_t buffer4 = manager.createBuffer();
+    manager.bufferElementData(buffer1, arrayIndices);
+    manager.bufferElementData(buffer2, vectorIndices, DrawMethod::DynamicDraw);
+    manager.bufferElementData(buffer3, cStyleIndices, sizeof(cStyleIndices), DrawMethod::StreamDraw);
+    manager.bufferElementData(buffer4, otherArrayIndices, DrawMethod::StaticDraw);
+
+    manager.createElementBuffer(arrayIndices);
+    manager.createElementBuffer(vectorIndices, DrawMethod::DynamicDraw);
+    manager.createElementBuffer(cStyleIndices, sizeof(cStyleIndices), DrawMethod::StreamDraw);
+    manager.createElementBuffer(otherArrayIndices, DrawMethod::StaticDraw);
+
+    manager.destroy();
 }

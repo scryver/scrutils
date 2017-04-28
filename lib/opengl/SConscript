@@ -28,6 +28,7 @@ headers = [
 
 inlines = [
     'buffer_inl.hpp',
+    'manager_inl.hpp',
 ]
 
 if 'testEnv' not in locals():
