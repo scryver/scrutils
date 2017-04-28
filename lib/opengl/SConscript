@@ -17,7 +17,7 @@ staticScrOgl = env.Library(
     source=[
         'manager.cpp',
         'shader.cpp',
-    ]
+    ],
 )
 
 headers = [

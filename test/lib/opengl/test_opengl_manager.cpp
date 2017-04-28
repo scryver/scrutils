@@ -74,7 +74,7 @@ TEST(GLManager, CreateBuffer)
         .WillOnce(testing::SetArgPointee<1>(1));
 
     buffer_t buf = manager.createBuffer();
-    ASSERT_EQ(1u, buf);
+    ASSERT_EQ(buffer_t(1), buf);
 
     EXPECT_CALL(GLMock, DeleteBuffers(1, testing::_))
         .Times(1)
@@ -85,12 +85,12 @@ TEST(GLManager, CreateBuffer)
 
 TEST(GLManager, CreateMultipleBuffers)
 {
-    GLuint buffers[] = {1, 2, 3, 4, 5};
+    GLuint bufferIDs[] = {1, 2, 3, 4, 5};
     GLManager& manager = GLManager::getInstance();
 
     EXPECT_CALL(GLMock, GenBuffers(5, testing::_))
         .Times(1)
-        .WillOnce(testing::SetArrayArgument<1>(buffers, buffers + 5));
+        .WillOnce(testing::SetArrayArgument<1>(bufferIDs, bufferIDs + 5));
 
     std::vector<buffer_t> buf = manager.createBuffers(5);
     ASSERT_EQ(5u, buf.size());
@@ -103,7 +103,7 @@ TEST(GLManager, CreateMultipleBuffers)
 
 TEST(GLManager, CreateSeperateBuffers)
 {
-    GLuint buffers[] = {4, 5, 6, 7};
+    GLuint bufferIDs[] = {4, 5, 6, 7};
     GLManager& manager = GLManager::getInstance();
 
     EXPECT_CALL(GLMock, GenBuffers(1, testing::_))
@@ -114,11 +114,11 @@ TEST(GLManager, CreateSeperateBuffers)
 
     EXPECT_CALL(GLMock, GenBuffers(4, testing::_))
         .Times(1)
-        .WillOnce(testing::SetArrayArgument<1>(buffers, buffers + 4));
+        .WillOnce(testing::SetArrayArgument<1>(bufferIDs, bufferIDs + 4));
 
-    ASSERT_EQ(1u, manager.createBuffer());
-    ASSERT_EQ(2u, manager.createBuffer());
-    ASSERT_EQ(3u, manager.createBuffer());
+    ASSERT_EQ(buffer_t(1), manager.createBuffer());
+    ASSERT_EQ(buffer_t(2), manager.createBuffer());
+    ASSERT_EQ(buffer_t(3), manager.createBuffer());
     std::vector<buffer_t> buf = manager.createBuffers(4);
     ASSERT_EQ(4u, buf.size());
 
@@ -137,7 +137,7 @@ TEST(GLManager, CreateVertexArray)
         .WillOnce(testing::SetArgPointee<1>(1));
 
     vertexArray_t buf = manager.createVertexArray();
-    ASSERT_EQ(1u, buf);
+    ASSERT_EQ(vertexArray_t(1), buf);
 
     EXPECT_CALL(GLMock, DeleteVertexArrays(1, testing::_))
         .Times(1)
@@ -148,7 +148,9 @@ TEST(GLManager, CreateVertexArray)
 
 TEST(GLManager, CreateMultipleVertexArrays)
 {
-    GLuint buffers[] = {1, 2, 3, 4, 5};
+    GLuint buffers[] = {
+        1, 2, 3, 4, 5
+    };
     GLManager& manager = GLManager::getInstance();
 
     EXPECT_CALL(GLMock, GenVertexArrays(5, testing::_))
@@ -157,6 +159,8 @@ TEST(GLManager, CreateMultipleVertexArrays)
 
     std::vector<vertexArray_t> buf = manager.createVertexArrays(5);
     ASSERT_EQ(5u, buf.size());
+    ASSERT_EQ(vertexArray_t(1), buf.front());
+    ASSERT_EQ(vertexArray_t(5), buf.back());
 
     EXPECT_CALL(GLMock, DeleteVertexArrays(5, testing::_))
         .Times(1);
@@ -166,7 +170,9 @@ TEST(GLManager, CreateMultipleVertexArrays)
 
 TEST(GLManager, CreateSeperateVertexArrays)
 {
-    GLuint buffers[] = {4, 5, 6, 7};
+    GLuint buffers[] = {
+        4, 5, 6, 7
+    };
     GLManager& manager = GLManager::getInstance();
 
     EXPECT_CALL(GLMock, GenVertexArrays(1, testing::_))
@@ -179,9 +185,9 @@ TEST(GLManager, CreateSeperateVertexArrays)
         .Times(1)
         .WillOnce(testing::SetArrayArgument<1>(buffers, buffers + 4));
 
-    ASSERT_EQ(1u, manager.createVertexArray());
-    ASSERT_EQ(2u, manager.createVertexArray());
-    ASSERT_EQ(3u, manager.createVertexArray());
+    ASSERT_EQ(vertexArray_t(1), manager.createVertexArray());
+    ASSERT_EQ(vertexArray_t(2), manager.createVertexArray());
+    ASSERT_EQ(vertexArray_t(3), manager.createVertexArray());
     std::vector<vertexArray_t> buf = manager.createVertexArrays(4);
     ASSERT_EQ(4u, buf.size());
 
@@ -266,7 +272,7 @@ TEST(GLManager, BindingVertexArray)
         .Times(1)
         .WillOnce(testing::SetArgPointee<1>(0));
 
-    buffer_t buffer = manager.createVertexArray();
+    vertexArray_t buffer = manager.createVertexArray();
     manager.bindVertexArray(buffer);
 
     manager.destroy();
@@ -484,3 +490,36 @@ TEST(GLManager, ElementBufferData)
 
     manager.destroy();
 }
+
+// TEST(GLManager, VertexAttributes)
+// {
+//     GLManager& manager = GLManager::getInstance();
+
+//     EXPECT_CALL(GLMock, GenVertexArrays(1, testing::_))
+//         .Times(2)
+//         .WillOnce(testing::SetArgPointee<1>(1))
+//         .WillOnce(testing::SetArgPointee<1>(3));
+//     EXPECT_CALL(GLMock, BindVertexArray(1u))
+//         .Times(1);
+//     EXPECT_CALL(GLMock, BindVertexArray(3u))
+//         .Times(1);
+//     EXPECT_CALL(GLMock, VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+//                                             sizeof(float) * 4,
+//                                             reinterpret_cast<void*>(0)))
+//         .Times(2);
+//     EXPECT_CALL(GLMock, VertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE,
+//                                             sizeof(float),
+//                                             reinterpret_cast<void*>(3)))
+//         .Times(2);
+//     EXPECT_CALL(GLMock, BindVertexArray(0u))
+//         .Times(2);
+//     EXPECT_CALL(GLMock, DeleteVertexArrays(2, testing::_))
+//         .Times(1)
+//         .WillOnce(testing::SetArgPointee<1>(0));
+
+//     buffer_t buffer = manager.createBuffer();
+//     vertexArray_t vertexAttribs = manager.createVertexArray();
+//     manager.vertexAttributes(vertexAttribs, buffer,);
+
+//     manager.destroy();
+// }

@@ -249,7 +249,6 @@ int main(int argc, char* argv[]) {
         glManager.bindVertexArray(skyBoxVAO);
         glManager.bindElementBuffer(skyBoxIdx);
         glEnableVertexAttribArray(0);
-        // glDrawArrays(GL_TRIANGLES, 0, 36);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
         glDisableVertexAttribArray(0);
         glManager.unbindElementBuffer();

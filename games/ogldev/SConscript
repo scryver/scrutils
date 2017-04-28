@@ -11,7 +11,7 @@ oglDevEnv = env.Clone()
 # oglDevEnv['VERSION_MINOR'] = 0
 # oglDevEnv.Header('config')
 
-oglDevEnv.Prepend(LIBS=['scrender', 'scrogl', 'scrine', 'scruts', 'scring', 'scriles'])
+oglDevEnv.Prepend(LIBS=['scrender', 'scrogl', 'scrine', 'scruts', 'scring', 'scriles', 'scrility'])
 
 main = oglDevEnv.Program('ogldev',
                           source=[

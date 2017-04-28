@@ -15,6 +15,7 @@
 
 #include "Scryver/Debug/Expector.hpp"
 #include "Scryver/Debug/Printer.hpp"
+#include "Scryver/Utility/TypeUtils.hpp"
 
 using Scryver::OpenGL::GLManager;
 using Scryver::OpenGL::Option;
@@ -153,24 +154,33 @@ void GLManager::disable(Option o)
 
 buffer_t GLManager::createBuffer()
 {
-    buffer_t buf;
-    glGenBuffers(1, &buf);
-    m_vBuffers.push_back(buf);
+    uint32_t bufHelper;
+    glGenBuffers(1, &bufHelper);
+    buffer_t buf{bufHelper};
+    m_vBuffers.push_back(bufHelper);
     return buf;
 }
 
 std::vector<buffer_t> GLManager::createBuffers(size_t nrBuffers)
 {
+    std::vector<uint32_t> bufHelpers;
+    bufHelpers.resize(nrBuffers);
+    glGenBuffers(nrBuffers, &bufHelpers.front());
+
+    m_vBuffers.insert(m_vBuffers.end(), bufHelpers.begin(), bufHelpers.end());
+
     std::vector<buffer_t> buf;
-    buf.resize(nrBuffers);
-    glGenBuffers(nrBuffers, &buf.front());
-    m_vBuffers.insert(m_vBuffers.end(), buf.begin(), buf.end());
+    for (const auto& b : bufHelpers)
+    {
+        buf.push_back(buffer_t(b));
+    }
+
     return buf;
 }
 
 void GLManager::bindArrayBuffer(buffer_t buffer)
 {
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, static_cast<uint32_t>(buffer));
 }
 
 void GLManager::unbindArrayBuffer()
@@ -180,7 +190,7 @@ void GLManager::unbindArrayBuffer()
 
 void GLManager::bindElementBuffer(buffer_t buffer)
 {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<uint32_t>(buffer));
 }
 
 void GLManager::unbindElementBuffer()
@@ -190,24 +200,32 @@ void GLManager::unbindElementBuffer()
 
 vertexArray_t GLManager::createVertexArray()
 {
-    vertexArray_t vao;
-    glGenVertexArrays(1, &vao);
-    m_vVertexArrays.push_back(vao);
+    uint32_t vaoHelper;
+    glGenVertexArrays(1, &vaoHelper);
+    vertexArray_t vao{vaoHelper};
+    m_vVertexArrays.push_back(vaoHelper);
     return vao;
 }
 
 std::vector<vertexArray_t> GLManager::createVertexArrays(size_t nrVertexArrays)
 {
+    std::vector<uint32_t> vaoHelpers;
+    vaoHelpers.resize(nrVertexArrays);
+    glGenVertexArrays(nrVertexArrays, &vaoHelpers.front());
+    m_vVertexArrays.insert(m_vVertexArrays.end(), vaoHelpers.begin(), vaoHelpers.end());
+
     std::vector<vertexArray_t> vaos;
-    vaos.resize(nrVertexArrays);
-    glGenVertexArrays(nrVertexArrays, &vaos.front());
-    m_vVertexArrays.insert(m_vVertexArrays.end(), vaos.begin(), vaos.end());
+    for (const auto& vao : vaoHelpers)
+    {
+        vaos.push_back(vertexArray_t(vao));
+    }
+
     return vaos;
 }
 
 void GLManager::bindVertexArray(vertexArray_t vertexArray)
 {
-    glBindVertexArray(vertexArray);
+    glBindVertexArray(static_cast<uint32_t>(vertexArray));
 }
 
 void GLManager::unbindVertexArray()
@@ -220,15 +238,14 @@ texture_t GLManager::createTexture(const std::string& ddsPath)
     ImageData data;
     bool success = openDdsImage(ddsPath, &data);
     if (success == false)
-        return 0;
+        return texture_t();
 
     // Create the texture
-    texture_t textureID;
-    glGenTextures(1, &textureID);
-    m_vTextures.push_back(textureID);
+    uint32_t texHelperID;
+    glGenTextures(1, &texHelperID);
 
     // Bind the newly created texture
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindTexture(GL_TEXTURE_2D, texHelperID);
 
     // Fill the mipmaps
     unsigned int blockSize = (data.format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
@@ -245,13 +262,16 @@ texture_t GLManager::createTexture(const std::string& ddsPath)
     }
     free(data.buffer);
 
+    m_vTextures.push_back(texHelperID);
+    texture_t textureID{texHelperID};
+
     glBindTexture(GL_TEXTURE_2D, 0);
     return textureID;
 }
 
 void GLManager::bindTexture(texture_t texture)
 {
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, static_cast<uint32_t>(texture));
 }
 
 void GLManager::unbindTexture()
@@ -280,10 +300,10 @@ texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
     --it;
     std::string baseDir = (*it == '/') ? skyBoxFolderPath : skyBoxFolderPath + "/";
 
-    texture_t textureID;
-    glGenTextures(1, &textureID);
+    uint32_t texHelperID;
+    glGenTextures(1, &texHelperID);
 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texHelperID);
 
     for (size_t i = 0; i < 6; ++i)
     {
@@ -292,8 +312,8 @@ texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
         bool success = openDdsImage(name, &data);
         if (success == false)
         {
-            glDeleteTextures(1, &textureID);
-            return 0;
+            glDeleteTextures(1, &texHelperID);
+            return texture_t();
         }
         // makeSure(data.mipMapCount == 1, "Mipmap count of 1 only supported for skyboxes");
 
@@ -310,7 +330,8 @@ texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    m_vTextures.push_back(textureID);
+    texture_t textureID{texHelperID};
+    m_vTextures.push_back(texHelperID);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
@@ -319,7 +340,7 @@ texture_t GLManager::createSkyBox(const std::string& skyBoxFolderPath)
 
 void GLManager::bindSkyBox(texture_t skyBox)
 {
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<uint32_t>(skyBox));
 }
 
 void GLManager::unbindSkyBox()

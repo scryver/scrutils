@@ -6,13 +6,18 @@
 #include <string>
 #include <vector>
 
+#include "Scryver/Utility/TypeUtils.hpp"
+
 namespace Scryver {
 
 namespace OpenGL {
 
-typedef uint32_t buffer_t;
-typedef uint32_t vertexArray_t;
-typedef uint32_t texture_t;
+struct buffer_tag{};
+typedef Scryver::Utils::ID<buffer_tag, uint32_t, 0> buffer_t;
+struct vertexArray_tag{};
+typedef Scryver::Utils::ID<vertexArray_tag, uint32_t, 0> vertexArray_t;
+struct texture_tag{};
+typedef Scryver::Utils::ID<texture_tag, uint32_t, 0> texture_t;
 
 enum class Option
 {
@@ -105,9 +110,9 @@ private:
     GLManager();
     ~GLManager();
 
-    std::vector<buffer_t>       m_vBuffers;
-    std::vector<vertexArray_t>  m_vVertexArrays;
-    std::vector<texture_t>      m_vTextures;
+    std::vector<uint32_t>       m_vBuffers;
+    std::vector<uint32_t>       m_vVertexArrays;
+    std::vector<uint32_t>       m_vTextures;
 
     bool                        m_wireMode;
     uint16_t                    m_width;

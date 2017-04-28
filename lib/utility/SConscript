@@ -12,6 +12,7 @@ staticScrIlity = env.Library(
 headers = [
     'dictionary.hpp',
     'macros.hpp',
+    'type_utils.hpp',
 ]
 
 inlines = [
@@ -22,3 +23,4 @@ install_headers(env, 'Scryver/Utility', headers, inlines)
 # @TODO: Implement copy-in file strategy for headers and inline/implementation
 
 env.Install('$PREFIX/lib', staticScrIlity)
+env['scrility'] = staticScrIlity

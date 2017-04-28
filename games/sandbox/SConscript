@@ -11,7 +11,7 @@ sandboxEnv['VERSION_MAJOR'] = 1
 sandboxEnv['VERSION_MINOR'] = 0
 sandboxEnv.Header('config')
 
-sandboxEnv.Prepend(LIBS=['scrogl', 'scrine', 'scruts', 'scring', 'scriles'])
+sandboxEnv.Prepend(LIBS=['scrogl', 'scrine', 'scruts', 'scring', 'scriles', 'scrility'])
 
 main = sandboxEnv.Program('sandbox',
                           source=[
