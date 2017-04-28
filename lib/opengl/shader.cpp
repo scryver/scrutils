@@ -149,14 +149,22 @@ uniform_t Shader::getUniform(const std::string& uniform)
     return location;
 }
 
+void Shader::uploadUniformOnce(const std::string& uniform, int value)
+{
+    uniform_t location = getUniform(uniform);
+    uploadUniform(location, value);
+}
+
 void Shader::uploadUniform(uniform_t location, int value)
 {
+    makeSure(identifier != shader_t::invalid(), "Shader not initialized");
     glUniform1i(static_cast<uint32_t>(location), value);
 }
 
 void Shader::uploadUniform(uniform_t location, const Math::Matrix4f& value,
                            bool transpose)
 {
+    makeSure(identifier != shader_t::invalid(), "Shader not initialized");
     glUniformMatrix4fv(static_cast<uint32_t>(location), 1,
                        transpose ? GL_TRUE : GL_FALSE,
                        &value.m[0][0]);

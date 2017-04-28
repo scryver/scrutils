@@ -109,10 +109,8 @@ int main(int argc, char* argv[]) {
     Scryver::OpenGL::uniform_t worldLoc = shader.getUniform("world");
     Scryver::OpenGL::uniform_t cameraLoc = shader.getUniform("camera");
 
-    Scryver::OpenGL::uniform_t colourSampler = shader.getUniform("texSampler");
-    Scryver::OpenGL::uniform_t normSampler = shader.getUniform("normSampler");
-    shader.uploadUniform(colourSampler, 0);
-    shader.uploadUniform(normSampler, 1);
+    shader.uploadUniformOnce("texSampler", 0);
+    shader.uploadUniformOnce("normSampler", 1);
 
     float count = 0.0f;
     Scryver::Math::Transform3Df transform;
@@ -168,8 +166,7 @@ int main(int argc, char* argv[]) {
 
     skyBoxShader.use();
     Scryver::OpenGL::uniform_t skyCameraLoc = skyBoxShader.getUniform("camera");
-    Scryver::OpenGL::uniform_t skySampler = skyBoxShader.getUniform("skybox");
-    skyBoxShader.uploadUniform(skySampler, 0);
+    skyBoxShader.uploadUniformOnce("skybox", 0);
 
     bool depthTest = false;
     bool synced = true;

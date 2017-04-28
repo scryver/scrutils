@@ -30,6 +30,8 @@ public:
 
     uniform_t getUniform(const std::string& uniform);
 
+    void uploadUniformOnce(const std::string& uniform, int value);
+
     void uploadUniform(uniform_t location, int value);
     void uploadUniform(uniform_t location, const Scryver::Math::Matrix4f& value,
                        bool transpose = true);
