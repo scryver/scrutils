@@ -83,6 +83,10 @@ public:
     void bindVertexArray(vertexArray_t vertexArray);
     void unbindVertexArray();
 
+    void enableVertexAttribute(uint32_t attribute);
+    void vertexAttributes(uint32_t attribute, size_t size, size_t stride = 0, size_t offset = 0);
+    void disableVertexAttribute(uint32_t attribute);
+
     texture_t createTexture(const std::string& ddsPath);
     void bindTexture(texture_t texture);
     void unbindTexture();

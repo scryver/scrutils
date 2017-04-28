@@ -88,14 +88,14 @@ int main(int argc, char* argv[]) {
 
     Scryver::OpenGL::vertexArray_t VAO = glManager.createVertexArray();
     glManager.bindVertexArray(VAO);
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
     glManager.bindArrayBuffer(VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, texCoord)));
+    glManager.enableVertexAttribute(0);
+    glManager.enableVertexAttribute(1);
+    glManager.vertexAttributes(0, 3, sizeof(Vertex), offsetof(Vertex, position));
+    glManager.vertexAttributes(1, 2, sizeof(Vertex), offsetof(Vertex, texCoord));
+    glManager.disableVertexAttribute(1);
+    glManager.disableVertexAttribute(0);
     glManager.unbindArrayBuffer();
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
 
     Scryver::OpenGL::texture_t statueCol = glManager.createTexture("resources/textures/statue.dds");
@@ -144,11 +144,11 @@ int main(int argc, char* argv[]) {
 
     Scryver::OpenGL::vertexArray_t skyBoxVAO = glManager.createVertexArray();
     glManager.bindVertexArray(skyBoxVAO);
-    glEnableVertexAttribArray(0);
     glManager.bindArrayBuffer(skyBoxBuf);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glManager.enableVertexAttribute(0);
+    glManager.vertexAttributes(0, 3);
+    glManager.disableVertexAttribute(0);
     glManager.unbindArrayBuffer();
-    glDisableVertexAttribArray(0);
     glManager.unbindVertexArray();
     Scryver::OpenGL::Shader skyBoxShader;
     if (skyBoxShader.initialize(skyBoxVertexFile, skyBoxFragmentFile) == false)
@@ -248,9 +248,9 @@ int main(int argc, char* argv[]) {
         glManager.bindSkyBox(skyBox);
         glManager.bindVertexArray(skyBoxVAO);
         glManager.bindElementBuffer(skyBoxIdx);
-        glEnableVertexAttribArray(0);
+        glManager.enableVertexAttribute(0);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
-        glDisableVertexAttribArray(0);
+        glManager.disableVertexAttribute(0);
         glManager.unbindElementBuffer();
         glManager.unbindVertexArray();
         glManager.unbindSkyBox();
@@ -263,11 +263,11 @@ int main(int argc, char* argv[]) {
         // Drawing calls
         glManager.bindVertexArray(VAO);
         glManager.bindElementBuffer(IBO);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        glManager.enableVertexAttribute(0);
+        glManager.enableVertexAttribute(1);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, 0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(0);
+        glManager.disableVertexAttribute(1);
+        glManager.disableVertexAttribute(0);
         glManager.unbindElementBuffer();
         glManager.unbindVertexArray();
         glManager.unbindTexture();

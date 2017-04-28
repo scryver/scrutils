@@ -105,6 +105,7 @@ public:
     MOCK_METHOD2( DeleteVertexArrays,       void(GLsizei n, GLuint* vertexArrays) );
     MOCK_METHOD1( BindVertexArray,          void(GLuint vertexArrays) );
     MOCK_METHOD1( EnableVertexAttribArray,  void(GLuint attribute) );
+    MOCK_METHOD1( DisableVertexAttribArray, void(GLuint attribute) );
     MOCK_METHOD6( VertexAttribPointer,      void(GLuint attribute, GLsizei size,
                                                  GLenum type, GLenum normal,
                                                  GLsizei stride, void* offset) );
@@ -165,6 +166,7 @@ public:
 #define glDeleteVertexArrays        GLMock.DeleteVertexArrays
 #define glBindVertexArray           GLMock.BindVertexArray
 #define glEnableVertexAttribArray   GLMock.EnableVertexAttribArray
+#define glDisableVertexAttribArray  GLMock.DisableVertexAttribArray
 #define glVertexAttribPointer       GLMock.VertexAttribPointer
 
 #define glCreateShader              GLMock.CreateShader

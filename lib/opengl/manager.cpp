@@ -233,6 +233,21 @@ void GLManager::unbindVertexArray()
     glBindVertexArray(0);
 }
 
+void GLManager::enableVertexAttribute(uint32_t attribute)
+{
+    glEnableVertexAttribArray(attribute);
+}
+
+void GLManager::vertexAttributes(uint32_t attribute, size_t size, size_t stride, size_t offset)
+{
+    glVertexAttribPointer(attribute, size, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(offset));
+}
+
+void GLManager::disableVertexAttribute(uint32_t attribute)
+{
+    glDisableVertexAttribArray(attribute);
+}
+
 texture_t GLManager::createTexture(const std::string& ddsPath)
 {
     ImageData data;

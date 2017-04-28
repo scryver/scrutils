@@ -491,35 +491,46 @@ TEST(GLManager, ElementBufferData)
     manager.destroy();
 }
 
-// TEST(GLManager, VertexAttributes)
-// {
-//     GLManager& manager = GLManager::getInstance();
+TEST(GLManager, VertexAttributes)
+{
+    GLManager& manager = GLManager::getInstance();
 
-//     EXPECT_CALL(GLMock, GenVertexArrays(1, testing::_))
-//         .Times(2)
-//         .WillOnce(testing::SetArgPointee<1>(1))
-//         .WillOnce(testing::SetArgPointee<1>(3));
-//     EXPECT_CALL(GLMock, BindVertexArray(1u))
-//         .Times(1);
-//     EXPECT_CALL(GLMock, BindVertexArray(3u))
-//         .Times(1);
-//     EXPECT_CALL(GLMock, VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-//                                             sizeof(float) * 4,
-//                                             reinterpret_cast<void*>(0)))
-//         .Times(2);
-//     EXPECT_CALL(GLMock, VertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE,
-//                                             sizeof(float),
-//                                             reinterpret_cast<void*>(3)))
-//         .Times(2);
-//     EXPECT_CALL(GLMock, BindVertexArray(0u))
-//         .Times(2);
-//     EXPECT_CALL(GLMock, DeleteVertexArrays(2, testing::_))
-//         .Times(1)
-//         .WillOnce(testing::SetArgPointee<1>(0));
+    EXPECT_CALL(GLMock, GenVertexArrays(1, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<1>(1));
+    EXPECT_CALL(GLMock, BindVertexArray(1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, EnableVertexAttribArray(0u))
+        .Times(1);
+    EXPECT_CALL(GLMock, EnableVertexAttribArray(1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                                            sizeof(float) * 4,
+                                            reinterpret_cast<void*>(0)))
+        .Times(1);
+    EXPECT_CALL(GLMock, VertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE,
+                                            sizeof(float) * 4,
+                                            reinterpret_cast<void*>(3 * 4)))
+        .Times(1);
+    EXPECT_CALL(GLMock, DisableVertexAttribArray(1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, DisableVertexAttribArray(0u))
+        .Times(1);
+    EXPECT_CALL(GLMock, BindVertexArray(0u))
+        .Times(1);
+    EXPECT_CALL(GLMock, DeleteVertexArrays(1, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<1>(0));
 
-//     buffer_t buffer = manager.createBuffer();
-//     vertexArray_t vertexAttribs = manager.createVertexArray();
-//     manager.vertexAttributes(vertexAttribs, buffer,);
+    vertexArray_t vertexAttribs = manager.createVertexArray();
+    manager.bindVertexArray(vertexAttribs);
+    manager.enableVertexAttribute(0);
+    manager.enableVertexAttribute(1);
+    manager.vertexAttributes(0, 3, sizeof(Vertex), offsetof(Vertex, position));
+    manager.vertexAttributes(1, 1, sizeof(Vertex), offsetof(Vertex, alpha));
+    manager.disableVertexAttribute(1);
+    manager.disableVertexAttribute(0);
+    manager.unbindVertexArray();
 
-//     manager.destroy();
-// }
+    manager.destroy();
+}
