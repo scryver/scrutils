@@ -244,4 +244,26 @@ TEST(Matrix4, InitLookAt)
     EXPECT_FLOAT_EQ(0.0f, m.m[3][1]);
     EXPECT_FLOAT_EQ(0.0f, m.m[3][2]);
     EXPECT_FLOAT_EQ(1.0f, m.m[3][3]);
+
+    m.initLookAt(Vector3Df(1, 0, 1), Vector3Df(0, -1, 1));
+
+    EXPECT_FLOAT_EQ(-0.577350269189626f, m.m[0][0]);
+    EXPECT_FLOAT_EQ( 0.577350269189626f, m.m[0][1]);
+    EXPECT_FLOAT_EQ( 0.577350269189626f, m.m[0][2]);
+    EXPECT_FLOAT_EQ(0.0f, m.m[0][3]);
+
+    EXPECT_FLOAT_EQ(-0.408248290463863f, m.m[1][0]);
+    EXPECT_FLOAT_EQ(-0.816496580927726f, m.m[1][1]);
+    EXPECT_FLOAT_EQ( 0.408248290463863f, m.m[1][2]);
+    EXPECT_FLOAT_EQ(0.0f, m.m[1][3]);
+
+    EXPECT_FLOAT_EQ(0.7071067811865475f, m.m[2][0]);
+    EXPECT_FLOAT_EQ(0.0f, m.m[2][1]);
+    EXPECT_FLOAT_EQ(0.7071067811865475f, m.m[2][2]);
+    EXPECT_FLOAT_EQ(0.0f, m.m[2][3]);
+
+    EXPECT_FLOAT_EQ(0.0f, m.m[3][0]);
+    EXPECT_FLOAT_EQ(0.0f, m.m[3][1]);
+    EXPECT_FLOAT_EQ(0.0f, m.m[3][2]);
+    EXPECT_FLOAT_EQ(1.0f, m.m[3][3]);
 }

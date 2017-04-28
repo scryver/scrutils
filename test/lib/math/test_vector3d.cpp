@@ -288,7 +288,11 @@ TEST(Vector3D, Normalize)
     Vector3Df vector2(3, 4, 5);
     vector2.normalize();
 
+    Vector3Df vs = vn.normalized();
+
     EXPECT_FLOAT_EQ(1.0f, vn.length());
+    EXPECT_FLOAT_EQ(1.0f, vs.length());
+    EXPECT_FLOAT_EQ(1.0f, vs.lengthSquared());
     EXPECT_GT(vector.length(), 1.0f);
     EXPECT_FLOAT_EQ(1.0f, vector2.length());
 }
@@ -302,6 +306,44 @@ TEST(Vector3D, CrossProduct)
     EXPECT_FLOAT_EQ(0.0f, cross.x);
     EXPECT_FLOAT_EQ(0.0f, cross.y);
     EXPECT_FLOAT_EQ(1.0f, cross.z);
+
+    Vector3Df v3(1, 1, 1);
+    Vector3Df v4(-1, 1, 0);
+
+    cross = v3.cross(v4);
+    EXPECT_FLOAT_EQ(-1.0f, cross.x);
+    EXPECT_FLOAT_EQ(-1.0f, cross.y);
+    EXPECT_FLOAT_EQ(2.0f, cross.z);
+
+    cross = v1.cross(v3);
+    EXPECT_FLOAT_EQ(0.0f, cross.x);
+    EXPECT_FLOAT_EQ(-1.0f, cross.y);
+    EXPECT_FLOAT_EQ(1.0f, cross.z);
+
+    cross = v1.cross(v4);
+    EXPECT_FLOAT_EQ(0.0f, cross.x);
+    EXPECT_FLOAT_EQ(0.0f, cross.y);
+    EXPECT_FLOAT_EQ(1.0f, cross.z);
+
+    cross = v2.cross(v3);
+    EXPECT_FLOAT_EQ(1.0f, cross.x);
+    EXPECT_FLOAT_EQ(0.0f, cross.y);
+    EXPECT_FLOAT_EQ(-1.0f, cross.z);
+
+    cross = v3.cross(v1);
+    EXPECT_FLOAT_EQ(0.0f, cross.x);
+    EXPECT_FLOAT_EQ(1.0f, cross.y);
+    EXPECT_FLOAT_EQ(-1.0f, cross.z);
+
+    cross = v3.cross(v2);
+    EXPECT_FLOAT_EQ(-1.0f, cross.x);
+    EXPECT_FLOAT_EQ(0.0f, cross.y);
+    EXPECT_FLOAT_EQ(1.0f, cross.z);
+
+    cross = v4.cross(v3);
+    EXPECT_FLOAT_EQ(1.0f, cross.x);
+    EXPECT_FLOAT_EQ(1.0f, cross.y);
+    EXPECT_FLOAT_EQ(-2.0f, cross.z);
 }
 
 TEST(Vector3D, RotateAroundAxis)
@@ -327,4 +369,29 @@ TEST(Vector3D, RotateAroundAxis)
     EXPECT_FLOAT_EQ(1.0f, v1.x);
     EXPECT_FLOAT_EQ(0.0f, v1.y);
     EXPECT_FLOAT_EQ(0.0f, v1.z);
+}
+
+TEST(Vector3D, RotatedAroundAxis)
+{
+    Vector3Df v1(1, 0, 0);
+
+    Vector3Df v2 = v1.rotated(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(0.0f, v2.x);
+    EXPECT_FLOAT_EQ(0.0f, v2.y);
+    EXPECT_FLOAT_EQ(-1.0f, v2.z);
+
+    Vector3Df v3 = v2.rotated(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(-1.0f, v3.x);
+    EXPECT_FLOAT_EQ(0.0f, v3.y);
+    EXPECT_FLOAT_EQ(0.0f, v3.z);
+
+    v2 = v3.rotated(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(0.0f, v2.x);
+    EXPECT_FLOAT_EQ(0.0f, v2.y);
+    EXPECT_FLOAT_EQ(1.0f, v2.z);
+
+    v3 = v1.rotated(90, Vector3Df(0, 1, 0));
+    EXPECT_FLOAT_EQ(0.0f, v3.x);
+    EXPECT_FLOAT_EQ(0.0f, v3.y);
+    EXPECT_FLOAT_EQ(-1.0f, v3.z);
 }

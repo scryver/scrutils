@@ -73,7 +73,7 @@ Vector3D<N> Vector3D<N>::rotated(const N& angleDegree, const Vector3D<N>& rotati
 template <typename N>
 Vector3D<N> Vector3D<N>::rotated(const Quaternion<N>& rotor) const
 {
-    Vector3D<N> result = *this;
+    Vector3D<N> result{*this};
     result.rotate(rotor);
     return result;
 }
