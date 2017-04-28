@@ -312,4 +312,3 @@ TEST(GLManager, DepthTest)
     manager.disable(Option::DepthTest);
     manager.enable(Option::DepthTest);
 }
-

@@ -110,16 +110,16 @@ private:
     inline bool freeListEmpty() const;
 
     // Variables
-    uint32_t    m_freeListFront = 0xFFFFFFFF; //!< start index in the embedded ComponentId freelist
-    uint32_t    m_freeListBack  = 0xFFFFFFFF; //!< last index in the freelist
+    uint32_t    m_freeListFront{0xFFFFFFFF};    //!< start index in the embedded ComponentId freelist
+    uint32_t    m_freeListBack{0xFFFFFFFF};     //!< last index in the freelist
 
-    uint16_t    m_itemTypeId;   //!< the DictKey::typeId to use for ids produced by this Dictionary<T>
+    uint16_t    m_itemTypeId{0};                //!< the DictKey::typeId to use for ids produced by this Dictionary<T>
 
-    uint8_t     m_fragmented = 0; //<! set to 1 if modified by insert or erase since last complete defragment
+    uint8_t     m_fragmented{0};                //!< set to 1 if modified by insert or erase since last complete defragment
 
-    KeySet      m_sparseIds;    //!< stores a set of DictKeys, these are "inner" ids indexing into m_items
-    DenseSet_t  m_items;        //!< stores items of type T
-    MetaSet_t   m_meta;         //!< stores Meta_t type for each item
+    KeySet      m_sparseIds;                    //!< stores a set of DictKeys, these are "inner" ids indexing into m_items
+    DenseSet_t  m_items;                        //!< stores items of type T
+    MetaSet_t   m_meta;                         //!< stores Meta_t type for each item
 };
 
 // struct DictKey comparison functions

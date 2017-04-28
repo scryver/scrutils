@@ -132,8 +132,10 @@ void GLManager::destroy()
 void GLManager::enable(Option o)
 {
     GLenum opt;
-    if (o == Option::DepthTest)
-        opt = GL_DEPTH_TEST;
+    switch (o)
+    {
+        case Option::DepthTest:     opt = GL_DEPTH_TEST; break;
+    }
 
     glEnable(opt);
 }
@@ -141,8 +143,10 @@ void GLManager::enable(Option o)
 void GLManager::disable(Option o)
 {
     GLenum opt;
-    if (o == Option::DepthTest)
-        opt = GL_DEPTH_TEST;
+    switch (o)
+    {
+        case Option::DepthTest:     opt = GL_DEPTH_TEST; break;
+    }
 
     glDisable(opt);
 }
