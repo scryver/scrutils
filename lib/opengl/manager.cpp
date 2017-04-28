@@ -289,6 +289,19 @@ void GLManager::bindTexture(texture_t texture)
     glBindTexture(GL_TEXTURE_2D, static_cast<uint32_t>(texture));
 }
 
+void GLManager::bindTexture(texture_t texture, uint32_t activeTexture)
+{
+    activateTexture(activeTexture);
+    glBindTexture(GL_TEXTURE_2D, static_cast<uint32_t>(texture));
+}
+
+void GLManager::activateTexture(uint32_t activeTexture)
+{
+    makeSure(activeTexture >= 0 && activeTexture < GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
+             "Max allowed active textures exceeded");
+    glActiveTexture(GL_TEXTURE0 + activeTexture);
+}
+
 void GLManager::unbindTexture()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -358,6 +371,12 @@ void GLManager::bindSkyBox(texture_t skyBox)
     glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<uint32_t>(skyBox));
 }
 
+void GLManager::bindSkyBox(texture_t skyBox, uint32_t activeTexture)
+{
+    activateTexture(activeTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<uint32_t>(skyBox));
+}
+
 void GLManager::unbindSkyBox()
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -381,6 +400,28 @@ void GLManager::viewport(uint16_t width, uint16_t height)
     m_width = width;
     m_height = height;
     glViewport(0, 0, static_cast<GLint>(width), static_cast<GLint>(height));
+}
+
+void GLManager::drawElements(buffer_t element, uint32_t nrElements,
+                             vertexArray_t vertexArray, uint32_t nrAttributes,
+                             ElementIndices indexType)
+{
+    GLenum mode;
+    switch (indexType)
+    {
+        case ElementIndices::UnsignedByte:  mode = GL_UNSIGNED_BYTE;    break;
+        case ElementIndices::UnsignedShort: mode = GL_UNSIGNED_SHORT;   break;
+        case ElementIndices::UnsignedInt:   mode = GL_UNSIGNED_INT;     break;
+    }
+    glBindVertexArray(static_cast<uint32_t>(vertexArray));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<uint32_t>(element));
+    for (uint32_t i = 0; i < nrAttributes; ++i)
+        glEnableVertexAttribArray(i);
+    glDrawElements(GL_TRIANGLES, nrElements, mode, 0);
+    for (uint32_t i = nrAttributes; i > 0; --i)
+        glDisableVertexAttribArray(i - 1);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 GLManager& GLManager::getInstance()

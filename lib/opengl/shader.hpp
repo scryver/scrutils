@@ -4,11 +4,17 @@
 #include <cstdint>
 #include <string>
 
+#include "Scryver/Math/Matrix4.hpp"
+#include "Scryver/Utility/TypeUtils.hpp"
+
 namespace Scryver {
 
 namespace OpenGL {
 
-typedef uint32_t uniform_t;
+struct shader_tag{};
+typedef Scryver::Utils::ID<shader_tag, uint32_t, 0> shader_t;
+struct uniform_tag{};
+typedef Scryver::Utils::ID<uniform_tag, uint32_t, 0xFFFFFFFF> uniform_t;
 
 class Shader
 {
@@ -24,7 +30,11 @@ public:
 
     uniform_t getUniform(const std::string& uniform);
 
-    uint32_t identifier;
+    void uploadUniform(uniform_t location, int value);
+    void uploadUniform(uniform_t location, const Scryver::Math::Matrix4f& value,
+                       bool transpose = true);
+
+    shader_t identifier;
 };
 
 }  // namespace OpenGL

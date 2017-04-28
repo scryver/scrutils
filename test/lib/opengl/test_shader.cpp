@@ -2,8 +2,12 @@
 
 #include "glmock.hpp"
 #include "Scryver/OpenGL/Shader.hpp"
+#include "Scryver/Math/Matrix4.hpp"
 
 using Scryver::OpenGL::Shader;
+using Scryver::OpenGL::shader_t;
+using Scryver::OpenGL::uniform_t;
+using Scryver::Math::Matrix4f;
 
 const std::string brokenFile = "build/test/files/broken.glsl";
 const std::string vertexFile = "build/test/files/vertex.glsl";
@@ -124,7 +128,7 @@ TEST(Shader, CompileLinkSimpleShaderFiles)
     ASSERT_TRUE(s.initialize(vertexFile, fragmentFile));
 
     // Ignore deletion check
-    s.identifier = 0;
+    s.identifier = shader_t::invalid();
 }
 
 TEST(Shader, FailOnShaderFileLinking)
@@ -409,7 +413,7 @@ TEST(Shader, UseSimpleShaderFiles)
     s.use();
 
     // Ignore deletion check
-    s.identifier = 0;
+    s.identifier = shader_t::invalid();
 }
 
 TEST(Shader, GetUniformLocation)
@@ -465,8 +469,80 @@ TEST(Shader, GetUniformLocation)
     Shader s;
 
     ASSERT_TRUE(s.initialize(vertexFile, fragmentFile));
-    ASSERT_EQ(5u, s.getUniform(uniformName));
+    ASSERT_EQ(uniform_t(5), s.getUniform(uniformName));
 
     // Ignore deletion check
-    s.identifier = 0;
+    s.identifier = shader_t::invalid();
+}
+
+TEST(Shader, UploadUniform)
+{
+    Matrix4f m;
+    m.initTranslation(1.0f, 2.0f, 3.0f);
+
+    EXPECT_CALL(GLMock, CreateShader(GL_VERTEX_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(1));
+    EXPECT_CALL(GLMock, ShaderSource(1, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(1)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(1, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateShader(GL_FRAGMENT_SHADER))
+        .Times(1)
+        .WillOnce(testing::Return(2));
+    EXPECT_CALL(GLMock, ShaderSource(2, 1, testing::_, testing::_))
+        .Times(1);
+    EXPECT_CALL(GLMock, CompileShader(2)).Times(1);
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_COMPILE_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetShaderiv(2, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    EXPECT_CALL(GLMock, CreateProgram()).Times(1).WillOnce(testing::Return(3));
+    EXPECT_CALL(GLMock, AttachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, AttachShader(3, 2)).Times(1);
+    EXPECT_CALL(GLMock, LinkProgram(3));
+
+    EXPECT_CALL(GLMock, DetachShader(3, 1)).Times(1);
+    EXPECT_CALL(GLMock, DetachShader(3, 2)).Times(1);
+
+    EXPECT_CALL(GLMock, DeleteShader(1)).Times(1);
+    EXPECT_CALL(GLMock, DeleteShader(2)).Times(1);
+
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_LINK_STATUS, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(GL_TRUE));
+    EXPECT_CALL(GLMock, GetProgramiv(3, GL_INFO_LOG_LENGTH, testing::_))
+        .Times(1)
+        .WillOnce(testing::SetArgPointee<2>(0));
+
+    const char* uniformName = "MyName";
+    EXPECT_CALL(GLMock, GetUniformLocation(3, testing::StrEq(uniformName)))
+        .Times(1)
+        .WillOnce(testing::Return(5));
+
+    EXPECT_CALL(GLMock, UniformMatrix4fv(5u, 1, GL_TRUE, &m.m[0][0]))
+        .Times(1);
+    EXPECT_CALL(GLMock, Uniform1i(5u, 3))
+        .Times(1);
+
+    Shader s;
+
+    ASSERT_TRUE(s.initialize(vertexFile, fragmentFile));
+    uniform_t u = s.getUniform(uniformName);
+    ASSERT_EQ(uniform_t(5), u);
+
+    s.uploadUniform(u, m);
+    s.uploadUniform(u, 3);
+
+    // Ignore deletion check
+    s.identifier = shader_t::invalid();
 }

@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <GL/glew.h>
-
 #include "Scryver/Inputs/KeyboardCodes.hpp"
 #include "Scryver/Engine/Window.hpp"
 #include "Scryver/OpenGL/Manager.hpp"
@@ -99,20 +97,28 @@ int main(int argc, char* argv[]) {
     glManager.unbindVertexArray();
 
     Scryver::OpenGL::texture_t statueCol = glManager.createTexture("resources/textures/statue.dds");
+    Scryver::OpenGL::texture_t statueNorm = glManager.createTexture("resources/textures/happy.dds");
 
     Scryver::Render::Camera camera;
-    camera.initialize(Scryver::Math::Vector3Df(0, 5, -15.0f),
+    camera.initialize(Scryver::Math::Vector3Df(0, 2, -5.0f),
                       Scryver::Math::Vector3Df(0, 0, 1),
                       Scryver::Math::Vector3Df(0, 1, 0),
                       800.0f, 600.0f);
 
+    shader.use();
     Scryver::OpenGL::uniform_t worldLoc = shader.getUniform("world");
     Scryver::OpenGL::uniform_t cameraLoc = shader.getUniform("camera");
+
+    Scryver::OpenGL::uniform_t colourSampler = shader.getUniform("texSampler");
+    Scryver::OpenGL::uniform_t normSampler = shader.getUniform("normSampler");
+    shader.uploadUniform(colourSampler, 0);
+    shader.uploadUniform(normSampler, 1);
 
     float count = 0.0f;
     Scryver::Math::Transform3Df transform;
 
     Scryver::OpenGL::texture_t skyBox = glManager.createSkyBox("resources/textures/cubemaps/stairs_in_forest");
+
     std::array<Scryver::Math::Vector3Df, 8> skyboxVertices = {
         // Positions
         Scryver::Math::Vector3Df(-50.0f,  50.0f, -50.0f),   // 0:
@@ -150,6 +156,7 @@ int main(int argc, char* argv[]) {
     glManager.disableVertexAttribute(0);
     glManager.unbindArrayBuffer();
     glManager.unbindVertexArray();
+
     Scryver::OpenGL::Shader skyBoxShader;
     if (skyBoxShader.initialize(skyBoxVertexFile, skyBoxFragmentFile) == false)
     {
@@ -158,7 +165,11 @@ int main(int argc, char* argv[]) {
         window.destroy();
         return -1;
     }
+
+    skyBoxShader.use();
     Scryver::OpenGL::uniform_t skyCameraLoc = skyBoxShader.getUniform("camera");
+    Scryver::OpenGL::uniform_t skySampler = skyBoxShader.getUniform("skybox");
+    skyBoxShader.uploadUniform(skySampler, 0);
 
     bool depthTest = false;
     bool synced = true;
@@ -243,33 +254,20 @@ int main(int argc, char* argv[]) {
         window.clear();
 
         skyBoxShader.use();
-        glUniformMatrix4fv(skyCameraLoc, 1, GL_TRUE, &camera.getViewProjection().m[0][0]);
-        glActiveTexture(GL_TEXTURE0);
-        glManager.bindSkyBox(skyBox);
-        glManager.bindVertexArray(skyBoxVAO);
-        glManager.bindElementBuffer(skyBoxIdx);
-        glManager.enableVertexAttribute(0);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0);
-        glManager.disableVertexAttribute(0);
-        glManager.unbindElementBuffer();
-        glManager.unbindVertexArray();
+        skyBoxShader.uploadUniform(skyCameraLoc, camera.getViewProjection());
+        glManager.bindSkyBox(skyBox, 0);
+        glManager.drawElements(skyBoxIdx, 36, skyBoxVAO, 1,
+                               Scryver::OpenGL::ElementIndices::UnsignedByte);
         glManager.unbindSkyBox();
 
         shader.use();
-        glUniformMatrix4fv(cameraLoc, 1, GL_TRUE, &camera.getWorldViewProjection().m[0][0]);
-        glUniformMatrix4fv(worldLoc, 1, GL_TRUE, &transform.get().m[0][0]);
-        glActiveTexture(GL_TEXTURE0);
-        glManager.bindTexture(statueCol);
+        shader.uploadUniform(worldLoc, transform.get());
+        shader.uploadUniform(cameraLoc, camera.getWorldViewProjection());
+        glManager.bindTexture(statueCol, 0);
+        glManager.bindTexture(statueNorm, 1);
         // Drawing calls
-        glManager.bindVertexArray(VAO);
-        glManager.bindElementBuffer(IBO);
-        glManager.enableVertexAttribute(0);
-        glManager.enableVertexAttribute(1);
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_BYTE, 0);
-        glManager.disableVertexAttribute(1);
-        glManager.disableVertexAttribute(0);
-        glManager.unbindElementBuffer();
-        glManager.unbindVertexArray();
+        glManager.drawElements(IBO, 12, VAO, 2,
+                               Scryver::OpenGL::ElementIndices::UnsignedByte);
         glManager.unbindTexture();
 
         window.display();

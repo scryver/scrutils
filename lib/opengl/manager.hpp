@@ -31,6 +31,13 @@ enum class DrawMethod
     StreamDraw,
 };
 
+enum class ElementIndices
+{
+    UnsignedByte,
+    UnsignedShort,
+    UnsignedInt
+};
+
 class GLManager
 {
 public:
@@ -89,15 +96,22 @@ public:
 
     texture_t createTexture(const std::string& ddsPath);
     void bindTexture(texture_t texture);
+    void bindTexture(texture_t texture, uint32_t activeTexture);
+    void activateTexture(uint32_t activeTexture);
     void unbindTexture();
     texture_t createSkyBox(const std::string& skyBoxFolderPath);
     void bindSkyBox(texture_t skyBox);
+    void bindSkyBox(texture_t skyBox, uint32_t activeTexture);
     void unbindSkyBox();
 
     bool wireMode() const;
     void wireMode(bool on);
 
     void viewport(uint16_t width, uint16_t height);
+
+    void drawElements(buffer_t element, uint32_t nrElements,
+                      vertexArray_t vertexArray, uint32_t nrAttributes,
+                      ElementIndices indexType);
 
     static GLManager& getInstance();
 

@@ -9,6 +9,7 @@
 #include "../../test/lib/opengl/glmock.hpp"
 #endif
 
+#include "Scryver/Math/Matrix4.hpp"
 #include "Scryver/Files/FileReader.hpp"
 #include "Scryver/Debug/Expector.hpp"
 #include "Scryver/Debug/Printer.hpp"
@@ -89,14 +90,14 @@ bool Shader::initialize(const std::string& vertex, const std::string& fragment,
     }
 
     debugPrint("Creating program");
-    identifier = glCreateProgram();
-    glAttachShader(identifier, vertexShaderID);
-    glAttachShader(identifier, fragmentShaderID);
+    uint32_t id = glCreateProgram();
+    glAttachShader(id, vertexShaderID);
+    glAttachShader(id, fragmentShaderID);
     debugPrint("Linking program");
-    glLinkProgram(identifier);
+    glLinkProgram(id);
 
-    glDetachShader(identifier, vertexShaderID);
-    glDetachShader(identifier, fragmentShaderID);
+    glDetachShader(id, vertexShaderID);
+    glDetachShader(id, fragmentShaderID);
 
     glDeleteShader(fragmentShaderID);
     glDeleteShader(vertexShaderID);
@@ -105,43 +106,60 @@ bool Shader::initialize(const std::string& vertex, const std::string& fragment,
     int infoLogLength;
 
     // Check the program
-    glGetProgramiv(identifier, GL_LINK_STATUS, &result);
-    glGetProgramiv(identifier, GL_INFO_LOG_LENGTH, &infoLogLength);
+    glGetProgramiv(id, GL_LINK_STATUS, &result);
+    glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
     if (result == GL_FALSE)
     {
 #ifndef NDEBUG
         if (infoLogLength > 0)
-            printProgramError(identifier, infoLogLength);
+            printProgramError(id, infoLogLength);
 #endif
-        glDeleteProgram(identifier);
-        identifier = 0;
+        glDeleteProgram(id);
+        identifier = shader_t::invalid();
         return false;
     }
+
+    identifier = static_cast<shader_t>(id);
 
     return true;
 }
 
 void Shader::destroy()
 {
-    if (identifier != 0)
+    if (identifier != shader_t::invalid())
     {
-        glDeleteProgram(identifier);
-        identifier = 0;
+        glDeleteProgram(static_cast<uint32_t>(identifier));
+        identifier = shader_t::invalid();
     }
 }
 
 void Shader::use()
 {
-    makeSure(identifier != 0, "Shader not initialized");
-    glUseProgram(identifier);
+    makeSure(identifier != shader_t::invalid(), "Shader not initialized");
+    glUseProgram(static_cast<uint32_t>(identifier));
 }
 
 uniform_t Shader::getUniform(const std::string& uniform)
 {
-    makeSure(identifier != 0, "Shader not initialized");
-    uniform_t location = glGetUniformLocation(identifier, uniform.c_str());
-    makeSure(location != static_cast<uint32_t>(-1), "Uniform does not exist");
+    makeSure(identifier != shader_t::invalid(), "Shader not initialized");
+    uniform_t location = static_cast<uniform_t>(
+        glGetUniformLocation(static_cast<uint32_t>(identifier), uniform.c_str())
+    );
+    makeSure(location != uniform_t::invalid(), "Uniform does not exist");
     return location;
+}
+
+void Shader::uploadUniform(uniform_t location, int value)
+{
+    glUniform1i(static_cast<uint32_t>(location), value);
+}
+
+void Shader::uploadUniform(uniform_t location, const Math::Matrix4f& value,
+                           bool transpose)
+{
+    glUniformMatrix4fv(static_cast<uint32_t>(location), 1,
+                       transpose ? GL_TRUE : GL_FALSE,
+                       &value.m[0][0]);
 }
 
 GLuint createAndCompileShader(const std::string& source, GLenum shaderType)

@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
         window.destroy();
         return -1;
     }
-    glUseProgram(shader.identifier);
+    glUseProgram(static_cast<uint32_t>(shader.identifier));
 
     glBindVertexArray(vertexAttribs);
     glEnableVertexAttribArray(0);
@@ -132,7 +132,7 @@ int main(int argc, char* argv[]) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    uint32_t modelPtr = glGetUniformLocation(shader.identifier, "model");
+    uint32_t modelPtr = glGetUniformLocation(static_cast<uint32_t>(shader.identifier), "model");
     float modelMtrx[4][4];
     for (size_t i = 0; i < 4; ++i)
     {
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
 
     modelMtrx[3][3] = 1.0f;
 
-    glUseProgram(shader.identifier);
+    glUseProgram(static_cast<uint32_t>(shader.identifier));
     glUniformMatrix4fv(modelPtr, 1, GL_FALSE, &modelMtrx[0][0]);
 
     // run the main loop

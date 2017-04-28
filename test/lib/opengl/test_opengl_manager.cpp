@@ -12,8 +12,11 @@
 using Scryver::OpenGL::GLManager;
 using Scryver::OpenGL::Option;
 using Scryver::OpenGL::DrawMethod;
+using Scryver::OpenGL::ElementIndices;
 using Scryver::OpenGL::buffer_t;
 using Scryver::OpenGL::vertexArray_t;
+// using Scryver::OpenGL::texture_t;
+
 // using Scryver::Engine::Window;
 using Scryver::Math::Vector3Df;
 
@@ -533,4 +536,56 @@ TEST(GLManager, VertexAttributes)
     manager.unbindVertexArray();
 
     manager.destroy();
+}
+
+TEST(GLManager, DrawElements)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    buffer_t ibo{3};
+    vertexArray_t vao{4};
+
+    EXPECT_CALL(GLMock, BindVertexArray(4u))
+        .Times(3);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 3u))
+        .Times(3);
+    EXPECT_CALL(GLMock, EnableVertexAttribArray(0u))
+        .Times(2);
+    EXPECT_CALL(GLMock, EnableVertexAttribArray(1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, DrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0))
+        .Times(1);
+    EXPECT_CALL(GLMock, DrawElements(GL_TRIANGLES, 65500, GL_UNSIGNED_SHORT, 0))
+        .Times(1);
+    EXPECT_CALL(GLMock, DrawElements(GL_TRIANGLES, 655300, GL_UNSIGNED_INT, 0))
+        .Times(1);
+    EXPECT_CALL(GLMock, DisableVertexAttribArray(1u))
+        .Times(1);
+    EXPECT_CALL(GLMock, DisableVertexAttribArray(0u))
+        .Times(2);
+    EXPECT_CALL(GLMock, BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0u))
+        .Times(3);
+    EXPECT_CALL(GLMock, BindVertexArray(0u))
+        .Times(3);
+
+    manager.drawElements(ibo, 36, vao, 2, ElementIndices::UnsignedByte);
+    manager.drawElements(ibo, 65500, vao, 1, ElementIndices::UnsignedShort);
+    manager.drawElements(ibo, 655300, vao, 0, ElementIndices::UnsignedInt);
+}
+
+TEST(GLManager, ActiveTexture)
+{
+    GLManager& manager = GLManager::getInstance();
+
+    EXPECT_CALL(GLMock, ActiveTexture(GL_TEXTURE0))
+        .Times(2);
+    EXPECT_CALL(GLMock, ActiveTexture(GL_TEXTURE0 + 9))
+        .Times(1);
+    EXPECT_CALL(GLMock, ActiveTexture(GL_TEXTURE0 + 2))
+        .Times(1);
+
+    manager.activateTexture(0);
+    manager.activateTexture(9);
+    manager.activateTexture(2);
+    manager.activateTexture(0);
 }

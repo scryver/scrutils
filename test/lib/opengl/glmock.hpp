@@ -9,6 +9,7 @@ typedef size_t GLsizei;
 typedef unsigned int GLuint;
 typedef int GLint;
 typedef void GLvoid;
+typedef float GLfloat;
 
 const GLenum GL_ARRAY_BUFFER = 0;
 const GLenum GL_ELEMENT_ARRAY_BUFFER = 1;
@@ -48,6 +49,10 @@ const GLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Y = 55;
 const GLenum GL_TEXTURE_CUBE_MAP_POSITIVE_Z = 56;
 const GLenum GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = 57;
 
+const GLenum GL_TEXTURE0 = 60;
+const GLenum GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = 61;
+
+
 const GLenum GL_TEXTURE_MAG_FILTER = 70;
 const GLenum GL_TEXTURE_MIN_FILTER = 71;
 const GLenum GL_TEXTURE_WRAP_S = 72;
@@ -69,6 +74,8 @@ const GLenum GL_FRONT_AND_BACK = 253;
 
 const GLenum GL_LINE = 300;
 const GLenum GL_FILL = 301;
+
+const GLenum GL_TRIANGLES = 350;
 
 class CGLMock {
 public:
@@ -111,6 +118,12 @@ public:
                                                  GLsizei stride, void* offset) );
 
     /**
+     * Drawing methods
+     */
+    MOCK_METHOD4( DrawElements,             void(GLenum mode, GLsizei count, GLenum type,
+                                                 const GLvoid* indices) );
+
+    /**
      * Shaders
      */
     MOCK_METHOD1( CreateShader,             GLuint(GLenum type) );
@@ -130,6 +143,9 @@ public:
     MOCK_METHOD1( UseProgram,               void(GLuint program) );
 
     MOCK_METHOD2( GetUniformLocation,       GLuint(GLuint program, const GLchar* name) );
+    MOCK_METHOD2( Uniform1i,                void(GLint location, GLint value) );
+    MOCK_METHOD4( UniformMatrix4fv,         void(GLint location, GLsizei count,
+                                                 GLenum transpose, const GLfloat* value) );
 
     /**
      * Textures
@@ -141,6 +157,7 @@ public:
     MOCK_METHOD8( CompressedTexImage2D,     void(GLenum t, GLint level, GLenum internalFmt,
                                                  GLsizei width, GLsizei height, GLint border,
                                                  GLsizei imageSize, const GLvoid* data) );
+    MOCK_METHOD1( ActiveTexture,            void(GLenum texture) );
 
 
     static CGLMock& getInstance();
@@ -169,6 +186,8 @@ public:
 #define glDisableVertexAttribArray  GLMock.DisableVertexAttribArray
 #define glVertexAttribPointer       GLMock.VertexAttribPointer
 
+#define glDrawElements              GLMock.DrawElements
+
 #define glCreateShader              GLMock.CreateShader
 #define glShaderSource              GLMock.ShaderSource
 #define glCompileShader             GLMock.CompileShader
@@ -184,11 +203,14 @@ public:
 #define glDeleteProgram             GLMock.DeleteProgram
 #define glUseProgram                GLMock.UseProgram
 #define glGetUniformLocation        GLMock.GetUniformLocation
+#define glUniform1i                 GLMock.Uniform1i
+#define glUniformMatrix4fv          GLMock.UniformMatrix4fv
 
 #define glGenTextures               GLMock.GenTextures
 #define glDeleteTextures            GLMock.DeleteTextures
 #define glBindTexture               GLMock.BindTexture
 #define glTexParameteri             GLMock.TexParameteri
 #define glCompressedTexImage2D      GLMock.CompressedTexImage2D
+#define glActiveTexture             GLMock.ActiveTexture
 
 #endif  // SCRYVER_TEST_OPEN_GL_MOCK_HPP
